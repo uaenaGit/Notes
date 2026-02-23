@@ -11,14 +11,14 @@
             "id": "d01b5b4e866718a8",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "split-diff-view",
               "state": {
-                "file": "Leetcode/02 - files/testDemo.md",
-                "mode": "source",
-                "source": false
+                "aFile": "Leetcode/02 - files/testDemo.md",
+                "bFile": "Leetcode/02 - files/testDemo.md",
+                "aRef": ""
               },
-              "icon": "lucide-file",
-              "title": "testDemo"
+              "icon": "diff",
+              "title": "Diff: testDemo  (Working Tree)"
             }
           }
         ]
@@ -211,6 +211,7 @@
   },
   "active": "d01b5b4e866718a8",
   "lastOpenFiles": [
+    "Leetcode/02 - files/testDemo.md",
     "Leetcode/02 - files/3634. 使数组平衡的最少移除数目.md",
     "Leetcode/02 - files/401. 二进制手表.md",
     "Pasted image 20260217233425.png",
@@ -220,7 +221,6 @@
     "Pasted image 20260223123025.png",
     "Pasted image 20260222122540.png",
     "Pasted image 20260222105103.png",
-    "Leetcode/02 - files/testDemo.md",
     "Leetcode/02 - files/693. 交替位二进制数.md",
     "Leetcode/02 - files/67. 二进制求和.md",
     "Leetcode/02 - files/80. 删除有序数组中的重复项 Ⅱ.md",
