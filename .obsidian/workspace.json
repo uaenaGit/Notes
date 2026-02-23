@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Leetcode/02 - files/401. 二进制手表.md",
+                "file": "Leetcode/02 - files/693. 交替位二进制数.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "401. 二进制手表"
+              "title": "693. 交替位二进制数"
             }
           }
         ]
@@ -146,8 +146,8 @@
                 "showSearch": false,
                 "searchQuery": ""
               },
-              "icon": "lucide-archive",
-              "title": "添加笔记属性"
+              "icon": "lucide-ghost",
+              "title": "all-properties"
             }
           },
           {
@@ -211,9 +211,9 @@
   },
   "active": "d01b5b4e866718a8",
   "lastOpenFiles": [
-    "Leetcode/02 - files/67. 二进制求和.md",
-    "Pasted image 20260217233425.png",
     "Leetcode/02 - files/401. 二进制手表.md",
+    "Pasted image 20260217233425.png",
+    "Leetcode/02 - files/67. 二进制求和.md",
     "Leetcode/02 - files/693. 交替位二进制数.md",
     "Pasted image 20260223212159.png",
     "Pasted image 20260223211958.png",
