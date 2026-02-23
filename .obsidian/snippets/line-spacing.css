@@ -1,0 +1,15 @@
+/* 调整正文行间距 */
+.markdown-preview-view,
+.markdown-source-view {
+  line-height: 1.6; /* 推荐值：1.4 ～ 1.8 */
+}
+
+/* 可选：单独调整编辑模式行间距 */
+.cm-line {
+  line-height: 1.6;
+}
+
+/* 可选：调整预览模式段落间距 */
+.markdown-preview-view p {
+  margin-bottom: 1em;
+}

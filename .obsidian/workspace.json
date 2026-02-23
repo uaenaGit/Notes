@@ -1,0 +1,251 @@
+{
+  "main": {
+    "id": "bebaf497054fff6e",
+    "type": "split",
+    "children": [
+      {
+        "id": "44722fc8c95daae6",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "d01b5b4e866718a8",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Leetcode/02 - files/401. 二进制手表.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "401. 二进制手表"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "454296165df24b53",
+    "type": "split",
+    "children": [
+      {
+        "id": "6420555faeca999a",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "c4b7f5945a8bfbf9",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "文件列表"
+            }
+          },
+          {
+            "id": "5e0bb6cc474c6340",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "搜索"
+            }
+          },
+          {
+            "id": "e38fed0d32a8a746",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "书签"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "061bffc60c22c43d",
+    "type": "split",
+    "children": [
+      {
+        "id": "353a1a722bb1c247",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "2ba08988f6b3a4d3",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Leetcode/02 - files/401. 二进制手表.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "401. 二进制手表 的反向链接列表"
+            }
+          },
+          {
+            "id": "1578df80e8165b61",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Leetcode/02 - files/401. 二进制手表.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "401. 二进制手表 的出链列表"
+            }
+          },
+          {
+            "id": "1885ff3d3d11981c",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "标签"
+            }
+          },
+          {
+            "id": "82acc894af99e643",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "添加笔记属性"
+            }
+          },
+          {
+            "id": "ad6a219d253361d8",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Leetcode/02 - files/401. 二进制手表.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "401. 二进制手表 的大纲"
+            }
+          },
+          {
+            "id": "290d89efe5478e52",
+            "type": "leaf",
+            "state": {
+              "type": "calendar",
+              "state": {},
+              "icon": "calendar-with-checkmark",
+              "title": "Calendar"
+            }
+          },
+          {
+            "id": "a869d0beb8d2eae0",
+            "type": "leaf",
+            "state": {
+              "type": "git-view",
+              "state": {},
+              "icon": "git-pull-request",
+              "title": "Source Control"
+            }
+          }
+        ],
+        "currentTab": 6
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false,
+      "bases:新建数据库": false,
+      "obsidian-excalidraw-plugin:新建绘图文件": false,
+      "templater-obsidian:Templater": false,
+      "table-editor-obsidian:Advanced Tables Toolbar": false,
+      "obsidian-git:Open Git source control": false,
+      "obsidian-kanban:创建新看板": false,
+      "pomodoro-timer:Toggle timer panel": false
+    }
+  },
+  "active": "d01b5b4e866718a8",
+  "lastOpenFiles": [
+    "Leetcode/02 - files/80. 删除有序数组中的重复项 Ⅱ.md",
+    "Leetcode/02 - files/67. 二进制求和.md",
+    "未命名.base",
+    "Pasted image 20260223123025.png",
+    "Pasted image 20260222122540.png",
+    "Pasted image 20260222105103.png",
+    "Pasted image 20260217233425.png",
+    "Templates/testDemoTemplate.md",
+    "Templates/readNotesTemplate.md",
+    "Templates/leetcodeNotesTemplate.md",
+    "Templates/debugTemplate.md",
+    "Templates",
+    "Output",
+    "Leetcode/02 - files/testDemo.md",
+    "Leetcode/02 - files/693. 交替位二进制数.md",
+    "Leetcode/02 - files/401. 二进制手表.md",
+    "Leetcode/02 - files/3634. 使数组平衡的最少移除数目.md",
+    "Leetcode/02 - files/3379. 转换数组.md",
+    "Leetcode/02 - files/231. 2 的幂.md",
+    "Leetcode/01 - intro/简介.md",
+    "Leetcode/02 - files",
+    "Leetcode/01 - intro",
+    "Leetcode",
+    "Images/leetcode drawing 2026-02-22 10.38.39.excalidraw.md",
+    "Images",
+    "03 -Ideas/Daily thoughts.md",
+    "03 -Ideas",
+    "02 - Books",
+    "01 - HOME/records/刷题记录.md",
+    "01 - HOME/records",
+    "01 - HOME/obsidian skills/常用快捷键.md",
+    "01 - HOME/obsidian skills/常用emoji.md",
+    "01 - HOME/debug/vscode/运行exe文件后中文输出乱码.md",
+    "01 - HOME/debug/obsidian/templater-debug.md",
+    "01 - HOME/cpp stl/string.md",
+    "Pasted image 20260223160610.png"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "editor:insert-table": [
+    {
+      "modifiers": [
+        "Mod",
+        "Shift"
+      ],
+      "key": "B"
+    }
+  ]
+}
