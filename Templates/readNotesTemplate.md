@@ -1,10 +1,11 @@
 ---
 created: 2026-02-23T20:45
-updated: 2026-02-24T14:30
+updated: 2026-02-24T15:00
 ---
 <%*
 // ====== 1. 基础数据准备 ======
 const today = tp.date.now("YYYY-MM-DD");
+const now = tp.date.now("YYYY-MM-DD HH:mm");
 
 // ====== 2. 用户交互输入 ======
 const bookTitle = await tp.system.prompt("📖 书名");
@@ -34,7 +35,7 @@ const statusInput = await tp.system.suggester(
 );
 const finalStatus = statusInput || "want-to-read";
 
-// 日期逻辑
+// 日期
 let startDate = "";
 let endDate = "";
 if (finalStatus === "reading" || finalStatus === "completed") {
@@ -51,25 +52,21 @@ const finalTags = (selectedTags && Array.isArray(selectedTags) && selectedTags.l
 const tagsStr = finalTags.map(t => `"${t}"`).join(", ");
 
 // ====== 3. 辅助变量计算 ======
-// 评分星星
 let starStr = "暂未评分";
 if (finalRating > 0) starStr = "⭐".repeat(finalRating);
 
-// 状态文字
 let statusText = "🔴 想读";
 if (finalStatus === "reading") statusText = "🟡 在读";
 if (finalStatus === "completed") statusText = "🟢 读完";
 if (finalStatus === "abandoned") statusText = "⚫ 弃读";
 
-// 时间范围
 let timeRange = startDate;
 if (endDate) timeRange = startDate + " → " + endDate;
 
-// ====== 4. 构建输出字符串 ======
-// 注意：modified 字段由插件自动维护，这里只需留个初始值
+// ====== 4. 构建最终输出字符串 ======
 tR = `---
 created: "${today}"
-modified: "${today}"
+updated: "${now}"
 书名: "${bookTitle}"
 作者: "${bookAuthor}"
 出版社: "${bookPublisher}"
@@ -189,6 +186,8 @@ aliases: ["${bookTitle}", "${bookTitle} (${bookAuthor})"]
 
 ---
 
-> 🕐 *最后自动更新时间：{{modified}}*
+> [!info] 📋 笔记元数据
+> - **创建时间**: ${today}
+
 `;
 _%>

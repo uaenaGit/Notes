@@ -1,6 +1,6 @@
 ---
 created: 2026-02-23T20:45
-updated: 2026-02-24T11:51
+updated: 2026-02-24T14:58
 ---
 <%*
 // ====== 1. 基础数据准备 ======
@@ -22,10 +22,6 @@ const bookCategory = await tp.system.suggester(categories, categories);
 const finalCategory = bookCategory || "📰 其他";
 
 // 评分
-const ratingMap = {
-    "⭐⭐⭐⭐⭐ (5)": 5, "⭐⭐⭐⭐ (4)": 4, "⭐⭐⭐ (3)": 3, 
-    "⭐⭐ (2)": 2, "⭐ (1)": 1, "暂不评分": 0
-};
 const ratingInput = await tp.system.suggester(
     ["⭐⭐⭐⭐⭐ (5)", "⭐⭐⭐⭐ (4)", "⭐⭐⭐ (3)", "⭐⭐ (2)", "⭐ (1)", "暂不评分"],
     [5, 4, 3, 2, 1, 0]
@@ -33,10 +29,6 @@ const ratingInput = await tp.system.suggester(
 const finalRating = ratingInput || 0;
 
 // 状态
-const statusMap = {
-    "🔴 想读": "want-to-read", "🟡 在读": "reading", 
-    "🟢 读完": "completed", "⚫ 弃读": "abandoned"
-};
 const statusInput = await tp.system.suggester(
     ["🔴 想读", "🟡 在读", "🟢 读完", "⚫ 弃读"],
     ["want-to-read", "reading", "completed", "abandoned"]
@@ -61,9 +53,7 @@ const tagsStr = finalTags.map(t => `"${t}"`).join(", ");
 
 // ====== 3. 辅助变量计算 ======
 let starStr = "暂未评分";
-if (finalRating > 0) {
-    starStr = "⭐".repeat(finalRating);
-}
+if (finalRating > 0) starStr = "⭐".repeat(finalRating);
 
 let statusText = "🔴 想读";
 if (finalStatus === "reading") statusText = "🟡 在读";
@@ -71,14 +61,12 @@ if (finalStatus === "completed") statusText = "🟢 读完";
 if (finalStatus === "abandoned") statusText = "⚫ 弃读";
 
 let timeRange = startDate;
-if (endDate) {
-    timeRange = startDate + " → " + endDate;
-}
+if (endDate) timeRange = startDate + " → " + endDate;
 
 // ====== 4. 构建最终输出字符串 ======
 tR = `---
 created: "${today}"
-modified: "${now}"
+updated: "${now}"
 书名: "${bookTitle}"
 作者: "${bookAuthor}"
 出版社: "${bookPublisher}"
@@ -198,6 +186,8 @@ aliases: ["${bookTitle}", "${bookTitle} (${bookAuthor})"]
 
 ---
 
-*最后更新：${now}*
+> [!info] 📋 笔记元数据
+> - **创建时间**: ${today}
+
 `;
 _%>
