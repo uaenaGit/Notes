@@ -1,117 +1,174 @@
 <%*
-// 获取当前日期
+// ====== 基础信息 ======
 const today = tp.date.now("YYYY-MM-DD");
 const now = tp.date.now("YYYY-MM-DD HH:mm");
 
-// 书籍信息输入
-const bookTitle = await tp.system.prompt("书名");
-const bookAuthor = await tp.system.prompt("作者");
-const bookCategory = await tp.system.suggester(
-    ["文学", "历史", "哲学", "心理学", "商业", "科技", "传记", "小说", "其他"],
-    ["文学", "历史", "哲学", "心理学", "商业", "科技", "传记", "小说", "其他"]
-);
+// ====== 用户交互输入 ======
+const bookTitle = await tp.system.prompt("📖 书名");
+const bookAuthor = await tp.system.prompt("✍️ 作者");
+const bookPublisher = await tp.system.prompt("🏢 出版社", "");
 
-// 评分系统 (1-5 星)
-const ratingOptions = ["⭐", "⭐⭐", "⭐⭐⭐", "⭐⭐⭐⭐", "⭐⭐⭐⭐⭐"];
-const ratingValues = [1, 2, 3, 4, 5];
-const selectedRating = await tp.system.suggester(ratingOptions, ratingValues);
-const finalRating = selectedRating || 0;
+// 分类
+const categories = ["文学", "历史", "哲学", "商业", "科技", "心理", "教育", "艺术", "科学", "其他"];
+const bookCategory = await tp.system.suggester(categories, categories);
+const finalCategory = bookCategory || "其他";
+
+// 评分 (1-5)
+const rating = await tp.system.suggester(
+    ["⭐⭐⭐⭐⭐ (5)", "⭐⭐⭐⭐ (4)", "⭐⭐⭐ (3)", "⭐⭐ (2)", "⭐ (1)", "暂不评分"],
+    [5, 4, 3, 2, 1, 0]
+);
+const finalRating = rating || 0;
 
 // 阅读状态
-const statusOptions = ["🔴 未开始", "🟡 进行中", "🟢 已完成", "⚫ 已暂停"];
-const statusValues = ["unread", "reading", "completed", "paused"];
-const selectedStatus = await tp.system.suggester(statusOptions, statusValues);
-const finalStatus = selectedStatus || "unread";
+const status = await tp.system.suggester(
+    ["🔴 想读", "🟡 在读", "🟢 读完", "⚫ 弃读"],
+    ["want-to-read", "reading", "completed", "abandoned"]
+);
+const finalStatus = status || "want-to-read";
 
-// 开始阅读日期
-const startDate = finalStatus === "completed" || finalStatus === "reading" 
-    ? await tp.system.prompt("开始阅读日期 (YYYY-MM-DD)", today) 
-    : "";
-
-// 完成阅读日期
+// 日期信息
+let startDate = "";
 let endDate = "";
-if (finalStatus === "completed") {
-    endDate = await tp.system.prompt("完成阅读日期 (YYYY-MM-DD)", today);
+if (finalStatus === "reading" || finalStatus === "completed") {
+    startDate = await tp.system.prompt("📅 开始阅读日期", today);
 }
-_%>
+if (finalStatus === "completed") {
+    endDate = await tp.system.prompt("📅 完成阅读日期", today);
+}
+
+// 标签
+const tags = ["读书笔记", "待整理", "已复盘", "推荐"];
+const selectedTags = await tp.system.multi_suggester(tags, tags);
+const finalTags = (selectedTags && Array.isArray(selectedTags) && selectedTags.length > 0) ? selectedTags : ["读书笔记"];
+
+// ====== 格式化数据 ======
+// 标签：必须是标准数组格式 ["A", "B"] 才能显示为胶囊
+const tagsArrayFormat = finalTags.map(t => `"${t}"`).join(", ");
+
+// ====== 生成 YAML Frontmatter ======
+tR = `---
+created: ${today}
+modified: ${now}
+书名: ${bookTitle}
+作者: ${bookAuthor}
+出版社: ${bookPublisher}
+分类: ${finalCategory}
+评分: ${finalRating}
+状态: ${finalStatus}
+开始日期: ${startDate}
+完成日期: ${endDate}
+tags: [${tagsArrayFormat}]
+aliases: ["${bookTitle}", "${bookTitle} (${bookAuthor})"]
 ---
-created: <% today %>
-modified: <% now %>
-tags:
-  - reading-notes
-  - book/<% bookCategory %>
-book-title: "<% bookTitle %>"
-book-author: "<% bookAuthor %>"
-book-category: <% bookCategory %>
-book-rating: <% finalRating %>
-reading-status: <% finalStatus %>
-<% if (startDate) { -%>
-start-date: <% startDate %>
-<% } -%>
-<% if (endDate) { -%>
-end-date: <% endDate %>
-<% } -%>
-aliases: [<% bookTitle %>]
+
+# 📖 ${bookTitle}
+
+> **作者**: ${bookAuthor}  
+> **出版社**: ${bookPublisher}  
+> **评分**: ${finalRating > 0 ? "⭐".repeat(finalRating) : "暂未评分"}  
+> **状态**: ${finalStatus === "completed" ? "🟢 读完" : finalStatus === "reading" ? "🟡 在读" : finalStatus === "want-to-read" ? "🔴 想读" : "⚫ 弃读"}  
+> **阅读时间**: ${startDate} ${endDate ? \`→ \${endDate}\` : ""}
+
 ---
 
-# 📖 <% bookTitle %>
+## 🎯 一句话总结
+<!-- 用一句话概括这本书的核心内容 -->
 
-## 📋 书籍信息
-| 项目 | 信息 |
-|------|------|
-| **作者** | <% bookAuthor %> |
-| **分类** | <% bookCategory %> |
-| **评分** | <% ratingOptions[finalRating - 1] || "暂未评分" %> (<% finalRating %>/5) |
-| **状态** | <% statusOptions[statusValues.indexOf(finalStatus)] %> |
-| **开始阅读** | <% startDate || "未开始" %> |
-| **完成阅读** | <% endDate || "未完成" %> |
 
-## 🎯 核心观点
-### 主要论点
-- 
+---
+
+## 📋 核心内容
+
+### 主要观点
+1. 
+2. 
+3. 
 
 ### 关键概念
-- 
+| 概念 | 解释 |
+|------|------|
+| | |
+| | |
 
-### 重要框架/模型
-- 
+### 知识框架
+\`\`\`
+<!-- 用文字或 ASCII 图描述书中的知识框架 -->
+
+\`\`\`
+
+---
 
 ## 💡 精彩摘录
-> 引用内容
-> 
-> —— 第 X 页
 
-> 引用内容
 > 
-> —— 第 X 页
+> — 第 X 页
+
+> 
+> — 第 X 页
+
+> 
+> — 第 X 页
+
+---
 
 ## 🧠 个人思考
+
 ### 启发与收获
+- 
+- 
 - 
 
 ### 质疑与反思
 - 
+- 
 
 ### 与其他知识的联系
-- 
-
-## 📝 实践应用
-### 可执行的行动项
-- [ ] 
-- [ ] 
-
-### 生活/工作中的应用场景
-- 
-
-## 🔗 相关链接
-- [[相关笔记]]
-- [外部资源链接]()
-
-## 📊 阅读统计
-- **总页数**: 
-- **阅读天数**: 
-- **每日平均页数**: 
+- 关联笔记：[[ ]]
+- 关联笔记：[[ ]]
 
 ---
-**最后更新**: <% now %>
-**阅读进度**: <% finalStatus === "completed" ? "✅ 已完成" : finalStatus === "reading" ? "🔄 进行中" : "⏳ 未开始" %>
+
+## 📝 实践应用
+
+### 行动清单
+- [ ] 
+- [ ] 
+- [ ] 
+
+### 应用场景
+| 场景 | 如何应用 |
+|------|---------|
+| 工作 | |
+| 生活 | |
+| 学习 | |
+
+---
+
+## 🔗 相关资源
+
+### 内部链接
+- [[ ]]
+
+### 外部链接
+- []()
+- []()
+
+### 类似书籍
+- [[ ]]
+- [[ ]]
+
+---
+
+## 📊 阅读记录
+
+| 日期 | 进度 | 备注 |
+|------|------|------|
+| ${today} | 0% | 开始阅读 |
+| | | |
+
+---
+
+*最后更新: ${now}*
+\`;
+_%>

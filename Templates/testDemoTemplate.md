@@ -1,80 +1,199 @@
 <%*
-// 1. 获取日期
+// ====== 1. 基础数据准备 ======
 const today = tp.date.now("YYYY-MM-DD");
 const now = tp.date.now("YYYY-MM-DD HH:mm");
 
-// 2. 交互式输入
+// ====== 2. 用户交互输入 ======
 const bookTitle = await tp.system.prompt("📖 书名");
 const bookAuthor = await tp.system.prompt("✍️ 作者");
 const bookPublisher = await tp.system.prompt("🏢 出版社", "");
 
-const bookCategory = await tp.system.suggester(
-    ["文学", "历史", "哲学", "商业", "科技", "心理", "其他"],
-    ["文学", "历史", "哲学", "商业", "科技", "心理", "其他"]
-);
+// 分类
+const categories = ["文学", "历史", "哲学", "商业", "科技", "心理", "教育", "艺术", "科学", "其他"];
+const bookCategory = await tp.system.suggester(categories, categories);
+const finalCategory = bookCategory || "其他";
 
-const rating = await tp.system.suggester(
+// 评分
+const ratingMap = {
+    "⭐⭐⭐⭐⭐ (5)": 5, "⭐⭐⭐⭐ (4)": 4, "⭐⭐⭐ (3)": 3, 
+    "⭐⭐ (2)": 2, "⭐ (1)": 1, "暂不评分": 0
+};
+const ratingInput = await tp.system.suggester(
     ["⭐⭐⭐⭐⭐ (5)", "⭐⭐⭐⭐ (4)", "⭐⭐⭐ (3)", "⭐⭐ (2)", "⭐ (1)", "暂不评分"],
     [5, 4, 3, 2, 1, 0]
 );
+const finalRating = ratingInput || 0;
 
-const status = await tp.system.suggester(
+// 状态
+const statusMap = {
+    "🔴 想读": "want-to-read", "🟡 在读": "reading", 
+    "🟢 读完": "completed", "⚫ 弃读": "abandoned"
+};
+const statusInput = await tp.system.suggester(
     ["🔴 想读", "🟡 在读", "🟢 读完", "⚫ 弃读"],
     ["want-to-read", "reading", "completed", "abandoned"]
 );
+const finalStatus = statusInput || "want-to-read";
 
-// 3. 处理日期逻辑
+// 日期
 let startDate = "";
 let endDate = "";
-if (status === "reading" || status === "completed") {
+if (finalStatus === "reading" || finalStatus === "completed") {
     startDate = await tp.system.prompt("📅 开始阅读日期", today);
 }
-if (status === "completed") {
+if (finalStatus === "completed") {
     endDate = await tp.system.prompt("📅 完成阅读日期", today);
 }
-_%>
----
-created: <% today %>
-modified: <% now %>
-tags:
-  - 读书笔记
-  - 书籍/<% bookCategory %>
-  - 状态/<% status %>
-book:
-  title: "<% bookTitle %>"
-  author: "<% bookAuthor %>"
-  publisher: "<% bookPublisher %>"
-  category: "<% bookCategory %>"
-  rating: <% rating %>
-  status: "<% status %>"
-  start-date: "<% startDate %>"
-  end-date: "<% endDate %>"
-aliases: ["<% bookTitle %>", "<% bookTitle %> (<% bookAuthor %>)"]
+
+// 标签
+const tags = ["读书笔记", "待整理", "已复盘", "推荐"];
+const selectedTags = await tp.system.multi_suggester(tags, tags);
+const finalTags = (selectedTags && Array.isArray(selectedTags) && selectedTags.length > 0) ? selectedTags : ["读书笔记"];
+const tagsStr = finalTags.map(t => `"${t}"`).join(", ");
+
+// ====== 3. 辅助变量计算 (避免在模板字符串里写逻辑) ======
+// 评分星星
+let starStr = "暂未评分";
+if (finalRating > 0) {
+    starStr = "⭐".repeat(finalRating);
+}
+
+// 状态文字
+let statusText = "🔴 想读";
+if (finalStatus === "reading") statusText = "🟡 在读";
+if (finalStatus === "completed") statusText = "🟢 读完";
+if (finalStatus === "abandoned") statusText = "⚫ 弃读";
+
+// 时间范围
+let timeRange = startDate;
+if (endDate) {
+    timeRange = startDate + " → " + endDate;
+}
+
+// ====== 4. 构建最终输出字符串 (tR) ======
+// 注意：这里全部使用简单的字符串拼接，不使用复杂的 ${} 逻辑，确保 100% 稳定
+tR = `---
+created: "${today}"
+modified: "${now}"
+书名: "${bookTitle}"
+作者: "${bookAuthor}"
+出版社: "${bookPublisher}"
+分类: "${finalCategory}"
+评分: ${finalRating}
+状态: "${finalStatus}"
+开始日期: "${startDate}"
+完成日期: "${endDate}"
+tags: [${tagsStr}]
+aliases: ["${bookTitle}", "${bookTitle} (${bookAuthor})"]
 ---
 
-# 📖 <% bookTitle %>
+# 📖 ${bookTitle}
 
-> **作者**: <% bookAuthor %>  
-> **出版社**: <% bookPublisher %>  
-> **评分**: <% rating > 0 ? "⭐".repeat(rating) : "暂未评分" %>  
-> **状态**: <% status === "completed" ? "🟢 读完" : status === "reading" ? "🟡 在读" : "🔴 想读" %>  
-> **阅读时间**: <% startDate %> <% endDate ? `→ ${endDate}` : "" %>
+> **作者**: ${bookAuthor}  
+> **出版社**: ${bookPublisher}  
+> **评分**: ${starStr}  
+> **状态**: ${statusText}  
+> **阅读时间**: ${timeRange}
 
 ---
 
 ## 🎯 一句话总结
+<!-- 用一句话概括这本书的核心内容 -->
 
 
-## 📋 核心观点
+---
+
+## 📋 核心内容
+
+### 主要观点
 1. 
 2. 
 3. 
 
+### 关键概念
+| 概念 | 解释 |
+|------|------|
+| | |
+| | |
+
+### 知识框架
+\`\`\`
+<!-- 用文字或 ASCII 图描述书中的知识框架 -->
+
+\`\`\`
+
+---
+
 ## 💡 精彩摘录
+
 > 
+> — 第 X 页
+
+> 
+> — 第 X 页
+
+> 
+> — 第 X 页
+
+---
 
 ## 🧠 个人思考
+
+### 启发与收获
+- 
+- 
 - 
 
-## 📝 行动清单
-- [ ] *
+### 质疑与反思
+- 
+- 
+
+### 与其他知识的联系
+- 关联笔记：[[ ]]
+- 关联笔记：[[ ]]
+
+---
+
+## 📝 实践应用
+
+### 行动清单
+- [ ] 
+- [ ] 
+- [ ] 
+
+### 应用场景
+| 场景 | 如何应用 |
+|------|---------|
+| 工作 | |
+| 生活 | |
+| 学习 | |
+
+---
+
+## 🔗 相关资源
+
+### 内部链接
+- [[ ]]
+
+### 外部链接
+- []()
+- []()
+
+### 类似书籍
+- [[ ]]
+- [[ ]]
+
+---
+
+## 📊 阅读记录
+
+| 日期 | 进度 | 备注 |
+|------|------|------|
+| ${today} | 0% | 开始阅读 |
+| | | |
+
+---
+
+*最后更新: ${now}*
+`;
+_%>
