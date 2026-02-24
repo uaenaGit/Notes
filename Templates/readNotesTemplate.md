@@ -1,3 +1,7 @@
+---
+created: 2026-02-23T20:45
+updated: 2026-02-24T11:36
+---
 <%*
 // ====== 基础信息 ======
 const today = tp.date.now("YYYY-MM-DD");
@@ -9,7 +13,7 @@ const bookAuthor = await tp.system.prompt("✍️ 作者");
 const bookPublisher = await tp.system.prompt("🏢 出版社", "");
 
 // 分类
-const categories = ["文学", "历史", "哲学", "商业", "科技", "心理", "教育", "艺术", "科学", "其他"];
+const categories = ["📖 文学", "📜 历史", "🧠 哲学", "💰 经济" "💼 商业", "💻 科技", "🧑‍⚕️ 心理", "📚 教育", "🎨 艺术", "🔬 科学", "📰 其他"];
 const bookCategory = await tp.system.suggester(categories, categories);
 const finalCategory = bookCategory || "其他";
 

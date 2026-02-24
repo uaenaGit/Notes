@@ -1,3 +1,7 @@
+---
+created: 2026-02-23T20:45
+updated: 2026-02-24T11:51
+---
 <%*
 // ====== 1. 基础数据准备 ======
 const today = tp.date.now("YYYY-MM-DD");
@@ -8,10 +12,14 @@ const bookTitle = await tp.system.prompt("📖 书名");
 const bookAuthor = await tp.system.prompt("✍️ 作者");
 const bookPublisher = await tp.system.prompt("🏢 出版社", "");
 
-// 分类
-const categories = ["文学", "历史", "哲学", "商业", "科技", "心理", "教育", "艺术", "科学", "其他"];
+// 分类（带 Emoji）
+const categories = [
+    "💰 经济", "📖 文学", "📜 历史", "🧠 哲学", 
+    "💼 商业", "💻 科技", "🧑‍⚕️ 心理", "📚 教育", 
+    "🎨 艺术", "🔬 科学", "📰 其他"
+];
 const bookCategory = await tp.system.suggester(categories, categories);
-const finalCategory = bookCategory || "其他";
+const finalCategory = bookCategory || "📰 其他";
 
 // 评分
 const ratingMap = {
@@ -51,27 +59,23 @@ const selectedTags = await tp.system.multi_suggester(tags, tags);
 const finalTags = (selectedTags && Array.isArray(selectedTags) && selectedTags.length > 0) ? selectedTags : ["读书笔记"];
 const tagsStr = finalTags.map(t => `"${t}"`).join(", ");
 
-// ====== 3. 辅助变量计算 (避免在模板字符串里写逻辑) ======
-// 评分星星
+// ====== 3. 辅助变量计算 ======
 let starStr = "暂未评分";
 if (finalRating > 0) {
     starStr = "⭐".repeat(finalRating);
 }
 
-// 状态文字
 let statusText = "🔴 想读";
 if (finalStatus === "reading") statusText = "🟡 在读";
 if (finalStatus === "completed") statusText = "🟢 读完";
 if (finalStatus === "abandoned") statusText = "⚫ 弃读";
 
-// 时间范围
 let timeRange = startDate;
 if (endDate) {
     timeRange = startDate + " → " + endDate;
 }
 
-// ====== 4. 构建最终输出字符串 (tR) ======
-// 注意：这里全部使用简单的字符串拼接，不使用复杂的 ${} 逻辑，确保 100% 稳定
+// ====== 4. 构建最终输出字符串 ======
 tR = `---
 created: "${today}"
 modified: "${now}"
@@ -194,6 +198,6 @@ aliases: ["${bookTitle}", "${bookTitle} (${bookAuthor})"]
 
 ---
 
-*最后更新: ${now}*
+*最后更新：${now}*
 `;
 _%>
