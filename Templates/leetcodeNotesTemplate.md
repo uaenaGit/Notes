@@ -1,6 +1,6 @@
 ---
 created: 2026-02-23T20:45
-updated: 2026-02-25T17:28
+updated: 2026-02-25T23:30
 ---
 <%*
 // ====== 基础信息 ======
@@ -13,7 +13,10 @@ const difficulty = await tp.system.suggester(["easy", "medium", "hard"], ["easy"
 const status = await tp.system.suggester(["Y(通过)", "N(不会)", "?(有疑问)"], ["Y(通过)", "N(不会)", "?(有疑问)"]);
 
 // 分类
-const categories = ["数组", "字符串", "模拟", "枚举", "双指针", "滑动窗口", "栈", "数学", "位运算", "矩阵", "堆", "二分", "链表", "树", "图", "动态规划"];
+const categories = [
+  "暴力", "数组", "字符串", "模拟", "枚举", "双指针", "滑动窗口", "栈", "数学", 
+  "位运算", "搜索", "矩阵", "堆", "二分", "链表", "树", "图", "动态规划"
+];
 const selectedCategories = await tp.system.multi_suggester(categories, categories);
 const finalCategories = (selectedCategories && Array.isArray(selectedCategories) && selectedCategories.length > 0) ? selectedCategories : ["待补充"];
 
