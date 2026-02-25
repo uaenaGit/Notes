@@ -1,6 +1,6 @@
 ---
 created: 2026-02-25T18:53
-updated: 2026-02-25T19:19
+updated: 2026-02-25T19:30
 ---
 `std::stringstream` 是 C++ 标准库 `<sstream>` 中提供的类，它允许像操作文件流（`cin`/`cout`）一样操作**内存中的字符串**。
 
@@ -89,85 +89,65 @@ std::stringstream ss(data); // 构造函数同样支持传入初始字符串
 int a; double b;
 ss >> a >> b;
 ```
+
+---
 ### 3. 核心用法二：格式化输出 (控制精度/宽度)
 相比 `to_string`，`stringstream` 的最大优势是可以**精细控制格式**（如保留小数位、补零、十六进制等）。
 ```cpp
 #include <iostream>   // 用于 std::cout
-
 #include <sstream>    // 用于 std::ostringstream
-
 #include <iomanip>    // 用于 setprecision, setw, setfill
-
 #include <windows.h>
-
   
-
 int main() {
-
     SetConsoleOutputCP(65001);
-
     double value = 3.1415926;
-
     int id = 7;
-
     std::ostringstream oss;
-
+    
     // 1. 保留 2 位小数
-
     oss << std::fixed << std::setprecision(2) << value;
 
     // 【关键步骤】使用 .str() 获取字符串并输出
-
     std::string result1 = oss.str();
 
     std::cout << "1. 保留2位小数: " << result1 << std::endl;
-
     // 输出: 1. 保留2位小数: 3.14
 
     // 2. 创建新流 (或者清空 oss: oss.str(""); oss.clear();)
-
     std::ostringstream oss2;
 
     // 3. 补零 (宽度为 4，不足补 0)
-
     oss2 << std::setfill('0') << std::setw(4) << id;
 
     // 【关键步骤】获取并输出
-
     std::cout << "2. 补零格式化: " << oss2.str() << std::endl;
-
     // 输出: 2. 补零格式化: 0007
 
     // 4. 十六进制
-
     std::ostringstream oss3;
-
     oss3 << std::hex << 255;
 
     // 【关键步骤】直接嵌入到 cout 中输出
-
     std::cout << "3. 十六进制: " << oss3.str() << std::endl;
-
     // 输出: 3. 十六进制: ff
 
     // 额外演示：拼接成一个完整的句子
-
     std::ostringstream final_oss;
-
     final_oss << "ID是" << oss2.str() << "，圆周率约为" << oss.str() << "，255的十六进制是" << oss3.str();
 
     std::cout << "\n4. 综合拼接: " << final_oss.str() << std::endl;
-
     // 输出: 4. 综合拼接: ID是0007，圆周率约为3.14，255的十六进制是ff
 
-  
-
     return 0;
-
 }
 ```
+
+---
 ### 4. 核心用法三：字符串分割 (Split)
 C++ 标准库没有直接的 `split` 函数，`stringstream` 是实现按空格/分隔符分割的最常用方法。
+- `std::cin` 在读取字符串（`std::string` 或 `char[]`）时，**遇到空格、制表符（Tab）或换行符就会停止读取**
+- 要读取包含空格的整行文字，必须使用 **`std::getline`** 函数。
 #### 按空格分割
 ```cpp
 #include <sstream>
@@ -188,6 +168,8 @@ std::vector<std::string> split_by_space(const std::string& input) {
 // 输入: "Hello World  C++"
 // 输出: ["Hello", "World", "C++"] (自动忽略多余空格)
 ```
+
+---
 #### 按自定义分隔符分割 (如逗号)
 ```cpp
 #include <sstream>
@@ -208,7 +190,9 @@ std::vector<std::string> split_by_comma(const std::string& input) {
 // 输入: "apple,banana,cherry"
 // 输出: ["apple", "banana", "cherry"]
 ```
-### 6. 高级技巧：清空与复用
+
+---
+### 5. 高级技巧：清空与复用
 ```cpp
 std::stringstream ss;
 
@@ -228,7 +212,7 @@ ss << 200;
 std::string s2 = ss.str(); // "200"
 ```
 
-
+---
 ### 总结
 
 - **简单数字转字符串** → 用 `std::to_string`。
