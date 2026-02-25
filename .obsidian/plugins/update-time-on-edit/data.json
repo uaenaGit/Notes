@@ -12,6 +12,9 @@
     "Templates/readNotesTemplate.md": "53f0338426e8b5113f062ece663c4f787af096b2997750afd4c293a897b47d86",
     "Templates/testDemoTemplate.md": "6ae4c59eda136c774c75aee30494e041baac6015c5626bc4b33e91d632d84ee2",
     "02 - Books/置身事内：中国政府与经济发展.md": "da6f9ee3763d7abbd3527d6bb2e4bd72b1f4cf1c39c99b3ffa5a589a2f2a1ee8",
-    "Leetcode/02 - files/868. 二进制距离.md": "7d596c8106c93f81978d75dac8742baf9dc0e68eb1cc08f538f1c9b025dfb8f8"
+    "Leetcode/02 - files/868. 二进制距离.md": "0cf0cbeb097ceebda6755804dd11ed662a6029653476b06634d634a97a5675f4",
+    "Leetcode/02 - files/231. 2 的幂.md": "c97cdbe926059623d90d1736457ad019d3a35ed4b9b193d45243143784c446c7",
+    "Leetcode/02 - files/401. 二进制手表.md": "04130a02f26876dd64cf4dc3396d9403d9fe57fd45470d316616e16b4de132df",
+    "Leetcode/03 - tips/CPP/__builtin_popcount.md": "428f4ab1087f9045d95d38cadc4e4078b943d6357c805ac05062058fbc562231"
   }
 }

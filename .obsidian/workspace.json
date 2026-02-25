@@ -11,12 +11,14 @@
             "id": "9c71c5d8bfc1d36b",
             "type": "leaf",
             "state": {
-              "type": "excalidraw",
+              "type": "markdown",
               "state": {
-                "file": "Images/leetcode drawing 2026-02-22 10.38.39.excalidraw.md"
+                "file": "Leetcode/03 - tips/CPP/__builtin_popcount.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "excalidraw-icon",
-              "title": "leetcode drawing 2026-02-22 10.38.39.excalidraw"
+              "icon": "lucide-file",
+              "title": "__builtin_popcount"
             }
           }
         ]
@@ -92,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Leetcode/02 - files/401. 二进制手表.md",
+                "file": "Leetcode/03 - tips/CPP/__builtin_popcount.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "401. 二进制手表 的反向链接列表"
+              "title": "__builtin_popcount 的反向链接列表"
             }
           },
           {
@@ -154,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Leetcode/02 - files/401. 二进制手表.md",
+                "file": "Leetcode/03 - tips/CPP/__builtin_popcount.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "401. 二进制手表 的大纲"
+              "title": "__builtin_popcount 的大纲"
             }
           },
           {
@@ -183,8 +185,7 @@
               "title": "Source Control"
             }
           }
-        ],
-        "currentTab": 6
+        ]
       }
     ],
     "direction": "horizontal",
@@ -209,8 +210,17 @@
   },
   "active": "9c71c5d8bfc1d36b",
   "lastOpenFiles": [
-    "Leetcode/02 - files/868. 二进制距离.md",
     "Leetcode/02 - files/401. 二进制手表.md",
+    "Leetcode/03 - tips/CPP/__builtin_popcount.md",
+    "`__builtin_popcount`讲解.md",
+    "Leetcode/02 - files/231. 2 的幂.md",
+    "Leetcode/02 - files/80. 删除有序数组中的重复项 Ⅱ.md",
+    "Leetcode/02 - files/67. 二进制求和.md",
+    "Leetcode/02 - files/868. 二进制距离.md",
+    "Leetcode/02 - files/3379. 转换数组.md",
+    "Leetcode/03 - tips/CPP",
+    "Leetcode/03 - tips/未命名.md",
+    "Images/leetcode drawing 2026-02-22 10.38.39.excalidraw.md",
     "Leetcode/03 - tips",
     "02 - Books/置身事内：中国政府与经济发展.md",
     "Templates/readNotesTemplate.md",
@@ -220,9 +230,7 @@
     "Pasted image 20260217233425.png",
     "Templates/leetcodeNotesTemplate.md",
     "Templates/debugTemplate.md",
-    "Leetcode/02 - files/231. 2 的幂.md",
     "Leetcode/02 - files/693. 交替位二进制数.md",
-    "Leetcode/02 - files/3379. 转换数组.md",
     "Leetcode/02 - files/3634. 使数组平衡的最少移除数目.md",
     "Pasted image 20260223212159.png",
     "Pasted image 20260223211958.png",
@@ -230,8 +238,6 @@
     "Pasted image 20260223123025.png",
     "Pasted image 20260222122540.png",
     "Pasted image 20260222105103.png",
-    "Leetcode/02 - files/67. 二进制求和.md",
-    "Leetcode/02 - files/80. 删除有序数组中的重复项 Ⅱ.md",
     "未命名.base",
     "Templates",
     "Output",
@@ -239,16 +245,13 @@
     "Leetcode/02 - files",
     "Leetcode/01 - intro",
     "Leetcode",
-    "Images/leetcode drawing 2026-02-22 10.38.39.excalidraw.md",
     "Images",
     "03 -Ideas/Daily thoughts.md",
     "03 -Ideas",
-    "02 - Books",
     "01 - HOME/records/刷题记录.md",
     "01 - HOME/obsidian skills/常用快捷键.md",
     "01 - HOME/obsidian skills/常用emoji.md",
     "01 - HOME/debug/vscode/运行exe文件后中文输出乱码.md",
-    "01 - HOME/debug/obsidian/templater-debug.md",
-    "01 - HOME/cpp stl/string.md"
+    "01 - HOME/debug/obsidian/templater-debug.md"
   ]
 }

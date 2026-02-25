@@ -4,5 +4,6 @@
   "enabledCssSnippets": [
     "line-spacing",
     "narrower-notes"
-  ]
+  ],
+  "baseFontSize": 17
 }
