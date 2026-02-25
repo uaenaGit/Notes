@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "01 - HOME/debug/cpp/sort 排序的第三个参数.md",
+                "file": "01 - HOME/cpp stl/string.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "sort 排序的第三个参数"
+              "title": "string"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "01 - HOME/debug/cpp/sort 排序的第三个参数.md",
+                "file": "01 - HOME/cpp stl/string.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "sort 排序的第三个参数 的反向链接列表"
+              "title": "string 的反向链接列表"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "01 - HOME/debug/cpp/sort 排序的第三个参数.md",
+                "file": "01 - HOME/cpp stl/string.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "sort 排序的第三个参数 的出链列表"
+              "title": "string 的出链列表"
             }
           },
           {
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "01 - HOME/debug/cpp/sort 排序的第三个参数.md",
+                "file": "01 - HOME/cpp stl/string.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "sort 排序的第三个参数 的大纲"
+              "title": "string 的大纲"
             }
           },
           {
@@ -211,14 +211,14 @@
   },
   "active": "9c71c5d8bfc1d36b",
   "lastOpenFiles": [
+    "01 - HOME/debug/cpp/关于 sort 排序的第三个参数.md",
+    "Templates/debugTemplate.md",
     "01 - HOME/records/刷题记录.md",
-    "01 - HOME/debug/cpp/sort 排序的第三个参数.md",
     "03 -Ideas/casual thoughts.md",
     "03 -Ideas/life/中 VS 美.md",
     "03 -Ideas/health",
     "03 -Ideas/wealth",
     "03 -Ideas/life",
-    "Templates/debugTemplate.md",
     "01 - HOME/debug/cpp",
     "01 - HOME/debug/CPP.md",
     "01 - HOME/debug/vscode/运行exe文件后中文输出乱码.md",

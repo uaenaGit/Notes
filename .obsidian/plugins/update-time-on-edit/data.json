@@ -25,6 +25,7 @@
     "Templates/leetcodeNotesTemplate.md": "8be0d17af76917c80735cc2102f945ac1424bf7e06e00b00e9003fe0dd90c820",
     "Leetcode/03 - tips/CPP/stringstream.md": "96c01e15d3278f1e620a0ae0eb423fbfb6efa4c033863b9d1b780966be711e85",
     "03 -Ideas/life/中 VS 美.md": "2c29f6ef7ee51a91cf107514058e5597e8a2e8229185668e604dba047163fc37",
-    "01 - HOME/debug/cpp/sort 排序的第三个参数.md": "11f502b47d4d3f42aed6611046899af786fc2054176a5e6dca95e0670d58a163"
+    "Templates/debugTemplate.md": "55a5512857c8b763c62b623f24747888c3b507a30f79e99670a93ff8ffbc9e4e",
+    "01 - HOME/debug/cpp/关于 sort 排序的第三个参数.md": "062cc46371757e3a8471797428835c779141600993f352b15786ae088b20de7c"
   }
 }
