@@ -1,6 +1,6 @@
 ---
 created: 2026-02-25T17:21
-updated: 2026-02-25T18:47
+updated: 2026-02-25T18:53
 ---
 `snprintf` 是 **C 标准库**中的格式化输出函数，是 `sprintf` 的**安全版本**，用于将格式化数据写入字符串缓冲区，并**防止缓冲区溢出**。
 
@@ -158,3 +158,4 @@ if (ret >= sizeof(buffer)) {
 | `std::stringstream`   | `ss << "num: " << 42`        | 流式拼接      |
 | `std::format` (C++20) | `std::format("{}:{}", h, m)` | 类似 Python |
 | `fmt::format`         | `fmt::format("{}:{}", h, m)` | 第三方库      |
+[[stringstream]] 介绍
