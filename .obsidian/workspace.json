@@ -185,8 +185,7 @@
               "title": "Source Control"
             }
           }
-        ],
-        "currentTab": 4
+        ]
       }
     ],
     "direction": "horizontal",
@@ -211,12 +210,16 @@
   },
   "active": "9c71c5d8bfc1d36b",
   "lastOpenFiles": [
+    "01 - HOME/cpp stl/string.md",
+    "Leetcode/03 - tips/CPP/string-substr.md",
+    "substr.md",
+    "Leetcode/02 - files/1461. 检查一个字符串是否包含所有长度为 K 的二进制子串.md",
+    "03 -Ideas/casual thoughts.md",
+    "Leetcode/02 - files/3634. 使数组平衡的最少移除数目.md",
     "01 - HOME/cpp stl/priority_queue.md",
     "01 - HOME/cpp stl/map.md",
     "01 - HOME/cpp stl/set",
-    "01 - HOME/cpp stl/string.md",
     "01 - HOME/cpp stl/vector.md",
-    "Leetcode/02 - files/1461. 检查一个字符串是否包含所有长度为 K 的二进制子串.md",
     "Leetcode/02 - files/80. 删除有序数组中的重复项 Ⅱ.md",
     "Templates/leetcodeNotesTemplate.md",
     "Leetcode/02 - files/231. 2 的幂.md",
@@ -224,7 +227,6 @@
     "01 - HOME/debug/cpp/关于 sort 排序的第三个参数.md",
     "Templates/debugTemplate.md",
     "01 - HOME/records/刷题记录.md",
-    "03 -Ideas/casual thoughts.md",
     "03 -Ideas/life/中 VS 美.md",
     "03 -Ideas/health",
     "03 -Ideas/wealth",
@@ -240,9 +242,6 @@
     "Leetcode/02 - files/67. 二进制求和.md",
     "Leetcode/02 - files/868. 二进制距离.md",
     "Leetcode/03 - tips/CPP/snprintf.md",
-    "Leetcode/03 - tips/CPP/stringstream.md",
-    "Leetcode/02 - files/3634. 使数组平衡的最少移除数目.md",
-    "Leetcode/02 - files/3379. 转换数组.md",
     "Leetcode/03 - tips/CPP",
     "Leetcode/03 - tips",
     "Pasted image 20260217233425.png",
