@@ -196,7 +196,7 @@
             }
           }
         ],
-        "currentTab": 4
+        "currentTab": 6
       }
     ],
     "direction": "horizontal",
@@ -219,11 +219,11 @@
       "pomodoro-timer:Toggle timer panel": false
     }
   },
-  "active": "9c71c5d8bfc1d36b",
+  "active": "a869d0beb8d2eae0",
   "lastOpenFiles": [
-    "Leetcode/02 - files/1461. 检查一个字符串是否包含所有长度为 K 的二进制子串.md",
     "Images/leetcode drawing 2026-02-22 10.38.39.excalidraw.md",
     "Leetcode/02 - files/1022. 从根到叶的二进制数之和.md",
+    "Leetcode/02 - files/1461. 检查一个字符串是否包含所有长度为 K 的二进制子串.md",
     "Leetcode/02 - files/3634. 使数组平衡的最少移除数目.md",
     "Templates/leetcodeNotesTemplate.md",
     "Leetcode/02 - files/67. 二进制求和.md",
