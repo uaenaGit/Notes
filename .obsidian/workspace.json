@@ -27,7 +27,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "01 - HOME/operation tips/pycharm/常用快捷键.md",
+                "file": "01 - HOME/operation tips/vscode/常用快捷键.md",
                 "mode": "source",
                 "source": false
               },
@@ -109,7 +109,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "01 - HOME/operation tips/pycharm/常用快捷键.md",
+                "file": "01 - HOME/operation tips/vscode/常用快捷键.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -128,7 +128,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "01 - HOME/operation tips/pycharm/常用快捷键.md",
+                "file": "01 - HOME/operation tips/vscode/常用快捷键.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
@@ -171,7 +171,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "01 - HOME/operation tips/pycharm/常用快捷键.md",
+                "file": "01 - HOME/operation tips/vscode/常用快捷键.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -211,7 +211,7 @@
             }
           }
         ],
-        "currentTab": 6
+        "currentTab": 4
       }
     ],
     "direction": "horizontal",
@@ -236,28 +236,28 @@
   },
   "active": "ce968f81db5b665b",
   "lastOpenFiles": [
-    "01 - HOME/operation tips/vscode/常用快捷键.md",
     "01 - HOME/operation tips/pycharm/常用快捷键.md",
     "01 - HOME/operation tips/windows/常用快捷键.md",
-    "01 - HOME/operation tips/obsidian/常用emoji.md",
+    "01 - HOME/operation tips/vscode/常用快捷键.md",
     "01 - HOME/operation tips/obsidian/常用快捷键.md",
+    "Leetcode/02 - files/868. 二进制距离.md",
+    "Leetcode/02 - files/693. 交替位二进制数.md",
+    "Leetcode/02 - files/401. 二进制手表.md",
+    "Leetcode/02 - files/1404. 将二进制表示减到1的步骤数.md",
+    "Leetcode/02 - files/1461. 检查一个字符串是否包含所有长度为 K 的二进制子串.md",
+    "Leetcode/02 - files/231. 2 的幂.md",
+    "Leetcode/02 - files/80. 删除有序数组中的重复项 Ⅱ.md",
+    "01 - HOME/operation tips/obsidian/常用emoji.md",
     "01 - HOME/operation tips/pycharm",
     "01 - HOME/operation tips/vscode",
     "01 - HOME/operation tips/windows",
     "01 - HOME/operation tips/obsidian",
-    "Leetcode/02 - files/1404. 将二进制表示减到1的步骤数.md",
     "01 - HOME/operation tips/未命名.md",
     "Leetcode/02 - files/67. 二进制求和.md",
     "Leetcode/02 - files/1022. 从根到叶的二进制数之和.md",
     "Images/leetcode drawing 2026-02-22 10.38.39.excalidraw.md",
-    "Leetcode/02 - files/1461. 检查一个字符串是否包含所有长度为 K 的二进制子串.md",
     "Leetcode/02 - files/3634. 使数组平衡的最少移除数目.md",
     "Templates/leetcodeNotesTemplate.md",
-    "Leetcode/02 - files/80. 删除有序数组中的重复项 Ⅱ.md",
-    "Leetcode/02 - files/231. 2 的幂.md",
-    "Leetcode/02 - files/401. 二进制手表.md",
-    "Leetcode/02 - files/693. 交替位二进制数.md",
-    "Leetcode/02 - files/868. 二进制距离.md",
     "Leetcode/02 - files/3379. 转换数组.md",
     "01 - HOME/cpp stl/string.md",
     "Leetcode/03 - tips/CPP/string-substr.md",
