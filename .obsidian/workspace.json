@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Leetcode/02 - files/67. 二进制求和.md",
+                "file": "Leetcode/02 - files/1404. 将二进制表示减到1的步骤数.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "67. 二进制求和"
+              "title": "1404. 将二进制表示减到1的步骤数"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Leetcode/02 - files/67. 二进制求和.md",
+                "file": "Leetcode/02 - files/1404. 将二进制表示减到1的步骤数.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "67. 二进制求和 的反向链接列表"
+              "title": "1404. 将二进制表示减到1的步骤数 的反向链接列表"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Leetcode/02 - files/67. 二进制求和.md",
+                "file": "Leetcode/02 - files/1404. 将二进制表示减到1的步骤数.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "67. 二进制求和 的出链列表"
+              "title": "1404. 将二进制表示减到1的步骤数 的出链列表"
             }
           },
           {
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Leetcode/02 - files/67. 二进制求和.md",
+                "file": "Leetcode/02 - files/1404. 将二进制表示减到1的步骤数.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "67. 二进制求和 的大纲"
+              "title": "1404. 将二进制表示减到1的步骤数 的大纲"
             }
           },
           {
@@ -221,12 +221,13 @@
   },
   "active": "9c71c5d8bfc1d36b",
   "lastOpenFiles": [
+    "Leetcode/02 - files/67. 二进制求和.md",
+    "Leetcode/02 - files/1404. 将二进制表示减到1的步骤数.md",
     "Leetcode/02 - files/1022. 从根到叶的二进制数之和.md",
     "Images/leetcode drawing 2026-02-22 10.38.39.excalidraw.md",
     "Leetcode/02 - files/1461. 检查一个字符串是否包含所有长度为 K 的二进制子串.md",
     "Leetcode/02 - files/3634. 使数组平衡的最少移除数目.md",
     "Templates/leetcodeNotesTemplate.md",
-    "Leetcode/02 - files/67. 二进制求和.md",
     "Leetcode/02 - files/80. 删除有序数组中的重复项 Ⅱ.md",
     "Leetcode/02 - files/231. 2 的幂.md",
     "Leetcode/02 - files/401. 二进制手表.md",
@@ -251,7 +252,6 @@
     "01 - HOME/debug/cpp",
     "01 - HOME/debug/CPP.md",
     "01 - HOME/debug/vscode/运行exe文件后中文输出乱码.md",
-    "01 - HOME/debug/obsidian/templater-debug.md",
     "01 - HOME/debug/vscode/未命名",
     "Leetcode/03 - tips/CPP",
     "Leetcode/03 - tips",

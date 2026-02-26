@@ -17,7 +17,7 @@
     "Leetcode/02 - files/401. 二进制手表.md": "422af3b67c1e42c90727af60967668b7d87a6993bc703784c2f9b274c769ffe0",
     "Leetcode/03 - tips/CPP/__builtin_popcount.md": "1ce5ed05f42254af1a6a39875a18f9cead2a4d7223927206fa698a28e7340952",
     "Leetcode/03 - tips/CPP/snprintf.md": "55976c6d90676e75eb126e515e22e8f5d39b573f08e9182ac00984fa526b750e",
-    "Leetcode/02 - files/67. 二进制求和.md": "415948b5f8f6fc4b9832b61ba4415a8a6ee349f47ee45772c5a0f90ce7c01a61",
+    "Leetcode/02 - files/67. 二进制求和.md": "f5dfb5075ad45e57bab4d074945f34b7e4e1399385a5316cbc8e41e75a0b9f66",
     "Leetcode/02 - files/80. 删除有序数组中的重复项 Ⅱ.md": "963de61520dcfa7302c9c35a5a38cd95493c832f4ee82f2d92e6e1fb61c2c2a6",
     "Leetcode/02 - files/693. 交替位二进制数.md": "afca514f588275facd365504abda43f6b052f3aa88c2cde7cb1667875f6d61d4",
     "Leetcode/02 - files/3379. 转换数组.md": "47e92cf00530c3a0bd8b1de64a4fd550a4cc944597329be72ddd5d7728ec1c4e",
@@ -31,6 +31,7 @@
     "01 - HOME/cpp stl/string.md": "7316972821c8e1c2d1c6c2a0c85a9bb1bb0e727402d6097207b55af83414827b",
     "03 -Ideas/casual thoughts.md": "42966fc216efb050b911116ef1c8e06364a928254713e9c04a3b480b2e80bfc1",
     "Leetcode/03 - tips/CPP/string-substr.md": "f141fa04b690192c1ccb40e400fbbff9811fa6ce3daaf2a7995271366d805c1d",
-    "Leetcode/02 - files/1022. 从根到叶的二进制数之和.md": "e02cd67a943dde728f35ae1e8d859d7d6a6ce067159040502211c64052b19dd2"
+    "Leetcode/02 - files/1022. 从根到叶的二进制数之和.md": "e02cd67a943dde728f35ae1e8d859d7d6a6ce067159040502211c64052b19dd2",
+    "Leetcode/02 - files/1404. 将二进制表示减到1的步骤数.md": "4313390e74615bb1de485838f147c5f24c2dd492efb7aafa60454d2b61841627"
   }
 }
