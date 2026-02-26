@@ -11,12 +11,14 @@
             "id": "9c71c5d8bfc1d36b",
             "type": "leaf",
             "state": {
-              "type": "excalidraw",
+              "type": "markdown",
               "state": {
-                "file": "Images/leetcode drawing 2026-02-22 10.38.39.excalidraw.md"
+                "file": "Leetcode/02 - files/1022. 从根到叶的二进制数之和.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "excalidraw-icon",
-              "title": "leetcode drawing 2026-02-22 10.38.39.excalidraw"
+              "icon": "lucide-file",
+              "title": "1022. 从根到叶的二进制数之和"
             }
           }
         ]
@@ -92,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Images/leetcode drawing 2026-02-22 10.38.39.excalidraw.md",
+                "file": "Leetcode/02 - files/1022. 从根到叶的二进制数之和.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "leetcode drawing 2026-02-22 10.38.39.excalidraw 的反向链接列表"
+              "title": "1022. 从根到叶的二进制数之和 的反向链接列表"
             }
           },
           {
@@ -111,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Images/leetcode drawing 2026-02-22 10.38.39.excalidraw.md",
+                "file": "Leetcode/02 - files/1022. 从根到叶的二进制数之和.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "leetcode drawing 2026-02-22 10.38.39.excalidraw 的出链列表"
+              "title": "1022. 从根到叶的二进制数之和 的出链列表"
             }
           },
           {
@@ -154,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Images/leetcode drawing 2026-02-22 10.38.39.excalidraw.md",
+                "file": "Leetcode/02 - files/1022. 从根到叶的二进制数之和.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "leetcode drawing 2026-02-22 10.38.39.excalidraw 的大纲"
+              "title": "1022. 从根到叶的二进制数之和 的大纲"
             }
           },
           {
@@ -219,8 +221,9 @@
   },
   "active": "9c71c5d8bfc1d36b",
   "lastOpenFiles": [
-    "Leetcode/02 - files/1022. 从根到叶的二进制数之和.md",
     "Leetcode/02 - files/1461. 检查一个字符串是否包含所有长度为 K 的二进制子串.md",
+    "Images/leetcode drawing 2026-02-22 10.38.39.excalidraw.md",
+    "Leetcode/02 - files/1022. 从根到叶的二进制数之和.md",
     "Leetcode/02 - files/3634. 使数组平衡的最少移除数目.md",
     "Templates/leetcodeNotesTemplate.md",
     "Leetcode/02 - files/67. 二进制求和.md",
@@ -250,7 +253,6 @@
     "01 - HOME/debug/vscode/运行exe文件后中文输出乱码.md",
     "01 - HOME/debug/obsidian/templater-debug.md",
     "01 - HOME/debug/vscode/未命名",
-    "01 - HOME/obsidian skills/常用快捷键.md",
     "Leetcode/03 - tips/CPP",
     "Leetcode/03 - tips",
     "Pasted image 20260217233425.png",
