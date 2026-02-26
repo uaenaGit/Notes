@@ -184,8 +184,19 @@
               "icon": "git-pull-request",
               "title": "Source Control"
             }
+          },
+          {
+            "id": "94b592274e7f7707",
+            "type": "leaf",
+            "state": {
+              "type": "timer-view",
+              "state": {},
+              "icon": "timer",
+              "title": "Timer"
+            }
           }
-        ]
+        ],
+        "currentTab": 7
       }
     ],
     "direction": "horizontal",
@@ -208,7 +219,7 @@
       "pomodoro-timer:Toggle timer panel": false
     }
   },
-  "active": "9c71c5d8bfc1d36b",
+  "active": "94b592274e7f7707",
   "lastOpenFiles": [
     "01 - HOME/cpp stl/string.md",
     "Leetcode/03 - tips/CPP/string-substr.md",
