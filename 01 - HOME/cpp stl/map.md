@@ -1,6 +1,6 @@
 ---
 created: 2026-02-25T23:42
-updated: 2026-02-27T11:50
+updated: 2026-02-27T12:25
 ---
 这是一份为您精心整理的 **C++ `std::map` 全方位方法详解**。
 
@@ -257,7 +257,7 @@ int main() {
 
 ### A. 迭代器
 `map` 的元素是 `pair<const Key, T>`。
-- `it->first`: 键 (const，不可改)
+- `it->first`: **键 (const，不可改)**
 - `it->second`: 值 (可改)
 
 ```cpp
