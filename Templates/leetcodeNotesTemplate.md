@@ -1,6 +1,6 @@
 ---
 created: 2026-02-23T20:45
-updated: 2026-02-26T10:44
+updated: 2026-02-27T10:44
 ---
 <%*
 // ====== 基础信息 ======
@@ -21,7 +21,7 @@ const selectedCategories = await tp.system.multi_suggester(categories, categorie
 const finalCategories = (selectedCategories && Array.isArray(selectedCategories) && selectedCategories.length > 0) ? selectedCategories : ["待补充"];
 
 // 标签
-const tags = ["每日一题", "面试经典150 题", "hot100", "leetcode", "acwing"];
+const tags = ["每日一题", "面试经典150题", "hot100", "leetcode", "acwing"];
 const selectedTags = await tp.system.multi_suggester(tags, tags);
 const finalTags = (selectedTags && Array.isArray(selectedTags) && selectedTags.length > 0) ? selectedTags : [];
 
