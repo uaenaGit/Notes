@@ -28,7 +28,7 @@
     "Templates/debugTemplate.md": "55a5512857c8b763c62b623f24747888c3b507a30f79e99670a93ff8ffbc9e4e",
     "01 - HOME/debug/cpp/关于 sort 排序的第三个参数.md": "062cc46371757e3a8471797428835c779141600993f352b15786ae088b20de7c",
     "Leetcode/02 - files/1461. 检查一个字符串是否包含所有长度为 K 的二进制子串.md": "c7894bce6e63c7d0e844a5107fbca0dc1edcd3540c9f0746b9083347a5d18ef9",
-    "01 - HOME/cpp stl/string.md": "7316972821c8e1c2d1c6c2a0c85a9bb1bb0e727402d6097207b55af83414827b",
+    "01 - HOME/cpp stl/string.md": "163f83d04ea12e1cf42818c193c0ad285adb6f9da03bb182d5e7642b8da62961",
     "03 -Ideas/casual thoughts.md": "42966fc216efb050b911116ef1c8e06364a928254713e9c04a3b480b2e80bfc1",
     "Leetcode/03 - tips/CPP/string-substr.md": "f141fa04b690192c1ccb40e400fbbff9811fa6ce3daaf2a7995271366d805c1d",
     "Leetcode/02 - files/1022. 从根到叶的二进制数之和.md": "e02cd67a943dde728f35ae1e8d859d7d6a6ce067159040502211c64052b19dd2",
@@ -37,6 +37,9 @@
     "01 - HOME/operation tips/vscode/常用快捷键.md": "9ef3444ad2fe971c7a10f796ec3d8d7395c7ee90e688ef7281ef23745288a248",
     "01 - HOME/operation tips/pycharm/常用快捷键.md": "883cc40a0448d5d4ec9f4f725e578604094a2a5ece0d45cfc27f84b07a948c04",
     "Leetcode/02 - files/169. 多数元素.md": "658dfc164e5630cb2e08aed64f6f41368e3c3ec83256c52e1c44fc3ccfb401ee",
-    "Leetcode/02 - files/178. 轮转数组.md": "fc518d47d4e02419cb9105ccfc479dcda874720e3572beada354531f7918a31c"
+    "Leetcode/02 - files/178. 轮转数组.md": "5ce68c017e2ce51b9dc069db821c160274dc9cfa6a80118d6acaeb6e2abb77d4",
+    "Leetcode/03 - tips/CPP/algorithm-copy.md": "e5843e34b10ee20c86c557e7e67e7c9ada2b316ad0bdb45743982990311350c7",
+    "01 - HOME/cpp stl/vector.md": "50a26f49b1261f3274d41a9571aaf4426cb78050d6d68e3aa86a9d5f36f4dbb9",
+    "Leetcode/03 - tips/CPP/string-find.md": "6f83a55f582751aa5401aec36891ea93e6d75a40963cda76406710796953e453"
   }
 }
