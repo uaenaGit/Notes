@@ -50,7 +50,7 @@
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -123,7 +123,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Leetcode/02 - files/122. 买卖股票的最佳时机 Ⅱ.md",
+                "file": "Images/leetcode drawing 2026-02-22 10.38.39.excalidraw.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -133,7 +133,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "122. 买卖股票的最佳时机 Ⅱ 的反向链接列表"
+              "title": "leetcode drawing 2026-02-22 10.38.39.excalidraw 的反向链接列表"
             }
           },
           {
@@ -142,12 +142,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Leetcode/02 - files/122. 买卖股票的最佳时机 Ⅱ.md",
+                "file": "Images/leetcode drawing 2026-02-22 10.38.39.excalidraw.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "122. 买卖股票的最佳时机 Ⅱ 的出链列表"
+              "title": "leetcode drawing 2026-02-22 10.38.39.excalidraw 的出链列表"
             }
           },
           {
@@ -185,13 +185,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Leetcode/02 - files/122. 买卖股票的最佳时机 Ⅱ.md",
+                "file": "Images/leetcode drawing 2026-02-22 10.38.39.excalidraw.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "122. 买卖股票的最佳时机 Ⅱ 的大纲"
+              "title": "leetcode drawing 2026-02-22 10.38.39.excalidraw 的大纲"
             }
           },
           {
@@ -248,14 +248,16 @@
       "pomodoro-timer:Toggle timer panel": false
     }
   },
-  "active": "a869d0beb8d2eae0",
+  "active": "ce968f81db5b665b",
   "lastOpenFiles": [
-    "Images/leetcode drawing 2026-02-22 10.38.39.excalidraw.md",
     "Leetcode/02 - files/122. 买卖股票的最佳时机 Ⅱ.md",
+    "Leetcode/02 - files/80. 删除有序数组中的重复项 Ⅱ.md",
     "Templates/leetcodeNotesTemplate.md",
+    "`__builtin_popcount`讲解.md",
+    "01 - HOME/operation tips/pycharm/常用快捷键.md",
+    "Images/leetcode drawing 2026-02-22 10.38.39.excalidraw.md",
     "Leetcode/02 - files/121. 买卖股票的最佳时机.md",
     "Leetcode/02 - files/67. 二进制求和.md",
-    "Leetcode/02 - files/80. 删除有序数组中的重复项 Ⅱ.md",
     "Leetcode/02 - files/178. 轮转数组.md",
     "01 - HOME/cpp stl/priority_queue.md",
     "01 - HOME/cpp stl/map.md",
@@ -269,13 +271,11 @@
     "Leetcode/03 - tips/CPP/string-substr.md",
     "Leetcode/02 - files/169. 多数元素.md",
     "01 - HOME/operation tips/vscode/常用快捷键.md",
-    "01 - HOME/operation tips/pycharm/常用快捷键.md",
     "01 - HOME/operation tips/windows/常用快捷键.md",
     "01 - HOME/operation tips/obsidian/常用快捷键.md",
     "Leetcode/02 - files/868. 二进制距离.md",
     "Leetcode/02 - files/693. 交替位二进制数.md",
     "Leetcode/02 - files/401. 二进制手表.md",
-    "Leetcode/02 - files/1404. 将二进制表示减到1的步骤数.md",
     "01 - HOME/operation tips/pycharm",
     "01 - HOME/operation tips/vscode",
     "01 - HOME/operation tips/windows",
