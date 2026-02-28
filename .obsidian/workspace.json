@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Leetcode/02 - files/122. 买卖股票的最佳时机 Ⅱ.md",
+                "file": "Templates/leetcodeNotesTemplate.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "122. 买卖股票的最佳时机 Ⅱ"
+              "title": "leetcodeNotesTemplate"
             }
           }
         ],
@@ -123,7 +123,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Leetcode/02 - files/122. 买卖股票的最佳时机 Ⅱ.md",
+                "file": "Templates/leetcodeNotesTemplate.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -133,7 +133,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "122. 买卖股票的最佳时机 Ⅱ 的反向链接列表"
+              "title": "leetcodeNotesTemplate 的反向链接列表"
             }
           },
           {
@@ -142,12 +142,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Leetcode/02 - files/122. 买卖股票的最佳时机 Ⅱ.md",
+                "file": "Templates/leetcodeNotesTemplate.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "122. 买卖股票的最佳时机 Ⅱ 的出链列表"
+              "title": "leetcodeNotesTemplate 的出链列表"
             }
           },
           {
@@ -185,13 +185,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Leetcode/02 - files/122. 买卖股票的最佳时机 Ⅱ.md",
+                "file": "Templates/leetcodeNotesTemplate.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "122. 买卖股票的最佳时机 Ⅱ 的大纲"
+              "title": "leetcodeNotesTemplate 的大纲"
             }
           },
           {
@@ -250,8 +250,9 @@
   },
   "active": "8b5f580f31d14c10",
   "lastOpenFiles": [
-    "Images/leetcode drawing 2026-02-22 10.38.39.excalidraw.md",
     "Leetcode/02 - files/122. 买卖股票的最佳时机 Ⅱ.md",
+    "Leetcode/02 - files/309. 买卖股票的最佳时机含冷冻期.md",
+    "Images/leetcode drawing 2026-02-22 10.38.39.excalidraw.md",
     "01 - HOME/cpp stl/vector.md",
     "Leetcode/02 - files/80. 删除有序数组中的重复项 Ⅱ.md",
     "Templates/leetcodeNotesTemplate.md",
@@ -275,7 +276,6 @@
     "01 - HOME/operation tips/obsidian/常用快捷键.md",
     "Leetcode/02 - files/868. 二进制距离.md",
     "Leetcode/02 - files/693. 交替位二进制数.md",
-    "Leetcode/02 - files/401. 二进制手表.md",
     "01 - HOME/operation tips/pycharm",
     "01 - HOME/operation tips/vscode",
     "01 - HOME/operation tips/windows",
