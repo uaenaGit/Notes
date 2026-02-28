@@ -1,6 +1,6 @@
 ---
 created: 2026-02-25T23:34
-updated: 2026-02-27T12:32
+updated: 2026-02-28T12:16
 ---
 这是一份为您精心整理的 **C++ `std::vector` 全方位方法详解**。
 
@@ -43,6 +43,174 @@ using namespace std;
 | **`vector(const vector& other)`** | `other`: 另一个 vector | - | 拷贝构造，深拷贝。 |
 | **`vector(vector&& other)`** | `other`: 右值引用 (C++11) | - | 移动构造，窃取资源，`other` 变为空。 |
 | **`vector(initializer_list<T> init)`** | `init`: 初始化列表 (C++11) | - | 列表构造，如 `{1, 2, 3}`。 |
+**二维`vector`初始化：**
+
+在 C++ 中，初始化 `vector` 二维数组（即 `vector<vector<T>>`）有几种常用方法，取决于你是否知道行列数以及是否需要特定初始值。
+
+以下是 **5 种最常用**的初始化方式：
+
+---
+
+ 1️⃣ 指定行列数 + 初始值（最常用）
+这是动态规划（DP）或需要固定大小矩阵时的标准写法。
+**语法**：`vector<vector<T>> 名字(行数, vector<T>(列数, 初始值));`
+
+```cpp
+#include <vector>
+using namespace std;
+
+int main() {
+    int rows = 3;
+    int cols = 4;
+    int init_val = 0;
+
+    // 创建一个 3行4列 的二维数组，所有元素初始化为 0
+    vector<vector<int>> matrix(rows, vector<int>(cols, init_val));
+
+    // 验证
+    // matrix[0] 是 vector<int>(4, 0)
+    // matrix[1] 是 vector<int>(4, 0)
+    // ...
+    
+    return 0;
+}
+```
+> **适用场景**：DP 表格、网格地图、需要预分配空间的场景。
+
+---
+
+ 2️⃣ 使用初始化列表（已知具体数据）
+如果你已经知道具体的数值，可以直接用 `{}` 赋值。
+**注意**：这种方式创建的二维数组，每一行的列数可以不同（不规则矩阵）。
+
+```cpp
+int main() {
+    // 直接初始化
+    vector<vector<int>> matrix = {
+        {1, 2, 3},
+        {4, 5, 6},
+        {7, 8, 9}
+    };
+
+    // 或者不规则矩阵（锯齿状数组）
+    vector<vector<int>> jagged = {
+        {1, 2},       // 第 0 行 2 列
+        {3, 4, 5, 6}, // 第 1 行 4 列
+        {7}           // 第 2 行 1 列
+    };
+
+    return 0;
+}
+```
+> **适用场景**：测试用例、硬编码的小矩阵、图论中的邻接表。
+
+---
+
+ 3️⃣ 先定义大小，后逐行赋值
+如果你需要先创建空壳，再在循环中填充数据。
+
+```cpp
+int main() {
+    int n = 3;
+    // 先创建 n 个空的 vector
+    vector<vector<int>> matrix(n); 
+
+    for (int i = 0; i < n; ++i) {
+        // 为每一行单独分配大小并初始化
+        matrix[i].resize(5, -1); // 第 i 行变为 5 列，初始值为 -1
+        
+        // 或者手动 push_back
+        // matrix[i].push_back(i * 10);
+    }
+
+    return 0;
+}
+```
+> **适用场景**：每一行的列数不一样，且需要在运行时动态决定。
+
+---
+
+ 4️⃣ 动态扩容（类似 Python 的 append）
+完全动态地构建，不需要预先知道大小。
+
+```cpp
+int main() {
+    vector<vector<int>> matrix;
+
+    // 添加第一行
+    vector<int> row1 = {1, 2, 3};
+    matrix.push_back(row1);
+
+    // 添加第二行（直接构造）
+    matrix.push_back({4, 5, 6});
+
+    // 添加第三行（手动构建）
+    vector<int> row3;
+    row3.push_back(7);
+    row3.push_back(8);
+    matrix.push_back(row3);
+
+    return 0;
+}
+```
+> **适用场景**：数据流处理、不确定总行数的场景。
+
+---
+
+ 5️⃣ 特殊技巧：快速创建全 0 或全 1 矩阵
+在算法题中，经常需要快速创建一个 $N \times N$ 的全 0 矩阵。
+
+```cpp
+int n = 100;
+// 创建 100x100 的全 0 矩阵
+vector<vector<int>> dp(n, vector<int>(n, 0));
+
+// 创建 100x100 的全 -1 矩阵 (常用于记忆化搜索标记)
+vector<vector<int>> memo(n, vector<int>(n, -1));
+```
+
+---
+
+ ⚠️ 常见错误与注意事项
+
+ ❌ 错误 1：访问越界
+```cpp
+vector<vector<int>> v(3, vector<int>(3));
+v[3][0] = 1; // ❌ 崩溃！行下标最大是 2
+v[0][3] = 1; // ❌ 崩溃！列下标最大是 2
+```
+
+ ❌ 错误 2：混淆 `resize` 和构造函数
+```cpp
+vector<vector<int>> v;
+v.resize(3);      // 现在有 3 行，但每行是空的 (size=0)
+v[0][0] = 1;      // ❌ 崩溃！因为 v[0] 还没有列空间
+
+// ✅ 正确做法：
+v[0].resize(3);   // 给第 0 行分配 3 列
+v[0][0] = 1;      // ✅ 正常
+```
+
+ 💡 性能提示
+- **连续内存？** `vector<vector<int>>` **不是**连续内存。每一行都是一个独立的 `vector` 对象，分散在堆的不同位置。
+- **缓存友好性**：如果需要极高的性能（如图像处理、大规模矩阵运算），建议使用**一维 `vector` 模拟二维**：
+  ```cpp
+  // 模拟 3行4列
+  vector<int> mat(3 * 4, 0); 
+  // 访问 (i, j)
+  int val = mat[i * 4 + j]; 
+  ```
+  这样内存是连续的，缓存命中率更高。但在一般算法题中，`vector<vector<int>>` 足够方便且够用。
+
+ 总结速查表
+
+| 需求            | 代码示例                                               |
+| :------------ | :------------------------------------------------- |
+| **固定大小 + 初值** | `vector<vector<int>> v(n, vector<int>(m, 0));`     |
+| **已知数据**      | `vector<vector<int>> v = {{1,2}, {3,4}};`          |
+| **动态加行**      | `v.push_back({1, 2, 3});`                          |
+| **记忆化搜索专用**   | `vector<vector<int>> memo(n, vector<int>(2, -1));` |
+
 
 ### 💻 代码示例
 ```cpp
