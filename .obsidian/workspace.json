@@ -1,0 +1,333 @@
+{
+  "main": {
+    "id": "bebaf497054fff6e",
+    "type": "split",
+    "children": [
+      {
+        "id": "df416b0dcd8adb4f",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "ce968f81db5b665b",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "excalidraw",
+              "state": {
+                "file": "Images/leetcode drawing 2026-02-22 10.38.39.excalidraw.md"
+              },
+              "pinned": true,
+              "icon": "excalidraw-icon",
+              "title": "leetcode drawing 2026-02-22 10.38.39.excalidraw"
+            }
+          },
+          {
+            "id": "76d17622d77054b7",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "02 - School/实验室/刘玉生老师.md",
+                "mode": "source",
+                "source": false
+              },
+              "pinned": true,
+              "icon": "lucide-file",
+              "title": "刘玉生老师"
+            }
+          },
+          {
+            "id": "56c33c79877004cd",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "02 - School/tutorial/Python/黑马.md",
+                "mode": "source",
+                "source": false
+              },
+              "pinned": true,
+              "icon": "lucide-file",
+              "title": "黑马"
+            }
+          },
+          {
+            "id": "f42180a3464b4294",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "01 - HOME/operation tips/vscode/常用快捷键.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "常用快捷键"
+            }
+          },
+          {
+            "id": "ea1289d5f87c584f",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "01 - HOME/operation tips/obsidian/常用快捷键.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "常用快捷键"
+            }
+          }
+        ],
+        "currentTab": 4
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "454296165df24b53",
+    "type": "split",
+    "children": [
+      {
+        "id": "6420555faeca999a",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "c4b7f5945a8bfbf9",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "文件列表"
+            }
+          },
+          {
+            "id": "5e0bb6cc474c6340",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "搜索"
+            }
+          },
+          {
+            "id": "e38fed0d32a8a746",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "书签"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 270.5
+  },
+  "right": {
+    "id": "061bffc60c22c43d",
+    "type": "split",
+    "children": [
+      {
+        "id": "353a1a722bb1c247",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "2ba08988f6b3a4d3",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Leetcode/02 - files/testDemo.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "testDemo 的反向链接列表"
+            }
+          },
+          {
+            "id": "1578df80e8165b61",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Temp/第八章 下半部和推后执行的工作.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "第八章 下半部和推后执行的工作 的出链列表"
+            }
+          },
+          {
+            "id": "1885ff3d3d11981c",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "标签"
+            }
+          },
+          {
+            "id": "82acc894af99e643",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-ghost",
+              "title": "all-properties"
+            }
+          },
+          {
+            "id": "ad6a219d253361d8",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "01 - HOME/operation tips/obsidian/常用快捷键.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "常用快捷键 的大纲"
+            }
+          },
+          {
+            "id": "290d89efe5478e52",
+            "type": "leaf",
+            "state": {
+              "type": "calendar",
+              "state": {},
+              "icon": "calendar-with-checkmark",
+              "title": "Calendar"
+            }
+          },
+          {
+            "id": "a869d0beb8d2eae0",
+            "type": "leaf",
+            "state": {
+              "type": "git-view",
+              "state": {},
+              "icon": "git-pull-request",
+              "title": "Source Control"
+            }
+          },
+          {
+            "id": "94b592274e7f7707",
+            "type": "leaf",
+            "state": {
+              "type": "timer-view",
+              "state": {},
+              "icon": "timer",
+              "title": "Timer"
+            }
+          }
+        ],
+        "currentTab": 6
+      }
+    ],
+    "direction": "horizontal",
+    "width": 365.5
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "templater-obsidian:Templater": false,
+      "pomodoro-timer:Toggle timer panel": false,
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false,
+      "bases:新建数据库": false,
+      "obsidian-excalidraw-plugin:新建绘图文件": false,
+      "table-editor-obsidian:Advanced Tables Toolbar": false,
+      "obsidian-git:Open Git source control": false,
+      "obsidian-kanban:创建新看板": false,
+      "mermaid-tools:Open Mermaid Toolbar": false
+    }
+  },
+  "active": "a869d0beb8d2eae0",
+  "lastOpenFiles": [
+    "02 - School/公司/项目/Record.md",
+    "02 - School/公司/SysML v2 语法速查.md",
+    "02 - School/公司/Pydantic 讲解.md",
+    "02 - School/公司/JSON 学习笔记.md",
+    "02 - School/公司/IM JSON ↔ SysML v2 Text ↔ OWL(Turtle).md",
+    "02 - School/公司/Ark-Agent-Plan.md",
+    "01 - HOME/operation tips/obsidian/常用快捷键.md",
+    "02 - School/公司/Turtle 语法.md",
+    "01 - HOME/operation tips/Python/常用命令.md",
+    "02 - School/公司/项目/ontology-builder/agent.py(src-ontology_builder_agent).md",
+    "02 - School/公司/项目/ontology-builder/extractor.py(src-ontology_builder_agent).md",
+    "02 - School/公司/项目/ontology-builder/bridge_im.py(src-ontology_builder_agent).md",
+    "02 - School/公司/项目/ontology-builder/im.py(src-ontology_builder_agent).md",
+    "01 - HOME/records/Python编程：从入门到实践（第2版）.md",
+    "01 - HOME/operation tips/vscode/常用快捷键.md",
+    "02 - School/tutorial/李宏毅/生成式人工智能导论/P1 第一讲.md",
+    "Templates/acwingTemplate.md",
+    "02 - School/公司/Paper/Ontology-grounded retrieval-augmented generation for large language models.md",
+    "02 - School/公司/本体.md",
+    "02 - School/公司/Paper",
+    "02 - School/公司/项目/ontology-builder/__main__.py(src-ontology_builder_agent).md",
+    "02 - School/tutorial/Python/黑马.md",
+    "02 - School/实验室/刘玉生老师.md",
+    "02 - School/公司/Drawing 2026-07-15 11.35.24.excalidraw.md",
+    "Images/leetcode drawing 2026-02-22 10.38.39.excalidraw.md",
+    "01 - HOME/records/睛问使用（上机）.md",
+    "01 - HOME/records/刷题记录.md",
+    "01 - HOME/operation tips/Python",
+    "02 - School/tutorial/李宏毅/生成式人工智能导论",
+    "02 - School/tutorial/李宏毅",
+    "02 - School/公司/项目/ontology-builder/未命名",
+    "ontology-builder/src/ontology_builder_agent",
+    "ontology-builder/src",
+    "ontology-builder",
+    "01 - HOME/operation tips/notepad++",
+    "02 - School/公司/项目/sysml-owl-bridge",
+    "Pasted Image 20260626183739_688.png",
+    "Pasted Image 20260312194616_170.png",
+    "Pasted Image 20260312194605_776.png",
+    "Pasted Image 20260308201949_529.png",
+    "Pasted Image 20260308201917_484.png",
+    "Pasted Image 20260308201737_293.png",
+    "Pasted image 20260217233425.png",
+    "Pasted image 20260223212159.png",
+    "Pasted image 20260223211958.png",
+    "Pasted image 20260223160610.png"
+  ]
+}

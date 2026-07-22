@@ -1,0 +1,11 @@
+/* === 编辑模式 + 阅读模式：减少左右边距 === */
+.markdown-preview-view,
+.markdown-source-view.mod-cm6 {
+  --file-margins: 50px !important; /* 控制左右空白 */
+  --file-line-width: 1200px !important; /* 控制内容最大宽度 */
+}
+
+/* === 可选：进一步移除容器内边距 === */
+.workspace-leaf-content[data-type="markdown"] .view-content {
+  padding: 0 !important;
+}

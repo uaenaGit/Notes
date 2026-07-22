@@ -1,0 +1,329 @@
+---
+created: 2026-02-23T20:45
+updated: 2026-02-27T11:38
+---
+这是一份为您精心整理的 **C++ `std::string` 全方位方法详解**。
+
+这份指南严格遵循 C++11 及以上标准，**重点补充了每个方法的详细参数说明、返回值含义以及具体的代码示例**，方便您查阅和记忆。
+
+---
+
+# 📚 C++ `std::string` 完全指南 (C++11+)
+
+### 📌 前置准备
+```cpp
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm> // 部分算法可能需要
+
+using namespace std;
+```
+
+---
+
+## 1️⃣ 构造与赋值 (Construction & Assignment)
+用于创建字符串对象或修改其内容。
+
+| 方法 | 参数详解 | 返回值 | 功能说明 |
+| :--- | :--- | :--- | :--- |
+| **`string()`** | 无 | - | 默认构造，生成空字符串 `""`。 |
+| **`string(const char* s)`** | `s`: C 风格字符串指针 | - | 从 C 字符串构造，直到遇到 `\0`。 |
+| **`string(size_t n, char c)`** | `n`: 重复次数`c`: 字符 | - | 构造由 `n` 个字符 `c` 组成的字符串。 |
+| **`string(const string& str)`** | `str`: 另一个 string 对象 | - | 拷贝构造，深拷贝 `str` 的内容。 |
+| **`string(const string& str, size_t pos, size_t len = npos)`** | `str`: 源字符串`pos`: 起始下标`len`: 截取长度 (默认到末尾) | - | 从 `str` 的 `pos` 位置开始，截取 `len` 个字符构造新串。 |
+| **`operator=`** | `rhs`: string / char* / char | `*this` | 赋值操作符，覆盖当前内容。 |
+| **`assign(...)`** | 多种重载 (同构造函数) | `*this` | 赋值函数，功能同 `operator=`，但支持更灵活的链式调用或局部赋值。 |
+| **`assign(const char* s, size_t n)`** | `s`: C 字符串`n`: 取前 n 个字符 | `*this` | 将 `s` 的前 `n` 个字符赋值给当前串。 |
+
+### 💻 代码示例
+```cpp
+int main() {
+    // 1. 基础构造
+    string s1;                  // ""
+    string s2("Hello");         // "Hello"
+    string s3(5, 'A');          // "AAAAA"
+    string s4(s2, 1, 3);        // "ell" (从 s2 下标1开始取3个)
+
+    // 2. 赋值
+    s1 = "World";               // "World"
+    s1.assign("C++", 2);        // "C+" (只取前2个字符)
+    
+    // 3. 链式赋值 (assign 返回引用)
+    string s5;
+    s5.assign(3, 'x').append("y"); // "xxxy"
+
+    cout << s1 << ", " << s3 << ", " << s4 << ", " << s5 << endl;
+    return 0;
+}
+```
+
+---
+
+## 2️⃣ 元素访问 (Element Access)
+用于获取字符串中的单个字符或底层指针。
+
+| 方法 | 参数详解 | 返回值 | 功能说明 |
+| :--- | :--- | :--- | :--- |
+| **`operator[]`** | `pos`: 下标 | `char&` | 返回 `pos` 处字符。**不检查边界**，越界行为未定义。 |
+| **`at(size_t pos)`** | `pos`: 下标 | `char&` | 返回 `pos` 处字符。**检查边界**，越界抛出 `out_of_range` 异常。 |
+| **`front()`** | 无 | `char&` | 返回第一个字符 (C++11)。等价于 `s[0]`。 |
+| **`back()`** | 无 | `char&` | 返回最后一个字符 (C++11)。等价于 `s[s.size()-1]`。 |
+| **`c_str()`** | 无 | `const char*` | 返回以 `\0` 结尾的 C 风格字符串指针。数据只读。 |
+| **`data()`** | 无 | `const char*` (C++11/14)`char*` (C++17) | C++11/14 同 `c_str()`；C++17 起返回非 const 指针，允许修改内容。 |
+
+### 💻 代码示例
+```cpp
+int main() {
+    string s = "Hello";
+    
+    // 安全访问 vs 不安全访问
+    char c1 = s[0];         // 'H' (快，但不安全)
+    char c2 = s.at(1);      // 'e' (安全，慢一点)
+    
+    // 首尾访问
+    cout << "First: " << s.front() << ", Last: " << s.back() << endl;
+
+    // C 风格互操作
+    printf("C-Str: %s\n", s.c_str());
+    
+    // C++17 可以直接修改 data() 指向的内容 (需确保不改变长度)
+    // s.data()[0] = 'h'; // s 变为 "hello"
+
+    try {
+        s.at(100); // 抛出异常
+    } catch (const out_of_range& e) {
+        cout << "Out of range!" << endl;
+    }
+    return 0;
+}
+```
+
+---
+
+## 3️⃣ 容量与状态 (Capacity & State)
+查询字符串的大小、容量及调整内存。
+
+| 方法                                                    | 参数详解                         | 返回值            | 功能说明                                                              |
+| :---------------------------------------------------- | :--------------------------- | :------------- | :---------------------------------------------------------------- |
+| **`size()`**                                          | 无                            | `size_t`       | 返回当前字符个数。                                                         |
+| **`length()`**                                        | 无                            | `size_t`       | 同 `size()`。                                                       |
+| **`empty()`**                                         | 无                            | `bool`         | 若字符串为空 (`size()==0`) 返回 `true`。                                   |
+| **`capacity()`**                                      | 无                            | `size_t`       | 返回当前已分配内存可容纳的字符数（不含 `\0`）。                                        |
+| **`max_size()`**                                      | 无                            | `size_t`       | 返回理论上的最大长度限制。                                                     |
+| **`reserve(size_t n)`**                               | `n`: 期望容量                    | `void`         | **预分配**至少 `n` 个字符的空间。若 `n` 大于当前 capacity 则扩容，否则不做操作。**不改变 size**。 |
+| **`resize(size_t n)`** **`resize(size_t n, char c)`** | `n`: 新长度 `c`: 填充字符 (默认 `\0`) | `void`         | 改变字符串长度。若变长，新位置填 `c`；若变短，截断多余部分。                                  |
+| **`clear()`**                                         | 无                            | `void`         | 清空内容，`size` 变为 0，但 `capacity` 通常保持不变。                             |
+| **`shrink_to_fit()`**                                 | 无                            | `void` (C++11) | 请求释放未使用的内存，使 `capacity` 等于 `size` (非强制，取决于实现)。                    |
+
+### 💻 代码示例
+```cpp
+int main() {
+    string s = "Hi";
+    cout << "Size: " << s.size() << ", Cap: " << s.capacity() << endl;
+
+    // 预分配内存，避免多次 push_back 导致的重新分配
+    s.reserve(100); 
+    cout << "After reserve, Cap: " << s.capacity() << endl;
+
+    // 调整大小
+    s.resize(5, 'x'); // "Hixxx"
+    cout << "After resize: " << s << endl;
+
+    s.resize(2);      // "Hi" (截断)
+    
+    s.clear();
+    cout << "Empty? " << s.empty() << endl; // 1 (true)
+    cout << "Cap after clear: " << s.capacity() << endl; // 仍为 100
+    
+    return 0;
+}
+```
+
+---
+
+## 4️⃣ 修改操作 (Modifiers)
+增删改查的核心操作。
+
+| 方法 | 参数详解 | 返回值 | 功能说明 |
+| :--- | :--- | :--- | :--- |
+| **`operator+=`** | `str` / `char*` / `char` | `*this` | 在末尾追加内容。 |
+| **`append(...)`** | 同 `+=` 的各种重载 | `*this` | 在末尾追加内容，功能更丰富（可指定子串追加）。 |
+| **`push_back(char c)`** | `c`: 字符 | `void` | 在末尾添加一个字符 (C++11)。 |
+| **`pop_back()`** | 无 | `void` | 移除末尾一个字符 (C++11)。 |
+| **`insert(...)`** | `pos`: 位置`str`: 插入内容 | `*this` | 在 `pos` 位置插入字符串/字符。有多种重载。 |
+| **`erase(...)`** | `pos`: 起始位置 (默认0)`len`: 删除长度 (默认到末尾) | `*this` | 删除从 `pos` 开始的 `len` 个字符。也支持迭代器版本。 |
+| **`replace(...)`** | `pos`: 起始`len`: 替换长度`str`: 新内容 | `*this` | 将从 `pos` 开始的 `len` 个字符替换为 `str`。 |
+| **`swap(string& str)`** | `str`: 另一个 string | `void` | 交换两个字符串的内容 (O(1) 复杂度)。 |
+
+### 💻 代码示例
+```cpp
+int main() {
+    string s = "Hello";
+    
+    // 追加
+    s += " World";
+    s.push_back('!');       // "Hello World!"
+    
+    // 插入 (在下标 5 处插入 ",")
+    s.insert(5, ",");       // "Hello, World!"
+    
+    // 删除 (从下标 5 开始删除 2 个字符 ", ")
+    s.erase(5, 2);          // "HelloWorld!"
+    
+    // 替换 (从下标 5 开始，长度 5 "World", 替换为 "C++")
+    s.replace(5, 5, "C++"); // "HelloC++!"
+    
+    // 弹出末尾
+    s.pop_back();           // "HelloC++"
+    
+    // 交换
+    string t = "Swap";
+    s.swap(t);              // s="Swap", t="HelloC++"
+    
+    cout << s << " | " << t << endl;
+    return 0;
+}
+```
+
+---
+
+## 5️⃣ 查找与子串 (Search & Substring)
+字符串处理中最常用的功能。
+
+| 方法                           | 参数详解                                        | 返回值      | 功能说明                                    |
+| :--------------------------- | :------------------------------------------ | :------- | :-------------------------------------- |
+| **`substr(...)`**            | `pos`: 起始下标 (默认0)`len`: 长度 (默认 `npos` 即到末尾) | `string` | 返回一个新的子串对象。                             |
+| **`find(...)`**              | `str`: 目标`pos`: 起始搜索位置 (默认0)                | `size_t` | **正向**查找 `str` 第一次出现的位置。未找到返回 `npos`。   |
+| **`rfind(...)`**             | 同上                                          | `size_t` | **反向**查找 `str` 最后一次出现的位置。未找到返回 `npos`。  |
+| **`find_first_of(...)`**     | `chars`: 字符集`pos`: 起始位置                     | `size_t` | 查找**任意一个**属于 `chars` 的字符首次出现的位置。        |
+| **`find_first_not_of(...)`** | `chars`: 字符集`pos`: 起始位置                     | `size_t` | 查找**第一个不**属于 `chars` 的字符的位置 (常用于去空格)。   |
+| **`find_last_of(...)`**      | 同上                                          | `size_t` | 查找**任意一个**属于 `chars` 的字符最后一次出现的位置。      |
+| **`find_last_not_of(...)`**  | 同上                                          | `size_t` | 查找**最后一个不**属于 `chars` 的字符的位置。           |
+| **`copy(...)`**              | `dest`: 目标 char 数组`len`: 复制长度`pos`: 起始位置    | `size_t` | 将子串复制到 C 风格数组 `dest` 中。**不会自动添加 `\0`**。 |
+
+> ⚠️ **注意**: 所有查找函数失败时均返回 `string::npos` (通常是 `-1` 的无符号最大值)。
+
+### 💻 代码示例
+```cpp
+int main() {
+    string s = "apple banana apple";
+    
+    // 子串
+    string sub = s.substr(6, 6); // "banana"
+    
+    // 查找
+    size_t p1 = s.find("apple");       // 0
+    size_t p2 = s.rfind("apple");      // 13 (最后一次出现)
+    size_t p3 = s.find('b');           // 6
+    
+    // 查找字符集
+    string text = "  hello  ";
+    size_t start = text.find_first_not_of(" "); // 2 ('h')
+    size_t end = text.find_last_not_of(" ");    // 8 ('o')
+    string trimmed = text.substr(start, end - start + 1); // "hello"
+    
+    // copy 到数组
+    char buf[10];
+    s.copy(buf, 5, 0); // 复制 "apple"
+    buf[5] = '\0';     // 手动加结束符
+    
+    if (s.find("orange") == string::npos) {
+        cout << "Not found!" << endl;
+    }
+    
+    cout << "Trimmed: " << trimmed << ", Buffer: " << buf << endl;
+    return 0;
+}
+```
+
+---
+
+## 6️⃣ 比较与迭代 (Comparison & Iteration)
+用于排序、判断相等及遍历。
+
+| 方法 | 参数详解 | 返回值 | 功能说明 |
+| :--- | :--- | :--- | :--- |
+| **`compare(...)`** | `str`: 比较对象(也有 pos/len 重载) | `int` | 字典序比较。`<0`: 当前串小`0`: 相等`>0`: 当前串大 |
+| **`operator==, !=`****`<, <=, >, >=`** | `rhs`: string / char* | `bool` | 重载的比较运算符，基于字典序。 |
+| **`begin()` / `end()`** | 无 | `iterator` | 返回指向首/尾后一位的正向迭代器。 |
+| **`rbegin()` / `rend()`** | 无 | `reverse_iterator` | 返回指向尾/首前一位的反向迭代器。 |
+| **`cbegin()` / `cend()`** | 无 | `const_iterator` | 返回只读迭代器 (C++11)。 |
+
+### 💻 代码示例
+```cpp
+int main() {
+    string a = "apple";
+    string b = "banana";
+    
+    // 比较
+    if (a < b) cout << "a comes before b" << endl;
+    cout << "Compare result: " << a.compare(b) << endl; // 负数
+
+    // 迭代器遍历
+    cout << "Forward: ";
+    for (auto it = a.begin(); it != a.end(); ++it) {
+        cout << *it;
+    }
+    cout << endl;
+
+    // 反向遍历
+    cout << "Reverse: ";
+    for (auto rit = a.rbegin(); rit != a.rend(); ++rit) {
+        cout << *rit;
+    }
+    cout << endl; // elppa
+
+    // 范围 for (推荐)
+    for (char c : b) cout << c; 
+    cout << endl;
+    
+    return 0;
+}
+```
+
+---
+
+## 7️⃣ 数值转换 (Numeric Conversions) - C++11
+`<string>` 头文件提供的全局函数，用于字符串与数字互转。
+
+| 函数 | 参数 | 返回值 | 说明 |
+| :--- | :--- | :--- | :--- |
+| **`to_string(val)`** | `val`: int/long/float/double 等 | `string` | 将数值转换为字符串。 |
+| **`stoi(str)`** | `str`: 字符串`idx`: 输出解析结束位置 (可选)`base`: 进制 (可选, 默认10) | `int` | 字符串转整数。失败抛异常。 |
+| **`stol`, `stoll`** | 同上 | `long`, `long long` | 转长整型。 |
+| **`stof`, `stod`** | 同上 | `float`, `double` | 转浮点型。 |
+
+### 💻 代码示例
+```cpp
+int main() {
+    // 数字转字符串
+    int num = 123;
+    string s = to_string(num) + " apples"; // "123 apples"
+    
+    // 字符串转数字
+    string str_num = "456";
+    int val = stoi(str_num); // 456
+    
+    // 处理带前缀或非纯数字
+    string mixed = "100px";
+    size_t idx;
+    int px = stoi(mixed, &idx); // px=100, idx=3 (停在'p')
+    
+    // 十六进制转换
+    string hex = "1A";
+    int hex_val = stoi(hex, nullptr, 16); // 26
+    
+    cout << s << ", " << val << ", " << px << ", " << hex_val << endl;
+    return 0;
+}
+```
+
+---
+
+### 💡 核心总结
+1. **安全性**：访问元素优先用 `at()`，性能敏感且确定下标合法时用 `[]`。
+2. **效率**：大量拼接前使用 `reserve()` 预分配内存。
+3. **查找**：永远检查返回值是否等于 `string::npos`。
+4. **修改**：`set` 中的元素不可改，但 `string` 是可变的序列容器，直接通过下标或迭代器修改即可。
+5. **C++11**：尽量使用 `to_string`, `stoi`, `push_back`, `emplace` (vector中) 等新特性。

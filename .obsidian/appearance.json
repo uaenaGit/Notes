@@ -1,0 +1,9 @@
+{
+  "cssTheme": "Border",
+  "baseFontSizeAction": true,
+  "enabledCssSnippets": [
+    "line-spacing",
+    "narrower-notes"
+  ],
+  "baseFontSize": 20
+}
