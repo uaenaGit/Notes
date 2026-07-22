@@ -1,6 +1,6 @@
 ---
 created: 2026-07-22T10:55
-updated: 2026-07-22T10:58
+updated: 2026-07-22T17:05
 ---
 # SysML v2 文本语法速查表（适配你的本体项目，初学者版）
 > 适用场景：`ontology-builder`自动生成、`sysml-owl-bridge`转换OWL，**重点聚焦结构建模**，行为建模仅作拓展
