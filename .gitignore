@@ -1,0 +1,9 @@
+# Obsidian插件、配置目录
+.obsidian/
+# 带密钥/私密关键词的笔记
+*key*.md
+*secret*.md
+# 环境密钥文件
+.env
+# 临时笔记目录
+Temp/
