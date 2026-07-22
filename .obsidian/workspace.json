@@ -73,12 +73,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "02 - School/公司/IM JSON ↔ SysML v2 Text ↔ OWL(Turtle).md",
+                "file": "02 - School/公司/项目/ontology-builder/prompts 优化.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "IM JSON ↔ SysML v2 Text ↔ OWL(Turtle)"
+              "title": "prompts 优化"
             }
           }
         ],
@@ -217,13 +217,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "01 - HOME/operation tips/obsidian/常用快捷键.md",
+                "file": "02 - School/公司/项目/ontology-builder/prompts 优化.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "常用快捷键 的大纲"
+              "title": "prompts 优化 的大纲"
             }
           },
           {
@@ -257,7 +257,7 @@
             }
           }
         ],
-        "currentTab": 6
+        "currentTab": 4
       }
     ],
     "direction": "horizontal",
@@ -283,12 +283,13 @@
   },
   "active": "ea1289d5f87c584f",
   "lastOpenFiles": [
+    "02 - School/公司/IM JSON ↔ SysML v2 Text ↔ OWL(Turtle).md",
+    "02 - School/公司/项目/ontology-builder/prompts 优化.md",
     "02 - School/公司/JSON 学习笔记.md",
     "01 - HOME/operation tips/obsidian/常用快捷键.md",
     "02 - School/公司/项目/Record.md",
     "02 - School/公司/SysML v2 语法速查.md",
     "02 - School/公司/Pydantic 讲解.md",
-    "02 - School/公司/IM JSON ↔ SysML v2 Text ↔ OWL(Turtle).md",
     "02 - School/公司/Ark-Agent-Plan.md",
     "02 - School/公司/Turtle 语法.md",
     "01 - HOME/operation tips/Python/常用命令.md",
@@ -309,7 +310,6 @@
     "02 - School/公司/Drawing 2026-07-15 11.35.24.excalidraw.md",
     "Images/leetcode drawing 2026-02-22 10.38.39.excalidraw.md",
     "01 - HOME/records/睛问使用（上机）.md",
-    "01 - HOME/records/刷题记录.md",
     "01 - HOME/operation tips/Python",
     "02 - School/tutorial/李宏毅/生成式人工智能导论",
     "02 - School/tutorial/李宏毅",

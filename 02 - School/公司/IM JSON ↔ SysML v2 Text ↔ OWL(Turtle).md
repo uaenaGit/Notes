@@ -1,6 +1,6 @@
 ---
 created: 2026-07-22T11:31
-updated: 2026-07-22T11:31
+updated: 2026-07-22T15:36
 ---
 # BridgeIM JSON ↔ SysML v2 Text ↔ OWL(Turtle) 完整映射清单
 > 适配项目链路：LLM输出 → BridgeIM(JSON) → SysML渲染 → sysml-owl-bridge → OWL本体
