@@ -1,6 +1,6 @@
 ---
 created: 2026-07-22T15:36
-updated: 2026-07-22T15:36
+updated: 2026-07-23T16:19
 ---
 有。最合适的做法是增加一次 `--prompt-file` 扩展能力，把领域规则放在项目外的 Markdown 文件中。以后换发动机类型只换参数，不再修改 [prompts.py](D:/Work/projects/ontology-builder/src/ontology_builder_agent/prompts.py)。
 

@@ -1,6 +1,6 @@
 ---
 created: 2026-07-21T14:17
-updated: 2026-07-22T17:56
+updated: 2026-07-23T16:31
 ---
 # 一、给定pdf生成本体demo（mode=im-bridge）
 ## 1、不能直接使用原始PDF文件作为 ontology-builder 的输入，因为原始Pdf字体编码导致乱码、公式和表格结构丢失
@@ -491,3 +491,234 @@ BRIDGE_IM_EXTRACTION_SYSTEM_PROMPT = """你是本体工程专家。你的任务�
 3. 增加范围、多工况和推进剂组合的表达方式。
 4. 补回推力室、燃烧室、喷管及 RD-170/YF-73/YF-75 的组件事实。
 ## 7、进一步完善`prompts`
+```
+12. 本任务采用“受控 TBox 标识符 + 来源原名 ABox 标识符”的命名策略，以消除第 8 条与领域统一词汇之间的冲突：
+    - 第 13、14 条列出的英文 type/feature 名称是预先规定的受控标识符，必须原样使用，不属于模型自行翻译；同时填写对应的中文 label。
+    - 来源中的中文推进剂、循环、供应方式、任务用途等 individual，name 必须使用中文原名，不得翻译或拼音化。
+    - 发动机型号等 ASCII 专名使用稳定的 lowerCamelCase name，并用 label 保留来源中的准确写法、大小写和连字符，例如 name="rD170"、label="RD-170"。
+    - 不在受控词汇表中的中文术语仍严格遵守第 8 条，name 使用中文原名。
+
+13. 只建立下列来源实际需要的核心 type，并使用给定 name 和中文 label：
+    - RocketEngine（火箭发动机）；LiquidRocketEngine（液体火箭发动机），后者继承前者。
+    - EngineComponent（发动机组件）；ThrustChamber（推力室）、CombustionChamber（燃烧室）、Nozzle（喷管）、Valve（阀门）、Regulator（调节器）、PropellantSupplySystem（推进剂供应系统）继承 EngineComponent。
+    - Propellant（推进剂）；Oxidizer（氧化剂）、Fuel（燃料）、Monopropellant（单组元推进剂）继承 Propellant。
+    - CycleType（动力循环类型）、SupplySystemType（供应系统类型）、MissionRole（任务用途）、Formula（公式）。
+    - 燃气发生器是组件，燃气发生器循环是 CycleType individual；不得把二者混为同一实体。
+    - PropellantCombination（推进剂组合性能）。
+    - FormulaParameter（公式参数）。
+
+14. 必须声明实际使用的 object feature；kind="ref"、owl_kind="object"：
+    - usesOxidizer：LiquidRocketEngine → Oxidizer，0..*。
+    - usesFuel：LiquidRocketEngine → Fuel，0..*。
+    - usesMonopropellant：LiquidRocketEngine → Propellant，0..1。
+    - hasCycle：LiquidRocketEngine → CycleType，0..1。
+    - hasSupplySystemType：LiquidRocketEngine → SupplySystemType，0..1。
+    - hasMissionRole：LiquidRocketEngine → MissionRole，0..*。
+    - hasComponent：LiquidRocketEngine → EngineComponent，0..*；只有来源明确给出组成关系时才生成 assertion。
+    除非来源明确给出，不得添加恰好 1 的封闭世界基数。
+
+15. 必须声明实际使用的 data feature；kind="attribute"、owl_kind="data"：
+    - vacuumThrustN、vacuumSpecificImpulseMPerS、chamberPressureMPa、molecularWeight、boilingPointK、freezingPointK、densityKgPerM3、decompositionTemperatureK、theoreticalSpecificImpulseMPerS：range_type="Real"。
+    - latexExpression、formulaNumber：range_type="String"。
+    - sourcePage：range_type="Integer"。
+    data feature 的 range_type 只使用 Real、Integer、String、Boolean，不得使用 xsd:Decimal、xsd:decimal、xsd:String、xsd:string。
+    object feature 的 range_type 必须是已经声明的本体 type，例如 Oxidizer、Fuel、CycleType，不受上述基础数据类型限制。
+
+16. 来源覆盖要求：
+    - 表1.1～1.5中的每个发动机或明确工况必须进入individuals。
+    - 表1.6～1.8中的每一行推进剂必须进入individuals，即使没有被发动机表引用。
+    - 表1.9中的每一行必须建成PropellantCombination individual。
+    - 不得以“未被其他individual引用”为理由省略来源表格中的明确数据行。
+    - 只禁止创建来源没有出现的词表项；来源表格行不属于空词表项。
+    - 来源明确提供的事实必须写入assertions，不得只创建名称。
+
+17. assertion 结构和数据类型必须符合当前 Python SysML renderer：
+    - 对象关系：kind="object"，value 是已存在 individual 的 name。
+    - 数值：kind="data"，datatype="double"。
+    - 整数：kind="data"，datatype="integer"。
+    - 文本：kind="data"，datatype="string"。
+    - 布尔值：kind="data"，datatype="boolean"。
+    datatype 字段不得带 xsd: 前缀，因为 renderer 会自动添加该前缀；禁止输出 xsd:xsd:double 等重复前缀。
+
+18. individual 示例：
+{
+  "name": "rD170",
+  "type": "LiquidRocketEngine",
+  "anonymous": false,
+  "label": "RD-170",
+  "assertions": [
+    {"kind": "object", "property": "usesOxidizer", "value": "液氧"},
+    {"kind": "data", "property": "vacuumThrustN", "value": "8060000", "datatype": "double"}
+  ]
+}
+
+19. 单位和数值规则：
+    - 真空推力使用 vacuumThrustN，单位 N；允许从 kN 做确定性换算，不得估算。
+    - vacuumSpecificImpulseMPerS 只接收来源单位为 m/s 的值；若来源单位是 s，不得写入该属性，也不得把秒当作 m/s。
+    - 燃烧室压力使用 chamberPressureMPa，密度使用 densityKgPerM3，温度属性使用 K。
+    - 表格中的“—”、空白、损坏字符或来源未给出的数值必须省略，不得填 0 或猜测。
+
+20. CycleType 只表示补燃循环、燃气发生器循环、膨胀循环等动力循环。挤压式、泵压式属于 SupplySystemType，不属于 CycleType。MissionRole 只表示一级发动机、二级发动机、上面级发动机、姿控发动机等任务用途；SSME 等型号是发动机 individual，不是 MissionRole。
+
+21. 对单组元发动机只使用 usesMonopropellant，不得使用 usesFuel 表示其单组元推进剂；肼作为单组元推进剂使用时同样如此。“三组元液体火箭发动机”是推进剂组合分类，不是 MissionRole，不得创建名为 tripropellantLiquidRocketEngine 的 MissionRole，也不得通过 hasMissionRole 关联。
+
+22. 公式只在来源明确给出时创建 Formula individual。latexExpression、formulaNumber、sourcePage 分别使用 string、string、integer assertion；某项在来源中不存在或无法确认时省略该 assertion，不得编造。公式中的反斜杠必须按 JSON 规则转义。
+
+23. 一致性检查：每个 individual.type、feature.owner_type 和 object feature.range_type 都必须引用已声明 type；每个 assertion.property 必须引用已声明且 kind 匹配的 feature；每个 object assertion.value 必须引用已声明 individual。不得同时把同一概念建成 type 和 individual，除非来源明确表达两个不同的元建模层次。
+
+24. 只提取来源明确陈述的事实。除了确定性的单位换算，不得根据常识补充性能、组成、分类或因果关系。annotations、rules、keys、disjoint_unions、disjoint_classes、property_axioms、datatype_definitions 默认输出空数组，除非来源和本任务明确需要。
+
+25. 输出紧凑 JSON，不为排版添加大量空行或重复 description。所有顶层数组即使为空也输出 []；输出结束前检查字符串转义、引号、方括号和花括号完整闭合。
+
+26. 中文label要求：
+    - 第13～15条及后续规则规定的所有英文type和feature都是受控TBox标识符，name必须保持规定的英文形式。
+    - 每个受控英文type和feature必须填写非空中文label。
+    - 例如：
+      {"name":"LiquidRocketEngine","kind":"item","label":"液体火箭发动机"}
+      {"name":"usesOxidizer","kind":"ref","owl_kind":"object",
+       "owner_type":"LiquidRocketEngine","range_type":"Oxidizer",
+       "label":"使用氧化剂"}
+    - 来源中的中文individual继续使用中文原名作为name。
+    - 发动机型号使用稳定的lowerCamelCase name，并用label保留来源的准确大小写和连字符，例如name="rD170"、label="RD-170"。
+    - 输出结束前检查：任何受控type或feature的label为空都视为失败。
+
+27. 发动机组件关系和数量：
+    - 声明hasCombustionChamber：
+      kind="ref"、owl_kind="object"、
+      owner_type="ThrustChamber"、
+      range_type="CombustionChamber"、
+      min_cardinality=0、max_cardinality=null。
+    - 声明hasNozzle：
+      kind="ref"、owl_kind="object"、
+      owner_type="ThrustChamber"、
+      range_type="Nozzle"、
+      min_cardinality=0、max_cardinality=null。
+    - 声明以下data feature：
+      thrustChamberCount：LiquidRocketEngine → Integer
+      turbopumpCount：LiquidRocketEngine → Integer
+      engineUnitCount：LiquidRocketEngine → Integer
+      restartCount：LiquidRocketEngine → Integer
+    - 只在来源明确给出数量时添加assertion。
+    - RD-170：thrustChamberCount=4。
+    - YF-73：turbopumpCount=1、thrustChamberCount=4、restartCount=2。
+    - YF-75：engineUnitCount=2、restartCount=2。
+    - 以上数量来自来源文本，不得扩展到其他发动机。
+
+28. 范围、多值、不等式和乘法形式不得丢失：
+    - a～b使用对应的Min和Max属性，不得只保留其中一个值。
+    - ≥a使用对应的Min属性，表示下界，不得把a当成精确值。
+    - a、b、c等多个离散值，允许同一个非functional数据属性出现多个data assertion。
+    - n×v分别保存unitCount=n和unitVacuumThrustN=v，不得只保存乘积。
+    - 声明以下data feature：
+      vacuumThrustMinN、vacuumThrustMaxN：
+        LiquidRocketEngine → Real
+      vacuumSpecificImpulseMinMPerS、
+      vacuumSpecificImpulseMaxMPerS：
+        LiquidRocketEngine → Real
+      boilingPointMinK、boilingPointMaxK：
+        Propellant → Real
+      densityMinKgPerM3、densityMaxKgPerM3：
+        Propellant → Real
+      decompositionTemperatureMinK、
+      decompositionTemperatureMaxK：
+        Propellant → Real
+      theoreticalSpecificImpulseMinMPerS、
+      theoreticalSpecificImpulseMaxMPerS：
+        Propellant → Real
+      unitCount：
+        LiquidRocketEngine → Integer
+      unitVacuumThrustN：
+        LiquidRocketEngine → Real
+    - FY-81的9.8～196 N使用vacuumThrustMinN=9.8和vacuumThrustMaxN=196。
+    - FY-81的≥2123 m/s使用vacuumSpecificImpulseMinMPerS=2123。
+    - FY-83的40、70、300 N使用三个vacuumThrustN assertion。
+    - Ariane 5 US-C的6×400 N使用unitCount=6和unitVacuumThrustN=400。
+
+29. 表1.9推进剂组合建模：
+    - 表1.9每一行建成PropellantCombination individual，共13个。
+    - 声明object feature：
+      combinationUsesOxidizer：
+        PropellantCombination → Oxidizer
+      combinationUsesFuel：
+        PropellantCombination → Fuel
+    - 声明data feature：
+      mixtureRatio：
+        PropellantCombination → Real
+      combustionTemperatureK：
+        PropellantCombination → Real
+      theoreticalVacuumSpecificImpulseMPerS：
+        PropellantCombination → Real
+    - individual的name使用来源中的中文组合名称，例如“液氧-液氢组合”。
+    - 不得只创建氧化剂和燃料名称而省略混合比、燃烧室温度和理论真空比冲。
+
+30. 肼的统一建模：
+    - 来源中的物质名称统一使用name="肼"，不得创建name="单组元肼"。
+    - 单组元发动机通过usesMonopropellant指向“肼”。
+    - 表1.7中的分子量、沸点、冰点和密度，以及表1.8中的能量特性，都附在同一个“肼”individual上。
+    - 当前阶段将“肼”的type设为Monopropellant。
+    - 不得为了表达不同使用方式复制两个“肼”individual。
+
+31. 公式及参数：
+    - 公式（1.1）建成Formula individual。
+    - 公式参数建成FormulaParameter individual，共6个：
+      w_e、gamma、R、T_c_star、p_e、p_in_star。
+    - 声明hasParameter：
+      kind="ref"、owl_kind="object"、
+      owner_type="Formula"、
+      range_type="FormulaParameter"。
+    - 声明以下String类型data feature：
+      symbol、normalizedName、meaning、unitText，
+      owner_type均为FormulaParameter。
+    - 参数的符号、规范名、含义和单位必须来自原文参数表。
+    - 公式的latexExpression、formulaNumber、sourcePage继续分别使用string、string、integer assertion。
+    - 公式反斜杠必须按JSON规则转义。
+
+32. 输出前执行完整自检：
+    - 所有受控英文type和feature都有非空中文label。
+    - 表1.1～1.5中的发动机和明确工况没有遗漏。
+    - 表1.6、表1.7、表1.8、表1.9分别覆盖6、7、6、13行。
+    - 范围、下界、多值和n×v没有被静默省略或错误压成单值。
+    - 每个individual.type引用已声明type。
+    - 每个feature.owner_type引用已声明type。
+    - 每个object feature.range_type引用已声明type。
+    - 每个assertion.property引用已声明且种类匹配的feature。
+    - 每个object assertion.value引用已声明individual。
+    - data feature.range_type只使用Real、Integer、String、Boolean。
+    - assertion.datatype只使用double、integer、string、boolean，不带xsd:前缀。
+    - 不得输出xsd:xsd:double、xsd:decimal或xsd:Decimal。
+    - 所有顶层数组完整输出，JSON字符串、反斜杠、引号和括号完整闭合。
+```
+修改：
+```python
+response = await service.chat(
+    messages=[
+        {"role": "system", "content": BRIDGE_IM_EXTRACTION_SYSTEM_PROMPT},
+        {"role": "user", "content": prompt},
+    ],
+    temperature=0.1,
+    max_tokens=65536,
+    enable_thinking=False,
+)
+```
+同时把超时提高：
+```python
+timeout=1200.0
+```
+
+当前结果：
+- JSON 可以完整解析，不再是 token 截断文件。
+- 19 个类型、49 个属性、98 个个体、468 条断言。
+- 所有类型、属性和个体都有标签。
+- 表1.9的13种推进剂组合已经建模。
+- 公式的6个参数已经创建。
+- FY-81、FY-82 的推力范围已经拆成最小值和最大值。
+- FY-83、FY-84 的多档推力均保留下来。
+- Ariane 5 US-C 的 `6×400 N` 已正确拆成数量6和单台推力400 N。
+- RD-170、YF-73、YF-75 的数量信息已经补充。
+- SysML 中没有 `xsd:xsd:double` 和 `xsd:decimal` 问题。
+- 没有重复ID、重复断言和无效来源ID。
+
+需要修复：
+- 物质类型与使用角色混在一起
+- 两个公式参数引用大小写错误
+- 90%过氧化氢重复建模
