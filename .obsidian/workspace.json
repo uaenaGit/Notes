@@ -73,12 +73,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "02 - School/公司/Git 分支上库流程.md",
+                "file": "01 - HOME/operation tips/pycharm/常用快捷键.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Git 分支上库流程"
+              "title": "常用快捷键"
             }
           }
         ],
@@ -217,13 +217,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "02 - School/公司/Git 分支上库流程.md",
+                "file": "01 - HOME/operation tips/pycharm/常用快捷键.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Git 分支上库流程 的大纲"
+              "title": "常用快捷键 的大纲"
             }
           },
           {
@@ -283,8 +283,8 @@
   },
   "active": "ea1289d5f87c584f",
   "lastOpenFiles": [
-    "02 - School/tutorial/Python/黑马.md",
     "02 - School/公司/Git 分支上库流程.md",
+    "02 - School/tutorial/Python/黑马.md",
     "02 - School/公司/Turtle 语法.md",
     "02 - School/公司/项目/Record.md",
     "01 - HOME/operation tips/pycharm/常用快捷键.md",
