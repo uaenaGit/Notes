@@ -1,12 +1,13 @@
 ---
 created: 2026-07-21T14:17
-updated: 2026-07-24T10:31
+updated: 2026-07-28T16:17
 ---
-# 一、给定pdf生成本体demo（mode=im-bridge）
-## 1、不能直接使用原始PDF文件作为 ontology-builder 的输入，因为原始Pdf字体编码导致乱码、公式和表格结构丢失
+# 一、液体火箭发动机设计%20第一二章%20(蔡国飙等).pdf
+## chapter 1 绪论
+### 1、不能直接使用原始PDF文件作为 ontology-builder 的输入，因为原始Pdf字体编码导致乱码、公式和表格结构丢失
 注意：就算是原生 PDF，也会存在页眉页脚、图表、公式无法正常提取的问题，先转成 md 人工清洗再生成本体，是更稳妥的工程方案；
 
-## 2、Invalid JSON: EOF while parsing a value at line 1 column 0 \[type=json_invalid, input_value='', input_type=str]
+### 2、Invalid JSON: EOF while parsing a value at line 1 column 0 \[type=json_invalid, input_value='', input_type=str]
 ![image.png](https://cdn.jsdelivr.net/gh/uaenaGit/image-host@main/images20260721142003764.png)
 
 也就是说解析器收到的只有空白字符，并不是“返回了一段格式错误的JSON”。
@@ -46,7 +47,7 @@ class BridgeIMExtractor:
 ![image.png](https://cdn.jsdelivr.net/gh/uaenaGit/image-host@main/images20260721143929223.png)
 
 
-## 3、RuntimeError: DeepSeek request failed: LLM Error:
+### 3、RuntimeError: DeepSeek request failed: LLM Error:
 ![image.png](https://cdn.jsdelivr.net/gh/uaenaGit/image-host@main/images20260721142636812.png)
 修改`timeout=600.0`，延长超时时间
 ![image.png](https://cdn.jsdelivr.net/gh/uaenaGit/image-host@main/images20260721142929029.png)
@@ -54,7 +55,7 @@ class BridgeIMExtractor:
 ![image.png](https://cdn.jsdelivr.net/gh/uaenaGit/image-host@main/images20260721143838514.png)
 生成的sysml在语法和结构转换上没有明显错误，重视反映了JSON，但是LLM生成的JSON不够完整。
 ![image.png](https://cdn.jsdelivr.net/gh/uaenaGit/image-host@main/images20260721154035082.png)
-## 4、修改`prompts`：BRIDGE_IM_EXTRACTION_SYSTEM_PROMPT
+### 4、修改`prompts`：BRIDGE_IM_EXTRACTION_SYSTEM_PROMPT
 ```
 8. 本任务处理液体火箭发动机领域，RocketEngine 下应建立 LiquidRocketEngine，
    来源中的具体发动机型号应作为 LiquidRocketEngine 个体。
@@ -107,7 +108,7 @@ class BridgeIMExtractor:
 结果：
 ![image.png](https://cdn.jsdelivr.net/gh/uaenaGit/image-host@main/images20260722095636949.png)
 修改提示词后，模型开始为大量发动机生成 `assertions`，输出从原来的“70个空个体”变成“70个带多个事实的个体”，所以16384 Token仍然可能不足。
-## 5、Invalid JSON: EOF while parsing a string at line 231 column 45
+### 5、Invalid JSON: EOF while parsing a string at line 231 column 45
 
 提高输出上限`max_tokens=32768`，`timeout=900.0`，添加报错打印和完善提示词
 ```
@@ -162,7 +163,7 @@ class BridgeIMExtractor:
 26. 所有顶层数组必须完整闭合，即使为空也输出[]；输出结束前检查JSON括号和引号是否闭合。
 ```
 结果：
-### 必须修正1：数据类型不兼容Java bridge
+#### 必须修正1：数据类型不兼容Java bridge
 
 当前SysML声明：
 
@@ -219,7 +220,7 @@ attribute sourcePage : Integer;
 }
 ```
 
-### 必须修正2：单组元发动机被错误建成“使用燃料”
+#### 必须修正2：单组元发动机被错误建成“使用燃料”
 
 当前存在：
 
@@ -273,7 +274,7 @@ FY84 usesMonopropellant singlePushThree
     肼作为单组元推进剂使用时，也必须通过usesMonopropellant关联。
 ```
 
-### 必须修正3：三组元发动机被误当成任务用途
+#### 必须修正3：三组元发动机被误当成任务用途
 
 当前：
 
@@ -321,7 +322,7 @@ PropellantComponentCountCategory
 
 但试验版可以先不建，避免复杂化。
 
-### 必须修正4：部件结构从第二版中消失了
+#### 必须修正4：部件结构从第二版中消失了
 
 上一版至少包含：
 
@@ -362,9 +363,9 @@ Regulator
 29. hasThrustChamber允许0..*，因为部分发动机具有多个推力室。
 ```
 
-### 建议优化项
+#### 建议优化项
 
-#### `shuttleMainEngine`名称不够明确
+##### `shuttleMainEngine`名称不够明确
 
 当前：
 
@@ -380,7 +381,7 @@ ssme hasMissionRole shuttleMainEngine
 spaceShuttleMainPropulsionRole
 ```
 
-#### `hasSupplySystemType`建议限制为0..1
+##### `hasSupplySystemType`建议限制为0..1
 
 当前允许多个：
 
@@ -393,7 +394,7 @@ hasSupplySystemType [0..*]
 ```text
 hasSupplySystemType [0..1]
 ```
-## 6、完善`prompts`
+### 6、完善`prompts`
 ```
 BRIDGE_IM_EXTRACTION_SYSTEM_PROMPT = """你是本体工程专家。你的任务是把自然语言或文档内容抽取为 bridge-aligned IM JSON draft。
 
@@ -490,7 +491,7 @@ BRIDGE_IM_EXTRACTION_SYSTEM_PROMPT = """你是本体工程专家。你的任务�
 2. 表 1.6～1.9 不得因“未被发动机引用”而省略。
 3. 增加范围、多工况和推进剂组合的表达方式。
 4. 补回推力室、燃烧室、喷管及 RD-170/YF-73/YF-75 的组件事实。
-## 7、进一步完善`prompts`
+### 7、进一步完善`prompts`
 ```
 12. 本任务采用“受控 TBox 标识符 + 来源原名 ABox 标识符”的命名策略，以消除第 8 条与领域统一词汇之间的冲突：
     - 第 13、14 条列出的英文 type/feature 名称是预先规定的受控标识符，必须原样使用，不属于模型自行翻译；同时填写对应的中文 label。
@@ -723,7 +724,7 @@ timeout=1200.0
 - 两个公式参数引用大小写错误
 - 90%过氧化氢重复建模
 
-## 8、基本完善，但是出现了关于推进剂供应系统的自主推测，应该忠于原文。
+### 8、基本完善，但是出现了关于推进剂供应系统的自主推测，应该忠于原文。
 完善`prompts`：
 ```
 把之前这段：
@@ -1272,3 +1273,10 @@ BRIDGE_IM_EXTRACTION_SYSTEM_PROMPT = """你是本体工程专家。你的任务�
     - 所有顶层数组完整输出。
     - JSON字符串、反斜杠、引号、方括号和花括号完整闭合。
 ```
+
+### 9、进一步完善提示词
+
+# 二、液体推进剂火箭发动机设计.pdf
+### chapter 1 液体火箭发动机简介
+### 1、OCR后生成的页码混入了其他书籍的页码
+16、17、20、21、22、23
