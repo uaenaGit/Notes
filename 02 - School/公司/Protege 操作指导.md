@@ -1,6 +1,6 @@
 ---
 created: 2026-07-30T11:04
-updated: 2026-07-30T11:05
+updated: 2026-07-30T11:37
 ---
 # Protege本体建模实操指导（面向MBSE/SysMLv2火箭发动机本体）
 > 适用：研0初学者；适配你的火箭发动机本体项目，内容整合了你实操遇到的**开放世界假设DL查询坑点**，可直接作为论文附录/项目技术文档
@@ -38,11 +38,9 @@ updated: 2026-07-30T11:05
 - `DL Query`：描述逻辑推理查询面板
 - `Reasoner`：推理机启动、一致性校验菜单
 
-> 【图片插入位置1】
-> 截图：你的第一张图（DL查询界面总览）
+![20260730-112058.png](https://cdn.jsdelivr.net/gh/uaenaGit/image-host@main/images20260730112456200.png)
+
 > 标注说明：Protege主界面，左侧类层级，右侧DL Query查询面板
-
-
 
 ---
 
@@ -53,8 +51,9 @@ updated: 2026-07-30T11:05
 2. **ABox（断言盒）**：定义实例与实例事实（对应SysML模型实例）
     - 示例：个体`:FY84`、`:ariane5USC`；实例之间的关联`:FY84 :usesMonopropellant :单推三`
 
-> 【图片插入位置2】
-> 截图：你的第三张图（Individuals个体详情页面）
+![20260730-112602.png](https://cdn.jsdelivr.net/gh/uaenaGit/image-host@main/images20260730112625978.png)
+![20260730-112725.png](https://cdn.jsdelivr.net/gh/uaenaGit/image-host@main/images20260730112808101.png)
+
 > 标注说明：ABox实例编辑界面，展示发动机实例的属性断言
 
 
@@ -90,10 +89,10 @@ updated: 2026-07-30T11:05
 ### 4.2 案例1：查询带单组元推进剂的液体发动机
 查询语句：
 ```dl
-:LiquidRocketEngine and :usesMonopropellant some :Propellant and :hasSupplySystemType some :SupplySystemType
+:LiquidRocketEngine and :usesMonopropellant some :Propellant
 ```
-> 【图片插入位置3】
-> 截图：你的第二张图（成功返回6条发动机实例）
+
+![20260730-112845.png](https://cdn.jsdelivr.net/gh/uaenaGit/image-host@main/images20260730112857770.png)
 
 
 
@@ -117,8 +116,8 @@ updated: 2026-07-30T11:05
 1. 手动添加【Negative object property assertions】负属性断言；适合小规模手动建模，自动化导出本体不推荐。
 2. 放弃DL Query，使用SPARQL查询（工程首选方案）。
 
-> 【图片插入位置4】
-> 截图：第一张图（not查询返回0实例界面）
+![20260730-112956.png](https://cdn.jsdelivr.net/gh/uaenaGit/image-host@main/images20260730113021828.png)
+
 
 
 
@@ -153,11 +152,38 @@ WHERE {
 ### 6.1 一致性校验
 启动HermiT推理机后，若本体存在逻辑冲突（实例同时属于两个互斥类、约束矛盾），界面自动标红告警。
 
-### 6.2 导出Turtle文件（和Python项目兼容）
-操作路径：`File → Export as`
-文件格式选择：`Turtle (.ttl)`
-> 保证导出文件可以直接被你的`ontology-builder`项目读取，编码统一使用UTF-8。
+### 6.2 导出 Turtle 文件（和 Python ontology-builder 项目兼容）
+> ⚠️注意：Protege 5.5.0 / 5.6.3 版本菜单中**不存在 Export as**，标准导出功能
+> 
+ 
+使用 `Save as...`
+操作路径：`File → Save as...`
+1. 点击 `Save as...`
+2. 在弹窗格式下拉列表，选择 **Turtle Syntax**
+3. 自定义文件路径，文件名后缀填写 `.ttl`
+4. 确认保存
 
+功能说明：
+仅导出**原始显式公理**（你建模/程序生成的本体内容），不会自动追加推理产生的隐式结论。生成文件 UTF-8 编码，可直接给 Python ontology-builder 加载读写。
+>【图片插入位置】后续你可以截图保存弹窗界面放这里
+
+### 6.3 导出推理公理（Export inferred axioms as ontology）
+操作路径：`File → Export inferred axioms as ontology`
+
+
+功能说明：
+`Save as...` 仅保存用户编写的显式公理；该功能会将HermiT推理机得到的全部隐式推理结论转化为显式三元组，输出一份推理完备的全新本体文件。
+适用场景：下游工具不支持OWL推理，需要预计算、固化实例分类结果。
+⚠️强制规范：**禁止覆盖原始源本体文件，务必另存为全新文件名**，否则无法区分人工定义公理与自动推理公理，导致后续本体迭代维护混乱。
+
+**最简操作指南**
+1. 日常导出ttl给Python代码用：`File → Save as...` → `Turtle Syntax` → 保存 xxx.ttl
+2. 需要把推理结果全部固化到文件（特殊需求）：`File → Export inferred axioms as ontology`
+
+**常见踩坑提醒**
+Save as 弹出格式列表：
+✅ 选：**Turtle Syntax**
+不要选 RDF/XML（owl格式），可读性差，和你的项目工作流不匹配。
 ## 7 高频问题汇总
 1. Q：本体IRI无法浏览器访问，是否配置错误？
 A：IRI只是标识符，**无需可访问**；可解析URI属于进阶拓展需求，建模阶段非必需。
@@ -175,8 +201,3 @@ A：Python程序输出`.ttl`时强制指定`encoding="utf-8"`。
 → 迭代优化TBox类与属性定义
 
 ---
-
-## 使用说明
-1. 文档中所有 `【图片插入位置】`，直接在对应位置粘贴截图；我已经按顺序匹配你提供的3张截图。
-2. 如果你需要 **纯Markdown版本（Obsidian直接导入）**，我可以重新输出；
-3. 需要我把这份文档精简为「论文附录精简版」，或者扩充一段实验描述直接放进正文吗？
