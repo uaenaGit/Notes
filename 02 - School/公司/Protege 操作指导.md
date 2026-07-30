@@ -1,6 +1,6 @@
 ---
 created: 2026-07-30T11:04
-updated: 2026-07-30T11:37
+updated: 2026-07-30T11:38
 ---
 # Protege本体建模实操指导（面向MBSE/SysMLv2火箭发动机本体）
 > 适用：研0初学者；适配你的火箭发动机本体项目，内容整合了你实操遇到的**开放世界假设DL查询坑点**，可直接作为论文附录/项目技术文档
@@ -153,9 +153,7 @@ WHERE {
 启动HermiT推理机后，若本体存在逻辑冲突（实例同时属于两个互斥类、约束矛盾），界面自动标红告警。
 
 ### 6.2 导出 Turtle 文件（和 Python ontology-builder 项目兼容）
-> ⚠️注意：Protege 5.5.0 / 5.6.3 版本菜单中**不存在 Export as**，标准导出功能
-> 
- 
+
 使用 `Save as...`
 操作路径：`File → Save as...`
 1. 点击 `Save as...`
@@ -165,10 +163,11 @@ WHERE {
 
 功能说明：
 仅导出**原始显式公理**（你建模/程序生成的本体内容），不会自动追加推理产生的隐式结论。生成文件 UTF-8 编码，可直接给 Python ontology-builder 加载读写。
->【图片插入位置】后续你可以截图保存弹窗界面放这里
+![image.png](https://cdn.jsdelivr.net/gh/uaenaGit/image-host@main/images20260730113800224.png)
 
 ### 6.3 导出推理公理（Export inferred axioms as ontology）
 操作路径：`File → Export inferred axioms as ontology`
+![image.png](https://cdn.jsdelivr.net/gh/uaenaGit/image-host@main/images20260730113732927.png)
 
 
 功能说明：
