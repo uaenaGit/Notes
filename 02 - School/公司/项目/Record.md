@@ -1,6 +1,6 @@
 ---
 created: 2026-07-21T14:17
-updated: 2026-07-30T16:08
+updated: 2026-07-30T16:11
 ---
 # 一、液体火箭发动机设计%20第一二章%20(蔡国飙等).pdf
 ## chapter 1 绪论
@@ -1942,7 +1942,7 @@ python -m ontology_builder_agent from-file `
 ```
 
 ![image.png](https://cdn.jsdelivr.net/gh/uaenaGit/image-host@main/images20260730160434215.png)
-`*_bp.*`是先使用`--dry-run`模式生成的`im.json`和`sysml`，再通过命令[[操作命令]]
+`*_bp.*`是先使用`--dry-run`模式生成的`im.json`和`sysml`，再通过命灵[[操作命令#三、sysml 2 ttl]]转成ttl所得。
 # 二、液体推进剂火箭发动机设计.pdf
 ### chapter 1 液体火箭发动机简介
 ### 1、OCR后生成的页码混入了其他书籍的页码
