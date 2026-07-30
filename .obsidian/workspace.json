@@ -73,12 +73,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "02 - School/公司/Git 分支上库流程.md",
+                "file": "02 - School/公司/项目/ontology-builder/操作命令.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Git 分支上库流程"
+              "title": "操作命令"
             }
           }
         ],
@@ -217,13 +217,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "02 - School/公司/Git 分支上库流程.md",
+                "file": "02 - School/公司/项目/ontology-builder/操作命令.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Git 分支上库流程 的大纲"
+              "title": "操作命令 的大纲"
             }
           },
           {
@@ -283,6 +283,7 @@
   },
   "active": "ea1289d5f87c584f",
   "lastOpenFiles": [
+    "02 - School/公司/Git 分支上库流程.md",
     "02 - School/公司/Protege 操作指导.md",
     "01 - HOME/operation tips/obsidian/常用快捷键.md",
     "02 - School/公司/Turtle 语法.md",
@@ -296,7 +297,6 @@
     "01 - HOME/operation tips/vscode/常用快捷键.md",
     "02 - School/公司/项目/ontology-builder/prompts 优化.md",
     "01 - HOME/operation tips/pycharm/常用快捷键.md",
-    "02 - School/公司/Git 分支上库流程.md",
     "02 - School/tutorial/Python/黑马.md",
     "02 - School/公司/本体.md",
     "03 - Books/未命名.md",
