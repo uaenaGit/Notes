@@ -1,8 +1,8 @@
 ---
 created: 2026-07-31T11:01
-updated: 2026-07-31T16:12
+updated: 2026-07-31T16:31
 ---
-# `build_ontology` 函数详解
+# 一、`build_ontology` 函数详解
 
 > 本篇假定读者对 Python 异步编程、类型注解等特性不熟悉，会在关键节点展开解释。
 
@@ -113,7 +113,7 @@ data = _ensure_colors(data)
 data = _validate_references(data)
 ```
 
-LLM 可能生成指向不存在实例的 relations（比如 `from: "FOO"` 但 `FOO` 这个实例根本不存在），或者实例的 `type` 指向一个不存在的 `ontoType`。这个函数：
+([[#二、`_validate_references(data dict)` 解析]])LLM 可能生成指向不存在实例的 relations（比如 `from: "FOO"` 但 `FOO` 这个实例根本不存在），或者实例的 `type` 指向一个不存在的 `ontoType`。这个函数：
 
 - 过滤掉无效的 relations（`from` 或 `to` 在实例 ID 集合中找不到的）
 - 把 `type` 无效的实例修正为第一个有效类型
@@ -126,7 +126,7 @@ data["datatypeProperties"] = dpp
 data["constraints"] = axioms
 ```
 
-这个函数遍历所有实例的 `props`（属性字典），做两件事：
+这个函数()遍历所有实例的 `props`（属性字典），做两件事：
 
 **推导 `datatypeProperties`**：从属性值中推断属性类型。比如值是 `"5000 kN"`，它识别出 `5000` 是整数，单位为 `kN`，类型就是 `Integer`。值是 `"100~300 MHz"`，识别出这是一个范围，类型是 `Real`。它还记录每个属性适用于哪些类型（`appliesTo`）。
 
@@ -240,7 +240,7 @@ build_ontology(source_text)
 - **`temperature=0.1`**：极低温度保证输出结构稳定。本体抽取是确定性任务，不需要创造性。
 - **`*` 强制关键字参数**：`include_props` 只能按关键字传递，防止调用者搞混参数顺序。
 
-# `_validate_references(data: dict)` 解析
+# 二、`_validate_references(data: dict)` 解析
 ## 整体功能定位
 这是一份**本体实例数据的合法性校验+自动修复函数**。
 针对结构化数据（本体类型ontoTypes、实例instances、关联关系relations）做两件核心事：
