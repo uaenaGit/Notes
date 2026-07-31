@@ -1,8 +1,8 @@
 ---
 created: 2026-07-31T11:01
-updated: 2026-07-31T16:31
+updated: 2026-07-31T17:41
 ---
-# 一、`build_ontology` 函数详解
+# `build_ontology` 函数详解
 
 > 本篇假定读者对 Python 异步编程、类型注解等特性不熟悉，会在关键节点展开解释。
 
@@ -113,7 +113,7 @@ data = _ensure_colors(data)
 data = _validate_references(data)
 ```
 
-([[#二、`_validate_references(data dict)` 解析]])LLM 可能生成指向不存在实例的 relations（比如 `from: "FOO"` 但 `FOO` 这个实例根本不存在），或者实例的 `type` 指向一个不存在的 `ontoType`。这个函数：
+([[#`_validate_references(data dict)` 解析]])LLM 可能生成指向不存在实例的 relations（比如 `from: "FOO"` 但 `FOO` 这个实例根本不存在），或者实例的 `type` 指向一个不存在的 `ontoType`。这个函数：
 
 - 过滤掉无效的 relations（`from` 或 `to` 在实例 ID 集合中找不到的）
 - 把 `type` 无效的实例修正为第一个有效类型
@@ -126,7 +126,7 @@ data["datatypeProperties"] = dpp
 data["constraints"] = axioms
 ```
 
-这个函数()遍历所有实例的 `props`（属性字典），做两件事：
+这个函数([[#`derive_datatype_properties_and_constraints` 代码详解]])遍历所有实例的 `props`（属性字典），做两件事：
 
 **推导 `datatypeProperties`**：从属性值中推断属性类型。比如值是 `"5000 kN"`，它识别出 `5000` 是整数，单位为 `kN`，类型就是 `Integer`。值是 `"100~300 MHz"`，识别出这是一个范围，类型是 `Real`。它还记录每个属性适用于哪些类型（`appliesTo`）。
 
@@ -240,7 +240,7 @@ build_ontology(source_text)
 - **`temperature=0.1`**：极低温度保证输出结构稳定。本体抽取是确定性任务，不需要创造性。
 - **`*` 强制关键字参数**：`include_props` 只能按关键字传递，防止调用者搞混参数顺序。
 
-# 二、`_validate_references(data: dict)` 解析
+# `_validate_references(data: dict)` 解析
 ## 整体功能定位
 这是一份**本体实例数据的合法性校验+自动修复函数**。
 针对结构化数据（本体类型ontoTypes、实例instances、关联关系relations）做两件核心事：
@@ -325,15 +325,141 @@ Python字典是引用传递，函数外部的原始字典也会被改动。
 
 最终 `data["relations"]` 只剩第一条。
 
-# 边界情况梳理
+## 边界情况梳理
 1. `ontoTypes` 为空列表 → `valid_types`为空，不会执行type自动修复（防止强行赋值）
 2. `instances` 为空 → `inst_ids`为空，**所有relations全部清空**
 3. relation缺少`from` 或者 `to` 字段 → `r.get()`得到`None`，必然不在inst_ids，这条关系被过滤
 4. 实例type大小写不一致（`engine` vs `Engine`）：代码不会自动兼容，需要额外统一大小写
 
-# 潜在优化点（你后续开发可以参考）
+## 潜在优化点（你后续开发可以参考）
 1. 不要使用set存放valid_types，解决`list(valid_types)[0]`顺序随机问题；
 2. 非法type不要静默覆盖，可以增加日志告警，方便排查脏数据；
 3. 区分「原地修改」，如果不想改动原始入参，可以先深拷贝一份data再处理。
 
 如果你需要，我可以写一段测试代码，复制就能运行，直观看到修复前后的数据变化。
+
+# `derive_datatype_properties_and_constraints` 代码详解
+## 一、函数整体功能
+该函数面向本体工程（ABox/TBox）场景，**扫描实例列表中的自定义属性props，自动反向派生两类数据**：
+1. `datatypeProperties`：数据属性定义（归属TBox术语层，描述属性元信息）
+2. `constraints`：实例属性约束公理（归属ABox实例层，描述每个实体的属性取值）
+
+调用时机：`store.set_abox()`、`build_abox()` 流程收尾。
+业务价值：仅导入实例数据（ABox）时，无需提前人工建模属性定义，程序自动提取生成数据属性。
+
+入参说明：
+- `instances`：实例字典列表，每个实例包含id、type、props等字段
+- `valid_types`：合法本体类集合；传`None`代表纯ABox场景，不校验实例类型
+
+返回：`(datatypeProperties, constraints)`
+
+## 二、逐段源码解析
+```python
+def derive_datatype_properties_and_constraints(instances: list[dict], valid_types: set[str] | None = None) -> tuple[list[dict], list[dict]]:
+    """从实例 props 推导 datatype property + instance axiom。
+
+    返回 (datatypeProperties, constraints) 两份列表。
+    valid_types 为 None 时不限制 inst.type（ABox-only 上下文中所有 instance 视为合法）。
+    用于 store.set_abox() 自动派生、build_abox() 收尾时被调用。
+    """
+    dp_map: dict[str, dict] = {}   # 临时聚合所有推导出来的数据属性，key=属性名
+    constraints: list[dict] = []   # 存放所有实例属性约束
+    valid_types = valid_types or set() # 空兼容：外部传入None则初始化为空集合
+```
+
+```python
+    for inst in instances:
+        raw_type = inst.get("type")
+        # 判定当前实例类型是否合法
+        # 无合法类型限制 或者 实例type在合法集合内 → 保留类型；否则置为None
+        inst_type = raw_type if (not valid_types or raw_type in valid_types) else None
+```
+- 如果`inst_type = None`：后续不会把该类型加入属性的`appliesTo`（属性不认为适用于该非法类）
+
+```python
+        # 遍历实例下所有自定义属性 props
+        for name, raw_value in (inst.get("props") or {}).items():
+            # 工具函数：拆分【数值文本】和【单位】
+            # 示例："10~20 MPa" → value="10~20", unit="MPa"
+            value, unit = _split_value_unit(raw_value)
+            if not value:
+                continue # 无有效数值，跳过该属性
+
+            # 工具函数：自动推断属性基础数据类型（int/float/string）
+            ptype = _infer_property_type(raw_value)
+```
+
+```python
+            # setdefault机制：属性不存在则新建定义；已存在直接取出旧对象
+            dp = dp_map.setdefault(name, {"name": name, "type": ptype, "unit": unit, "appliesTo": set()})
+            # 实例类型合法，将类加入该属性适用范围集合
+            if inst_type:
+                dp["appliesTo"].add(inst_type)
+```
+> ⚠️ 关键隐患：`setdefault`仅首次创建对象，**后续同名属性出现不同unit/ptype不会更新、不会冲突告警**。
+> 例如先遇到`pressure=10 MPa`，后遇到`pressure=200 bar`，dp内unit永远保留MPa，bar直接被忽略。
+
+```python
+            # 正则匹配区间符号 ~ - ～ —，区分精确值 / 区间约束
+            operator = "range" if re.search(r"[~\-～—]", value) else "="
+            # 生成一条实例约束公理
+            constraints.append({
+                "subject": inst["id"],    # 主体：实例唯一ID
+                "property": name,         # 属性名称
+                "operator": operator,     # = 精确值 | range 区间
+                "value": value,           # 剥离单位后的数值文本
+                "unit": unit,             # 单位
+            })
+```
+
+```python
+    # 将dp_map字典转为标准列表结构，appliesTo集合排序，方便序列化JSON
+    datatype_properties = [
+        {"name": dp["name"], "type": dp["type"], "unit": dp["unit"], "appliesTo": sorted(dp["appliesTo"])}
+        for dp in dp_map.values()
+    ]
+    return datatype_properties, constraints
+```
+
+## 三、核心字段语义说明
+### datatypeProperties（数据属性定义）
+- `name`：属性标识名
+- `type`：自动推断的数据类型
+- `unit`：首次出现属性时捕获的单位
+- `appliesTo`：**该属性能够作用的本体类集合**
+
+### constraints（实例约束）
+每一条代表：某个实例拥有某属性，以及对应的取值条件。
+
+## 四、现存工程缺陷
+1. **单位/类型冲突静默处理**
+同名属性出现多种单位、多种数据类型时，无日志、无报错，仅保留第一条定义，容易造成本体建模不一致。
+2. **区间识别能力有限**
+仅识别 `~、-` 符号，无法识别 `>、<、≥` 这类不等式约束。
+3. **无单位换算逻辑**
+同一物理量混杂MPa / bar等不同单位时，不会自动标准化，后续数据查询、对比存在障碍。
+
+## 五、可选改造方向
+### 方案1：增加冲突检测（最小改动，推荐过渡使用）
+移除`setdefault`，手动判断属性是否存在，对比新旧unit、type，发现冲突输出警告日志。
+### 方案2：严格校验模式
+检测冲突直接抛出异常，阻断导入，强制上游清洗数据。
+### 方案3：单位标准化（长期方案）
+基于ISO80000体系构建单位库，自动识别、换算至基准单位，约束同时保存原始值与标准化数值。
+
+## 六、简易业务示例
+### 输入实例
+```python
+instances = [
+    {"id": "eng01", "type": "Engine", "props": {"pressure": "10~20 MPa"}},
+    {"id": "eng02", "type": "Engine", "props": {"pressure": "15 MPa"}},
+    {"id": "pump01", "type": "Pump", "props": {"pressure": "5~8 MPa"}}
+]
+valid_types = {"Engine", "Pump"}
+```
+### 输出结果
+1. datatypeProperties 生成`pressure`属性：
+`appliesTo: ["Engine", "Pump"], unit:"MPa"`
+2. constraints 生成3条约束，operator分别为range、=、range。
+
+如果你需要，我可以输出**加入单位冲突告警的改造后完整代码**。
