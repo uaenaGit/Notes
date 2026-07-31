@@ -1,6 +1,6 @@
 ---
 created: 2026-07-31T11:00
-updated: 2026-07-31T11:11
+updated: 2026-07-31T13:48
 ---
 # `build_ontology` 函数详解
 
@@ -79,7 +79,7 @@ raw = await llm_service.chat(messages, temperature=0.1, max_tokens=max_tokens)
 - **`temperature=0.1`**：控制 LLM 输出的"随机性"。0 到 1 之间，越低越确定（每次输出几乎一样），越高越有创造性。本体抽取是确定性任务，所以用 0.1 这个极低值。
 - **`raw`**：LLM 返回的原始文本字符串。
 
-**`llm_service.chat()` 内部做了什么？** 它在 `src/ontology_usage/llm_service.py:85`，通过 HTTP POST 请求调用 MiniMax 大模型 API（`/chat/completions` 端点），需要提前配置 `MINIMAX_API_KEY` 环境变量。返回的是 LLM 生成的完整文本。
+**`llm_service.chat()` 内部做了什么？**[[llm_service.py#`async def chat` 函数详解]] 它在 `src/ontology_usage/llm_service.py:85`，通过 HTTP POST 请求调用 MiniMax 大模型 API（`/chat/completions` 端点），需要提前配置 `MINIMAX_API_KEY` 环境变量。返回的是 LLM 生成的完整文本。
 
 ### 步骤 3：从 LLM 输出中提取 JSON
 
