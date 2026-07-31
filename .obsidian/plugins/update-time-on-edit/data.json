@@ -218,11 +218,6 @@
     "02 - School/公司/入职指南/Question.md": "85a087189d3254a06fcb21d6d20d7920f29c120b8908dcd22ab901db041a1549",
     "02 - School/公司/项目/ontology-builder/相关概念.md": "aca56ed070429ed8e340f6b4ce58a266dfe5471f0f159018cd1e2c12a6c29bea",
     "01 - HOME/operation tips/notepad++/常用快捷键.md": "653cefc8fac09dfc66234c74894105f7c1e8d5f3b523cd3ac01e8785ca5991b1",
-    "02 - School/公司/项目/ontology-builder/__main__.py(src-ontology_builder_agent).md": "362457c50bb721c0772a0960654d0bc50214c4809067d7685beca71b6787a2fb",
-    "02 - School/公司/项目/ontology-builder/agent.py(src-ontology_builder_agent).md": "a921bf632fe2b9d881120c7d74e3827dd0c5bb8e6acee439303a15cf42761ce2",
-    "02 - School/公司/项目/ontology-builder/extractor.py(src-ontology_builder_agent).md": "e8e6825b16bf9619cdb66664100a9c126abb309daa91c477709a10f35bdf9117",
-    "02 - School/公司/项目/ontology-builder/im.py(src-ontology_builder_agent).md": "c0c9d85a4168d520c7447475887194d17ccc983b246f9535923b76b07c4eb261",
-    "02 - School/公司/项目/ontology-builder/bridge_im.py(src-ontology_builder_agent).md": "123fee61ed5ee682b5e9b3809b936e240c517b37c4dbd703e66d4246d77f8f60",
     "01 - HOME/operation tips/Python/常用命令.md": "dfc94ec1358ac553ed5a5bcf7be7127ec03d8ea87434555968fcdac02fe149df",
     "01 - HOME/records/Python编程：从入门到实践（第2版）.md": "a8089a96e30c46a89d5ee676b5e7ee09f865737de688f3eb6816374813c4d084",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/P1 第一讲.md": "a65e5bc3d66dec71975bbe0ace72600be5a576b0e09ac43f79b72b33f9531d15",
@@ -237,6 +232,13 @@
     "02 - School/公司/tmp.md": "c88062283704f38b4278989671d76185ae04657e19f87f2f7c254875c698a7a5",
     "02 - School/公司/项目/ontology-builder/操作命令.md": "e6b8bbe93862e1e9c14b247d30e7cb2f52e68b90b27e01eca043d799b237718f",
     "02 - School/公司/项目/PDF OCR.md": "ba5b1b4b8f592da76497db5773541273bdb50251ac0bd4fc752cd26895da69af",
-    "02 - School/公司/Protege 操作指导.md": "0e63e74255e8524f99980a91e3c710757778b21a7e63e567fa0d7406df59584d"
+    "02 - School/公司/Protege 操作指导.md": "0e63e74255e8524f99980a91e3c710757778b21a7e63e567fa0d7406df59584d",
+    "02 - School/公司/项目/ontology-usage/app.py.md": "fd609d0d1612b12314671b48e9d774bdcf8db6f67431714ebb7e6a6ce872114f",
+    "02 - School/公司/项目/ontology-builder/src/im.py.md": "6647d91ef120f4680ed9e26c73ecaa6de7ef34235e3b98211b2ef1b6d6462dec",
+    "02 - School/公司/项目/ontology-builder/src/agent.py.md": "f2de06b660d1f531585059e433cb376c51f016cb5e4f781a8ffc02737700ca4d",
+    "02 - School/公司/项目/ontology-builder/src/bridge_im.py.md": "123fee61ed5ee682b5e9b3809b936e240c517b37c4dbd703e66d4246d77f8f60",
+    "02 - School/公司/项目/ontology-builder/src/extractor.py.md": "e8e6825b16bf9619cdb66664100a9c126abb309daa91c477709a10f35bdf9117",
+    "02 - School/公司/项目/ontology-builder/src/__main__.py.md": "362457c50bb721c0772a0960654d0bc50214c4809067d7685beca71b6787a2fb",
+    "02 - School/公司/项目/ontology-usage/llm_service.py.md": "7858ed42ec922340c66acfd99d81aed9ab32e8a0d288e0659d80e29b50c1eeb6"
   }
 }

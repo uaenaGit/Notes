@@ -1,6 +1,6 @@
 ---
 created: 2026-07-09T15:10
-updated: 2026-07-21T16:36
+updated: 2026-07-31T11:22
 ---
 
 # `ontology-builder/src/ontology_builder_agent/im.py`

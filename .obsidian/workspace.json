@@ -87,12 +87,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "02 - School/公司/Git 分支上库流程.md",
+                "file": "02 - School/公司/项目/ontology-usage/llm_service.py.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Git 分支上库流程"
+              "title": "llm_service.py"
             }
           },
           {
@@ -245,13 +245,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "02 - School/公司/项目/Record.md",
+                "file": "02 - School/公司/项目/ontology-usage/llm_service.py.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Record 的大纲"
+              "title": "llm_service.py 的大纲"
             }
           },
           {
@@ -285,7 +285,7 @@
             }
           }
         ],
-        "currentTab": 6
+        "currentTab": 4
       }
     ],
     "direction": "horizontal",
@@ -311,9 +311,21 @@
   },
   "active": "88ad6a5a620f300d",
   "lastOpenFiles": [
+    "02 - School/公司/项目/ontology-usage/app.py.md",
+    "02 - School/公司/项目/ontology-usage/llm_service.py.md",
+    "02 - School/公司/项目/ontology-builder/相关概念.md",
+    "02 - School/公司/项目/ontology-builder/src/__main__.py.md",
+    "02 - School/公司/项目/ontology-builder/src/agent.py.md",
+    "02 - School/公司/项目/ontology-builder/src/extractor.py.md",
+    "02 - School/公司/项目/ontology-builder/src/im.py.md",
+    "02 - School/公司/项目/ontology-builder/src/bridge_im.py.md",
+    "02 - School/公司/项目/ontology-builder/src",
+    "02 - School/公司/项目/ontology-usage/onyology_service.py.md",
+    "02 - School/公司/项目/ontology-usage",
+    "01 - HOME/operation tips/vscode/常用快捷键.md",
+    "02 - School/公司/Git 分支上库流程.md",
     "02 - School/公司/项目/Record.md",
     "02 - School/公司/项目/ontology-builder/操作命令.md",
-    "02 - School/公司/Git 分支上库流程.md",
     "02 - School/公司/Protege 操作指导.md",
     "01 - HOME/operation tips/obsidian/常用快捷键.md",
     "02 - School/公司/Turtle 语法.md",
@@ -322,31 +334,19 @@
     "02 - School/tutorial/李宏毅/生成式人工智能导论/P1 第一讲.md",
     "02 - School/实验室/刘玉生老师.md",
     "02 - School/公司/tmp.md",
-    "01 - HOME/operation tips/vscode/常用快捷键.md",
     "02 - School/公司/项目/ontology-builder/prompts 优化.md",
     "01 - HOME/operation tips/pycharm/常用快捷键.md",
     "02 - School/tutorial/Python/黑马.md",
     "02 - School/公司/本体.md",
     "03 - Books/未命名.md",
-    "02 - School/公司/SysML v2 语法速查.md",
-    "02 - School/公司/JSON 学习笔记.md",
-    "02 - School/公司/IM JSON ↔ SysML v2 Text ↔ OWL(Turtle).md",
-    "01 - HOME/records/Python编程：从入门到实践（第2版）.md",
-    "02 - School/公司/Pydantic 讲解.md",
-    "02 - School/公司/Ark-Agent-Plan.md",
-    "01 - HOME/operation tips/Python/常用命令.md",
-    "02 - School/公司/项目/ontology-builder/agent.py(src-ontology_builder_agent).md",
-    "02 - School/公司/项目/ontology-builder/extractor.py(src-ontology_builder_agent).md",
     "02 - School/公司/Paper",
     "01 - HOME/operation tips/Python",
     "02 - School/tutorial/李宏毅/生成式人工智能导论",
     "02 - School/tutorial/李宏毅",
-    "02 - School/公司/项目/ontology-builder/未命名",
     "ontology-builder/src/ontology_builder_agent",
     "ontology-builder/src",
     "ontology-builder",
     "01 - HOME/operation tips/notepad++",
-    "02 - School/公司/项目/sysml-owl-bridge",
     "Pasted Image 20260626183739_688.png",
     "Pasted Image 20260312194616_170.png",
     "Pasted Image 20260312194605_776.png",
