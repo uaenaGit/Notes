@@ -157,12 +157,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "02 - School/公司/项目/ontology-usage/onyology_service.py.md",
+                "file": "02 - School/公司/本体.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "onyology_service.py"
+              "title": "本体"
             }
           }
         ],
@@ -303,7 +303,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "02 - School/公司/项目/ontology-usage/onyology_service.py.md",
+                "file": "02 - School/公司/本体.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -369,8 +369,9 @@
   },
   "active": "2c1bcf6484a16f9a",
   "lastOpenFiles": [
-    "02 - School/tutorial/李宏毅/生成式人工智能导论/P1 第一讲.md",
+    "02 - School/公司/IM JSON ↔ SysML v2 Text ↔ OWL(Turtle).md",
     "02 - School/公司/项目/ontology-usage/onyology_service.py.md",
+    "02 - School/tutorial/李宏毅/生成式人工智能导论/P1 第一讲.md",
     "02 - School/公司/项目/ontology-builder/操作命令.md",
     "01 - HOME/operation tips/obsidian/常用快捷键.md",
     "02 - School/公司/项目/ontology-usage/app.py.md",
@@ -396,7 +397,6 @@
     "01 - HOME/operation tips/pycharm/常用快捷键.md",
     "02 - School/tutorial/Python/黑马.md",
     "02 - School/公司/本体.md",
-    "03 - Books/未命名.md",
     "02 - School/公司/Paper",
     "01 - HOME/operation tips/Python",
     "02 - School/tutorial/李宏毅/生成式人工智能导论",
