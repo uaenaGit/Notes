@@ -150,9 +150,21 @@
               "icon": "lucide-file",
               "title": "操作命令"
             }
+          },
+          {
+            "id": "2c1bcf6484a16f9a",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.13.4"
+              },
+              "icon": "lucide-book-up",
+              "title": "版本说明 1.13.4"
+            }
           }
         ],
-        "currentTab": 8
+        "currentTab": 10
       }
     ],
     "direction": "vertical"
@@ -172,7 +184,9 @@
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical",
-                "autoReveal": false
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
               },
               "icon": "lucide-folder-closed",
               "title": "文件列表"
@@ -293,7 +307,7 @@
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "onyology_service.py 的大纲"
+              "title": "大纲"
             }
           },
           {
@@ -351,7 +365,7 @@
       "mermaid-tools:Open Mermaid Toolbar": false
     }
   },
-  "active": "ad6a219d253361d8",
+  "active": "2c1bcf6484a16f9a",
   "lastOpenFiles": [
     "02 - School/公司/项目/ontology-usage/app.py.md",
     "02 - School/公司/项目/ontology-usage/llm_service.py.md",

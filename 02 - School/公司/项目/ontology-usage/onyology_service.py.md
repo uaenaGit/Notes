@@ -1,6 +1,6 @@
 ---
 created: 2026-07-31T11:01
-updated: 2026-07-31T17:41
+updated: 2026-07-31T18:08
 ---
 # `build_ontology` 函数详解
 
@@ -463,3 +463,143 @@ valid_types = {"Engine", "Pump"}
 2. constraints 生成3条约束，operator分别为range、=、range。
 
 如果你需要，我可以输出**加入单位冲突告警的改造后完整代码**。
+
+# infer_type_relations 代码详解
+## 一、函数整体功能
+这是本体建模自动化推导工具，**通过扫描实例之间的关系，反向推理出类与类之间的 `kind-of(subClassOf 子类)` 层级关系**。
+
+业务场景：
+用户只录入了实例（ABox）之间的从属关系，没有手动定义类层级（TBox）。该函数自动提炼：
+> 实例A kind-of 实例B → 实例A所属类 kind-of 实例B所属类
+
+属于自动化本体构建链路的一环，注释标注为纯函数，无外部副作用。
+
+### 入参说明
+1. `types: list[dict]`：本体类列表，每个类包含 `key`（类唯一标识）
+2. `instances: list[dict]`：实例列表，每个实例包含 `id`、`type`（归属的类）
+3. `relations: list[dict]`：**实例与实例之间的关系列表**
+
+### 返回值
+`list[dict]`：推导出来的【类和类之间】的kind-of子类关系。
+
+## 二、常量说明
+```python
+_KIND_OF_LABELS = {"子类", "is-a", "isa", "kind-of", "kindof", "subclass", "sub class", "类型", "category", "class"}
+```
+关系标签关键词集合。
+只要实例关系的标签包含集合内任意词汇，就认定这条关系表达「从属、子类、is-a」语义。
+支持中英文、多种写法，做兼容匹配。
+
+## 三、逐段源码解析
+```python
+valid_types = {t["key"] for t in types}
+```
+提取所有合法本体类key，存入集合，用于过滤无效类型。
+
+```python
+inst_type = {i["id"]: i["type"] for i in instances if i.get("type") in valid_types}
+```
+构建字典：`实例ID → 实例归属的类key`
+只保留类型在合法类清单内的实例；非法实例直接丢弃。
+
+```python
+seen = set()
+type_rels: list[dict] = []
+```
+- `seen`：去重集合，防止重复生成相同的类层级关系
+- `type_rels`：最终输出的类与类关系结果
+
+```python
+for rel in relations:
+    label = (rel.get("label") or "").lower()
+    # 判断当前实例关系是否属于【is-a/子类】类关系
+    if not any(kw in label for kw in _KIND_OF_LABELS):
+        continue
+```
+遍历每一条**实例之间的关系**：
+1. 获取关系标签，并转小写（忽略大小写）
+2. 如果标签不包含任意一个kind-of关键词 → 直接跳过这条关系
+
+> 示例：标签 `Is-A`、`子类`、`subClass` 都会命中；`connected-to`、`contains` 直接跳过。
+
+```python
+from_type = inst_type.get(rel.get("from"))
+to_type = inst_type.get(rel.get("to"))
+if not from_type or not to_type or from_type == to_type:
+    continue
+```
+- `rel["from"]`：源实例ID
+- `rel["to"]`：目标实例ID
+通过 `inst_type` 查询得到两个实例各自所属的**类**
+
+过滤规则：
+1. 源实例没有合法类型 → 跳过
+2. 目标实例没有合法类型 → 跳过
+3. 源类型 = 目标类型（类自己不能是自己的子类）→ 跳过
+
+```python
+key = (from_type, to_type)
+if key in seen:
+    continue
+seen.add(key)
+type_rels.append({"from": from_type, "to": to_type, "label": "kind-of", "key": 0})
+```
+1. 使用元组 `(源类,目标类)` 作为唯一标识做**去重**
+   多条实例关系推导出同一组类关系时，只生成一条。
+2. 新增一条类层级关系：
+   `from_type kind-of to_type`
+   语义：from_type 是 to_type 的子类（subClassOf）
+
+## 四、完整推演示例
+### 原始数据
+```python
+# 类定义
+types = [{"key":"Engine"}, {"key":"RocketEngine"}]
+# 实例
+instances = [
+    {"id":"eng1", "type":"RocketEngine"},
+    {"id":"eng2", "type":"Engine"}
+]
+# 实例之间的关系
+relations = [
+    {"from":"eng1", "to":"eng2", "label":"is-a"}
+]
+```
+### 推导流程
+1. 关系标签 `is-a` 命中 `_KIND_OF_LABELS`
+2. eng1所属类 = RocketEngine；eng2所属类 = Engine
+3. 生成类关系：`from: RocketEngine, to: Engine, label: kind-of`
+语义：**火箭发动机 是一种 发动机（子类关系）**
+
+## 五、关键规则 & 潜在缺陷
+### ✅ 现有优点
+1. 兼容中英文多种关系标签；
+2. 自动过滤非法类型、自环关系；
+3. 自动去重，避免产生大量重复类层级；
+4. 纯函数，无外部状态，易于单元测试。
+
+### ⚠️ 现存问题（工程注意）
+1. **模糊匹配风险**
+使用 `any(kw in label)` 包含匹配。
+如果标签是 `has-subclass`，里面包含 `subclass` 关键词，会被误识别为kind-of关系。
+> 优化方案：改为精确匹配，或者使用单词边界正则。
+
+2. **单向推导假设**
+固定语义：`实例A is-a 实例B` ⇒ `A的类 kind-of B的类`。
+不能配置方向，如果业务中存在反向语义会出错。
+
+3. `key:0` 写死常量
+输出关系的key固定为0，没有生成唯一标识，后续持久化存储时需要重新处理主键。
+
+4. 不传递推导
+只能直接实例关系推导；无法传递推导（A kind-of B，B kind-of C，不会自动推出A kind-of C）。
+
+## 六、本体视角总结
+这是 **ABox → TBox 自动派生链路** 的一环：
+- ABox：实例 + 实例之间的关系
+- 函数提取is-a类实例关系
+- 向上归纳，生成TBox层面的类继承层级（subClassOf / kind-of）
+和你之前 `derive_datatype_properties_and_constraints` 相互配合：
+一个推导**数据属性**，一个推导**类继承关系**，共同实现「只导入实例，自动生成本体框架」。
+
+如果你需要，我可以提供优化版本代码：修复关键词模糊匹配问题、增加日志输出。
