@@ -1,6 +1,6 @@
 ---
 created: 2026-08-04T10:42
-updated: 2026-08-04T11:19
+updated: 2026-08-04T14:01
 ---
 # normalize_text 文本规范化函数完整讲解
 ```python
@@ -127,16 +127,6 @@ return "\n".join(compact).strip()
 直接结束本次循环，不执行后面 `append`，相当于丢弃当前这一行。
 
 # `_load_html_document` 函数完整讲解（含BeautifulSoup基础说明）
-```python
-def _load_html_document(path: Path) -> LoadedDocument:
-    html = path.read_text(encoding="utf-8")
-    soup = BeautifulSoup(html, "html.parser")
-    for element in soup(["script", "style"]):
-        element.decompose()
-    text = normalize_text(soup.get_text("\n"))
-    return LoadedDocument(path=path, suffix=path.suffix.lower(), text=text, metadata={"parser": "beautifulsoup"})
-
-```
 ## 1. 整体功能
 读取本地HTML文件，借助BeautifulSoup解析网页，剔除JavaScript、CSS样式代码，抽取页面纯净正文文本；再调用`normalize_text()`规范化空白与换行，最终统一封装为`LoadedDocument`对象返回。
 该函数是项目HTML文档专用加载器，和纯文本加载函数`_load_text_document`对外输出相同结构，上层业务无需区分文件类型。
@@ -278,3 +268,168 @@ CSS、JS内容全部被清除。
 for element in soup(["script", "style", "nav"]):
     element.decompose()
 ```
+
+# _normalize_excel_header + _detect_excel_headers 完整讲解
+## 1. 整体作用
+这两个函数配套使用，**自动识别Excel表头别名**，解决用户表格表头名称不统一的问题。
+举例：
+标准字段要求 `name`，但是用户Excel表头可能写：`名称`、`名字`、`Name`、`Name `、`name_`。
+经过归一化处理后，程序可以自动识别，映射到统一字段。
+
+依赖常量（代码里存在）：`_EXCEL_HEADER_ALIASES`
+示例结构参考：
+```python
+_EXCEL_HEADER_ALIASES = {
+    "name": ["名称", "名字", "Name", "实体名称"],
+    "definition": ["定义", "描述", "说明"],
+    "propertyName": ["属性名", "property名称"]
+}
+```
+
+## 2. 源码
+```python
+def _normalize_excel_header(text: str | None) -> str:
+    if text is None:
+        return ""
+    return str(text).strip().replace(" ", "").replace("_", "").lower()
+
+
+def _detect_excel_headers(first_row: tuple) -> dict[str, int]:
+    """根据第一行标题文本，把列索引映射到标准字段。"""
+    mapping: dict[str, int] = {}
+    normalized = [_normalize_excel_header(cell) for cell in first_row]
+    for field_name, aliases in _EXCEL_HEADER_ALIASES.items():
+        for alias in aliases:
+            key = _normalize_excel_header(alias)
+            if key in normalized:
+                idx = normalized.index(key)
+                if field_name not in mapping:
+                    mapping[field_name] = idx
+                break
+    return mapping
+```
+
+## 3. 逐行解析第一个函数：_normalize_excel_header
+```python
+def _normalize_excel_header(text: str | None) -> str:
+```
+接收单元格内容，可以为空；返回清洗后的小写标准字符串。
+```python
+if text is None:
+    return ""
+```
+单元格为空（None），直接返回空字符串，防止报错。
+```python
+return str(text).strip().replace(" ", "").replace("_", "").lower()
+```
+归一化流水线，依次执行：
+1. `str(text)`：统一转为字符串
+2. `.strip()`：去除单元格首尾空格
+3. `.replace(" ", "")`：删除**所有中间空格**
+4. `.replace("_", "")`：删除下划线
+5. `.lower()`：全部转为小写
+
+### 直观例子
+原始表头：`Name _ `
+处理流程：
+`Name _ ` → `Name_` → `Name` → `name`
+
+原始表头：`实体 名称`
+处理后：`实体名称`
+
+> 目的：消除格式差异，只保留文字核心用于匹配。
+
+## 4. 逐行解析第二个函数：_detect_excel_headers
+```python
+def _detect_excel_headers(first_row: tuple) -> dict[str, int]:
+```
+入参：Excel第一行所有单元格（表头行）
+返回：`{标准字段名: 列下标}`
+示例返回结果：`{"name":0, "definition":2}`
+含义：name字段在第0列，definition字段在第2列。
+
+```python
+mapping: dict[str, int] = {}
+```
+最终存储【标准字段 → 列索引】的字典。
+
+```python
+normalized = [_normalize_excel_header(cell) for cell in first_row]
+```
+把表头每一格全部执行归一化，生成清洗后的表头列表。
+假设原始表头行：`["Name", "备注", "定义"]`
+normalized = `["name", "备注", "定义"]`
+
+```python
+for field_name, aliases in _EXCEL_HEADER_ALIASES.items():
+```
+循环遍历系统内置标准字段和它所有允许的别名。
+- field_name：内部标准字段，如 `name`
+- aliases：所有能等价代表该字段的表头文本列表
+
+```python
+for alias in aliases:
+    key = _normalize_excel_header(alias)
+```
+把别名也做同样归一化，保证匹配规则一致。
+
+```python
+if key in normalized:
+    idx = normalized.index(key)
+```
+如果归一化后的别名，出现在表头列表中
+找到这一列所在的下标。
+
+```python
+if field_name not in mapping:
+    mapping[field_name] = idx
+break
+```
+- 同一个标准字段只记录第一次匹配到的列
+- break：匹配成功后，不再尝试该字段剩下的别名，提升效率
+
+```python
+return mapping
+```
+返回表头映射字典，给上层Excel解析代码使用。
+
+## 5. 完整运行示例
+假设常量：
+```python
+_EXCEL_HEADER_ALIASES = {
+    "name": ["名称", "Name"],
+    "definition": ["定义", "描述"]
+}
+```
+Excel表头第一行：`["Name", "属性名", "定义"]`
+
+1. normalized表头：`["name","属性名","定义"]`
+2. 遍历标准字段
+- 字段`name`，别名依次尝试`名称`(不匹配) → `Name`(归一化为name，匹配成功)，记录`"name":0`
+- 字段`definition`，别名尝试`定义`，匹配成功，记录`"definition":2`
+
+最终mapping：
+```python
+{"name":0, "definition":2}
+```
+
+## 6. 核心业务价值
+1. **降低Excel导入门槛**
+用户不需要严格强制固定表头文字，多种写法都能识别；
+2. 统一匹配规则
+表头清洗逻辑集中在`_normalize_excel_header`，后续修改规则只改一处；
+3. 大小写、空格、下划线全部兼容，容错强。
+
+## 7. 现有代码存在的小局限（初学者可以留意）
+1. `normalized.index(key)` 只会返回**第一个匹配列**；如果表格出现重复表头，后面的列会被忽略；
+2. 使用完全匹配，不支持模糊包含；比如别名`名称`无法匹配`实体名称`；
+3. 一旦归一化规则修改，所有表头识别逻辑同步变化。
+
+## 8. 和上层代码关联回顾
+在上一份 `_parse_excel_workbook` 中：
+```python
+headers = _detect_excel_headers(rows[0])
+if "name" not in headers and "definition" not in headers:
+    continue
+```
+这里拿到的headers就是本函数输出的映射字典，用来判断表格是否有效、读取对应列的数据。
