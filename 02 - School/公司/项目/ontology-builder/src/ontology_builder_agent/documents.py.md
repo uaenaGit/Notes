@@ -1,6 +1,6 @@
 ---
 created: 2026-08-04T10:42
-updated: 2026-08-04T14:01
+updated: 2026-08-04T14:20
 ---
 # normalize_text 文本规范化函数完整讲解
 ```python
@@ -433,3 +433,188 @@ if "name" not in headers and "definition" not in headers:
     continue
 ```
 这里拿到的headers就是本函数输出的映射字典，用来判断表格是否有效、读取对应列的数据。
+
+# `_parse_excel_workbook` 函数完整讲解
+## 1. 整体功能
+使用 `openpyxl` 读取本地 `.xlsx` Excel 文件，遍历文件内所有工作表；
+识别表头、区分**主数据行**与**附属属性行**，把表格数据解析成 `_ExcelEntity` 对象列表。
+业务设计：**一行主体 + 多行附属属性**，属性归属上方最近的主体条目。
+
+适用场景：本体概念、实例、属性在Excel批量录入，程序导入解析。
+> 限制：仅支持 xlsx，不支持老式 xls；需要安装依赖
+```bash
+pip install openpyxl
+```
+
+## 2. 源码
+```python
+def _parse_excel_workbook(path: Path) -> list[_ExcelEntity]:
+    import openpyxl
+
+    wb = openpyxl.load_workbook(path, data_only=True)
+    entities: list[_ExcelEntity] = []
+
+    for sheet_name in wb.sheetnames:
+        ws = wb[sheet_name]
+        rows = list(ws.iter_rows(values_only=True))
+        if not rows:
+            continue
+
+        headers = _detect_excel_headers(rows[0])
+        if "name" not in headers and "definition" not in headers:
+            continue
+
+        current: _ExcelEntity | None = None
+        for row in rows[1:]:
+            texts = _excel_row_texts(row)
+            if not any(texts):
+                continue
+
+            if _is_excel_main_row(texts, headers):
+                current = _read_excel_entity(texts, headers, sheet_name)
+                prop = _read_excel_property(texts, headers)
+                if prop:
+                    current.properties.append(prop)
+                entities.append(current)
+            elif current is not None:
+                prop = _read_excel_property(texts, headers)
+                if prop:
+                    current.properties.append(prop)
+
+    return entities
+```
+
+## 3. 逐行拆解
+```python
+import openpyxl
+```
+函数内部懒导入，只有解析Excel时才加载包，减少程序启动开销。
+
+```python
+wb = openpyxl.load_workbook(path, data_only=True)
+```
+- `wb`：整个Excel工作簿（一个文件）
+- `data_only=True`：**读取单元格计算结果，而不是公式**
+> 举例：单元格写 `=A1+B1`，开启后拿到数值；关闭拿到公式字符串。
+
+```python
+entities: list[_ExcelEntity] = []
+```
+存放最终解析完成的所有实体对象。
+
+```python
+for sheet_name in wb.sheetnames:
+```
+循环遍历Excel里每一个工作表（Sheet1、Sheet2……）
+
+```python
+ws = wb[sheet_name]
+rows = list(ws.iter_rows(values_only=True))
+```
+- `ws` 代表单个工作表
+- `iter_rows(values_only=True)`：只获取单元格值，不获取格式、样式；
+- 所有行转为列表，方便随机访问。
+
+```python
+if not rows:
+    continue
+```
+工作表完全空白，直接跳过。
+
+```python
+headers = _detect_excel_headers(rows[0])
+```
+`rows[0]` 第一行，调用函数识别表头，输出字典：`列名 -> 列下标`。
+
+```python
+if "name" not in headers and "definition" not in headers:
+    continue
+```
+校验：表头缺少关键字段，判定不是目标数据表，跳过当前sheet。
+
+```python
+current: _ExcelEntity | None = None
+```
+缓存**当前正在处理的实体**，附属属性行挂载到这个对象上。
+
+```python
+for row in rows[1:]:
+```
+从第2行开始循环（跳过表头）。
+
+```python
+texts = _excel_row_texts(row)
+if not any(texts):
+    continue
+```
+把一行单元格统一清洗成文本；整行全部为空则跳过空行。
+
+```python
+if _is_excel_main_row(texts, headers):
+```
+关键判断：识别**主体行（新实体开始）**
+规则约定：该行存在实体名称name，代表一条全新本体/实例。
+
+```python
+current = _read_excel_entity(texts, headers, sheet_name)
+prop = _read_excel_property(texts, headers)
+if prop:
+    current.properties.append(prop)
+entities.append(current)
+```
+1. 创建新的 `_ExcelEntity` 实体
+2. 主体行自身也可能附带属性，读取并加入实体属性列表
+3. 存入总列表
+4. 更新 `current`，后续附属行归属这个实体
+
+```python
+elif current is not None:
+    prop = _read_excel_property(texts, headers)
+    if prop:
+        current.properties.append(prop)
+```
+不是主体行 → 判定为**附属属性行**
+把属性追加到最近一个 `current` 实体上。
+> 如果前面还没有主体，这一行数据直接丢弃。
+
+## 4. 业务数据模型示意（表格结构）
+| name   | definition | propertyName | propertyValue |
+|--------|------------|--------------|---------------|
+| 发动机 | 动力装置   | 重量         | 200kg         |
+|        |            | 推力         | 5000N         |
+| 阀门   | 控制组件   | 材质         | 钛合金        |
+
+执行逻辑：
+1. 发动机 → 主体行，创建实体，添加【重量】属性
+2. 空name行 → 附属行，追加【推力】到发动机
+3. 阀门 → 新主体行，新建实体，添加【材质】
+
+## 5. 完整执行流程
+1. 打开Excel文件，读取单元格数值（不读取公式）
+2. 逐个工作表处理
+3. 读取第一行，识别表头；无关键字段直接跳过sheet
+4. 逐行遍历表格内容
+    - 空行：跳过
+    - 主体行：新建实体，缓存到current，加入总列表
+    - 属性附属行：挂载到current实体的properties数组
+5. 全部sheet处理完毕，返回所有实体列表
+
+## 6. 重点设计特点（初学者重点理解）
+1. **层级结构**
+实体 + 多行属性，不需要每个属性重复填写name，简化Excel录入；
+2. 跨Sheet支持
+一个Excel多个sheet可以存放多组本体数据；
+3. 容错
+空白工作表、无关数据表自动跳过；
+4. `data_only=True`
+工程表格大量存在公式，这个参数避免拿到计算公式字符串。
+
+## 7. 潜在局限
+1. 只能从上往下解析：属性**不能向上归属**，附属行必须紧跟主体下方；
+2. 如果中间主体行被删除，下方所有属性行会丢失；
+3. 只支持 `.xlsx`，不兼容旧版 `.xls`；
+4. 依赖配套辅助函数：
+`_detect_excel_headers` / `_excel_row_texts` / `_is_excel_main_row` / `_read_excel_entity` / `_read_excel_property`
+
+## 8. 拓展思考
+如果后续需要支持：一个属性拥有多个值、属性附带单位、注释，只需扩充 `properties` 对象字段即可。
