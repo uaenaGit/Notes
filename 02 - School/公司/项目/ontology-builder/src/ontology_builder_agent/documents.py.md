@@ -1,6 +1,6 @@
 ---
 created: 2026-08-04T10:42
-updated: 2026-08-04T14:20
+updated: 2026-08-04T14:51
 ---
 # normalize_text 文本规范化函数完整讲解
 ```python
@@ -618,3 +618,195 @@ elif current is not None:
 
 ## 8. 拓展思考
 如果后续需要支持：一个属性拥有多个值、属性附带单位、注释，只需扩充 `properties` 对象字段即可。
+
+# `_entities_to_text` 函数完整讲解
+## 1. 整体功能
+接收Excel解析出来的实体列表 `list[_ExcelEntity]`，**把结构化实体数据转换成可读Markdown文本**。
+作用：将表格里的本体实体、属性整理成文档文本，可直接用于：LLM输入、预览展示、导出文本报告。
+
+核心逻辑：
+1. 先按照 `工作表sheet + 分类category` 分组；
+2. 按分组渲染Markdown二级标题；
+3. 逐个渲染实体名称、英文、编号、定义、注释、属性列表；
+4. 属性自动拼接单位；
+5. 最终拼接为一整段字符串返回。
+
+## 2. 源码
+```python
+def _entities_to_text(entities: list[_ExcelEntity]) -> str:
+    lines: list[str] = []
+    if not entities:
+        return ""
+
+    grouped: dict[tuple[str, str], list[_ExcelEntity]] = {}
+    for e in entities:
+        key = (e.sheet, e.category)
+        grouped.setdefault(key, []).append(e)
+
+    for (sheet, category), items in grouped.items():
+        lines.append(f"## Sheet: {sheet} | 分类: {category or '未分类'}")
+        if category:
+            lines.append("（该分类下的对象可作为一个本体类型）")
+        for e in items:
+            title = e.name or e.english_name or f"术语{e.code}"
+            lines.append(f"\n### {title}")
+            if e.english_name:
+                lines.append(f"英文：{e.english_name}")
+            if e.code:
+                lines.append(f"编号：{e.code}")
+            if e.definition:
+                lines.append(f"定义：{e.definition}")
+            if e.note:
+                lines.append(f"注释：{e.note}")
+            if e.properties:
+                lines.append("典型属性：")
+                for p in e.properties:
+                    val = f"{p['value']} {p['unit']}".strip() if p["unit"] else p["value"]
+                    lines.append(f"- {p['name']}：{val}")
+        lines.append("")
+
+    return "\n".join(lines)
+```
+
+## 3. 逐行拆解
+```python
+lines: list[str] = []
+```
+收集所有文本片段，最后统一换行拼接（字符串拼接最优写法，避免频繁`+=`）。
+
+```python
+if not entities:
+    return ""
+```
+没有实体数据，直接返回空字符串，提前退出。
+
+```python
+grouped: dict[tuple[str, str], list[_ExcelEntity]] = {}
+for e in entities:
+    key = (e.sheet, e.category)
+    grouped.setdefault(key, []).append(e)
+```
+### 分组逻辑重点
+- `key = (e.sheet, e.category)`
+  使用**元组**作为字典key：`(工作表名称, 分类名称)`
+- `setdefault(key, [])`
+  如果key不存在，新建空列表；然后把实体追加进去。
+> 效果：同一个Sheet、同一个分类下的实体聚合在一起。
+
+示例分组key：
+`("本体概念", "发动机组件")`
+
+```python
+for (sheet, category), items in grouped.items():
+```
+循环每一组数据
+```python
+lines.append(f"## Sheet: {sheet} | 分类: {category or '未分类'}")
+```
+Markdown二级标题；`category or "未分类"`：分类为空时展示默认文字。
+
+```python
+if category:
+    lines.append("（该分类下的对象可作为一个本体类型）")
+```
+业务注释，适配你的本体建模场景。
+
+```python
+for e in items:
+    title = e.name or e.english_name or f"术语{e.code}"
+```
+**标题优先级规则**
+优先使用 `name`；
+name为空 → 使用 `english_name`；
+都没有 → 使用编号兜底 `术语xxx`。
+Python `or` 短路特性。
+
+```python
+lines.append(f"\n### {title}")
+```
+Markdown三级标题，单个实体。
+
+下面一批 `if` 判断：**有数据才输出，避免出现空行、空标签**
+```python
+if e.english_name:
+    lines.append(f"英文：{e.english_name}")
+if e.code:
+    lines.append(f"编号：{e.code}")
+if e.definition:
+    lines.append(f"定义：{e.definition}")
+if e.note:
+    lines.append(f"注释：{e.note}")
+```
+
+```python
+if e.properties:
+    lines.append("典型属性：")
+    for p in e.properties:
+        val = f"{p['value']} {p['unit']}".strip() if p["unit"] else p["value"]
+        lines.append(f"- {p['name']}：{val}")
+```
+遍历实体属性：
+- 如果属性带有单位 `unit`，自动拼接：`200 kg`
+- `.strip()` 防止单位为空时多出空格
+最终渲染成无序列表 `-`
+
+```python
+lines.append("")
+```
+每组末尾增加空行，分隔内容，排版更好看。
+
+```python
+return "\n".join(lines)
+```
+把列表中所有文本用换行符连接，返回完整文本。
+
+## 4. 输出文本样例（直观感受）
+```markdown
+## Sheet: 本体 | 分类: 发动机组件
+（该分类下的对象可作为一个本体类型）
+
+### 液体火箭发动机
+英文：LiquidEngine
+编号：ENG-001
+定义：以液体推进剂为燃料的动力装置
+注释：用于一级助推器
+典型属性：
+- 推力：5000 kN
+- 自重：2300 kg
+
+### 涡轮泵
+英文：Turbopump
+编号：PUMP-02
+定义：输送推进剂的核心组件
+典型属性：
+- 转速：22000 rpm
+
+```
+
+## 5. 上下游关联
+上游：`_parse_excel_workbook` 读取Excel，输出 `list[_ExcelEntity]`
+下游：得到markdown文本后，可以：
+1. 送入大模型进行本体抽取；
+2. 界面预览展示；
+3. 保存为`.md`文件。
+
+## 6. 优点
+1. 分组展示，结构清晰；
+2. 空字段自动隐藏，不会出现「定义：（空白）」；
+3. 属性单位自动拼接，适配你之前关心的单位业务；
+4. 输出标准Markdown，通用易阅读。
+
+## 7. 可以优化的点（可选）
+1. 增加换行控制，避免大量连续空行；
+2. 可以增加过滤：过滤定义为空的实体；
+3. 支持限制文本长度，防止输入LLM时文本超长；
+4. 分组key如果不需要同时区分sheet+category，可以灵活调整。
+
+## 8. 初学者重点理解
+`key = (e.sheet, e.category)`
+字典不能用列表`[]`作为key（列表不可哈希），**元组tuple可以**，非常常用的多条件分组写法。
+
+`a or b or c`
+依次判断，如果第一个不为空直接取用，向后兜底，是Python非常简洁的取值写法。
+
+如果你需要，我可以把Excel整套解析函数（读取、表头识别、实体解析、文本导出）汇总成一份完整笔记。
