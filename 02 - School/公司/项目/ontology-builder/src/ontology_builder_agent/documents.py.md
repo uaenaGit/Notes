@@ -1,6 +1,6 @@
 ---
 created: 2026-08-04T10:42
-updated: 2026-08-04T11:07
+updated: 2026-08-04T11:19
 ---
 # normalize_text 文本规范化函数完整讲解
 ```python
@@ -125,3 +125,156 @@ return "\n".join(compact).strip()
 
 2. `continue` 作用
 直接结束本次循环，不执行后面 `append`，相当于丢弃当前这一行。
+
+# `_load_html_document` 函数完整讲解（含BeautifulSoup基础说明）
+```python
+def _load_html_document(path: Path) -> LoadedDocument:
+    html = path.read_text(encoding="utf-8")
+    soup = BeautifulSoup(html, "html.parser")
+    for element in soup(["script", "style"]):
+        element.decompose()
+    text = normalize_text(soup.get_text("\n"))
+    return LoadedDocument(path=path, suffix=path.suffix.lower(), text=text, metadata={"parser": "beautifulsoup"})
+
+```
+## 1. 整体功能
+读取本地HTML文件，借助BeautifulSoup解析网页，剔除JavaScript、CSS样式代码，抽取页面纯净正文文本；再调用`normalize_text()`规范化空白与换行，最终统一封装为`LoadedDocument`对象返回。
+该函数是项目HTML文档专用加载器，和纯文本加载函数`_load_text_document`对外输出相同结构，上层业务无需区分文件类型。
+
+依赖前置：
+```bash
+pip install beautifulsoup4
+from bs4 import BeautifulSoup
+from pathlib import Path
+```
+
+## 2. 完整源码
+```python
+def _load_html_document(path: Path) -> LoadedDocument:
+    html = path.read_text(encoding="utf-8")
+    soup = BeautifulSoup(html, "html.parser")
+    for element in soup(["script", "style"]):
+        element.decompose()
+    text = normalize_text(soup.get_text("\n"))
+    return LoadedDocument(
+        path=path,
+        suffix=path.suffix.lower(),
+        text=text,
+        metadata={"parser": "beautifulsoup"}
+    )
+```
+
+## 3. 逐行代码拆解 + BeautifulSoup知识点讲解
+```python
+def _load_html_document(path: Path) -> LoadedDocument:
+```
+- 入参：`path` 为`pathlib.Path`文件路径对象，指向本地html文件
+- 返回值：标准化文档结构体`LoadedDocument`
+
+```python
+html = path.read_text(encoding="utf-8")
+```
+以UTF-8编码读取HTML文件，获取原始网页字符串。
+
+```python
+soup = BeautifulSoup(html, "html.parser")
+```
+### BeautifulSoup知识点1：构建文档解析树
+1. `BeautifulSoup()`：解析HTML字符串的核心构造函数
+2. 第一个参数：待解析的原始html文本
+3. 第二个参数`"html.parser"`：解析器
+   - Python内置解析器，**无需额外安装第三方库**；
+   - 备选`lxml`解析器速度更快，但是需要额外安装包，本项目选择内置实现，减少环境依赖。
+4. 变量`soup`：把一串杂乱的HTML文本，转换成**结构化标签树**，程序可以轻松查找、删除、读取标签内容。
+
+```python
+for element in soup(["script", "style"]):
+    element.decompose()
+```
+### BeautifulSoup知识点2：查找标签并删除
+1. `soup(["script", "style"])`
+    等价 `soup.find_all(["script", "style"])`，自动查找文档中**全部**`<script>`、`<style>`标签
+    - `<script>`：存放JS代码
+    - `<style>`：存放CSS样式
+2. `.decompose()`
+    把当前标签**从文档树上彻底移除**，标签以及标签内部所有内容全部销毁。
+> 对比区分（初学者重点）
+> - `decompose()`：直接删除丢弃内容（本代码使用）
+> - `extract()`：删除标签，同时返回被删除的内容，适合需要临时保存被移除文本的场景
+
+作用：防止后续提取文本时，把代码、样式混入正文，造成文本噪音。
+
+```python
+text = normalize_text(soup.get_text("\n"))
+```
+### BeautifulSoup知识点3：提取页面纯文本
+`soup.get_text("\n")`
+遍历整个标签树，提取所有标签内可见文字；
+传入参数`"\n"`：**不同标签的文本之间使用换行隔开**，保留原文段落结构。
+
+示例对比：
+假设html：`<h1>标题</h1><p>正文</p>`
+- `soup.get_text()` → `标题正文`（文字挤在一起，丢失段落）
+- `soup.get_text("\n")`
+```
+标题
+正文
+```
+
+随后调用你项目内的`normalize_text()`：
+1. 统一各类操作系统换行符；
+2. 每行首尾空格清除；
+3. 连续多行空行压缩为单行空行；
+4. 清除文本首尾多余空白。
+
+```python
+return LoadedDocument(
+    path=path,
+    suffix=path.suffix.lower(),
+    text=text,
+    metadata={"parser": "beautifulsoup"}
+)
+```
+组装统一文档对象：
+- path：原始文件路径
+- suffix：小写后的文件后缀（`.html`）
+- text：清洗完成后的纯净文本
+- metadata：标记解析器类型，方便日志、后续处理区分文档解析方式
+
+## 4. 完整执行流程
+1. 读取本地HTML原始字符串
+2. BeautifulSoup加载HTML，生成结构化文档树
+3. 删除所有script、style标签，清理代码噪音
+4. 提取网页文字，标签之间使用换行分隔
+5. normalize_text规范化换行、空白、空行
+6. 封装为统一文档对象返回
+
+## 5. 运行示例演示
+原始HTML片段
+```html
+<html>
+<style>body{color: black;}</style>
+<script>console.log("测试")</script>
+<h1>发动机文档</h1>
+<p>本体建模相关说明</p>
+</html>
+```
+处理后提取文本：
+```
+发动机文档
+本体建模相关说明
+```
+CSS、JS内容全部被清除。
+
+## 6. 函数局限性
+1. 仅移除script、style，**不会自动清理导航栏、页脚、广告等多余网页模块**；如需进一步降噪，需要追加标签过滤；
+2. 无法处理JavaScript动态渲染网页（只能解析静态HTML）；
+3. 图片alt文字会一并提取，如果不需要图片文本需要额外过滤`<img>`标签。
+
+## 7. 拓展小技巧
+如果想要额外移除图片、导航栏，可以修改过滤代码：
+```python
+# 同时删除脚本、样式、导航标签
+for element in soup(["script", "style", "nav"]):
+    element.decompose()
+```
