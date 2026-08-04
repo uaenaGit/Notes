@@ -1,6 +1,6 @@
 ---
 created: 2026-07-31T11:01
-updated: 2026-07-31T18:08
+updated: 2026-08-04T16:10
 ---
 # `build_ontology` 函数详解
 
@@ -603,3 +603,164 @@ relations = [
 一个推导**数据属性**，一个推导**类继承关系**，共同实现「只导入实例，自动生成本体框架」。
 
 如果你需要，我可以提供优化版本代码：修复关键词模糊匹配问题、增加日志输出。
+
+# extract_entities_from_excel_file 函数完整讲解
+## 1. 总览
+```python
+async def extract_entities_from_excel_file(tmp_path: str, suffix: str) -> list[dict]:
+    """从 Excel 文件中抽取实体列表（不构建完整本体）。"""
+```
+这是**Excel实体抽取的上层异步接口**，就是上一节 `classify_and_parse` 里面优先调用的那个函数。
+
+**整体逻辑：优先走「schema推断结构化解析」；一旦报错/拿不到实体，就降级到文本解析兜底。**
+
+调用链路：
+```
+extract_entities_from_excel_file
+├─优先路径：excel_schema 整套流水线（推断schema →抽取实体→校验）
+│  └─失败 → 进入兜底分支
+└─兜底路径：read_document读excel为文本 → _parse_excel_entities从文本里解析实体
+```
+
+> 返回：`list[dict]`，实体字典列表，不是对象，是字典，会把内部字段`_source`删掉。
+
+## 逐行拆解
+```python
+if suffix.lower() == ".xlsx":
+    try:
+        schema = await excel_schema.infer_excel_schema(tmp_path)
+        logger.info("[excel] inferred schema=%s", schema)
+```
+只对`.xlsx`尝试高级schema流水线；
+`infer_excel_schema(tmp_path)`：**推断Excel表格的schema**，自动识别哪一列是名称、英文、编号、定义、属性名、属性值、单位，相当于自动识别表头映射关系。
+> 对比你之前写的：`_detect_excel_headers`，`infer_excel_schema`是更完整的版本，输出完整的表格结构描述对象。
+
+```python
+entities = excel_schema.extract_entities_from_excel(tmp_path, schema)
+```
+拿着推断出来的schema，读取excel，提取出实体列表。
+这一步就是结构化读取，直接拿到实体，不是文本。
+
+```python
+if entities:
+    validation = await excel_schema.validate_extraction(schema, entities)
+    logger.info("[excel] validation=%s", validation)
+    if not validation.get("ok"):
+        logger.warning("[excel] validation issues=%s", validation.get("issues"))
+```
+拿到实体之后，执行校验：
+- 校验实体是否合法；字段是否缺失；属性格式是否正常；
+- `validation`是字典：`{"ok":bool, "issues":[警告字符串]}`
+- 校验不ok**不会抛异常**，只打warning日志，实体依旧继续往下返回。
+
+```python
+    for e in entities:
+        e.pop("_source", None)
+    return entities
+```
+`pop("_source", None)`：删除实体内部的`_source`字段（内部调试用元数据，对外输出不需要）；
+`None`含义：如果key不存在，不会报错。
+
+```python
+except Exception as exc:
+    logger.warning("[excel] schema pipeline failed, fallback to read_document: %s", exc)
+```
+> 重点：**整个schema流水线任意一步抛异常，不会向上抛出，仅仅打警告日志，直接跳出try块，进入下面兜底逻辑。**
+
+触发场景举例：
+1. excel格式损坏
+2. 无法自动推断schema（表头识别失败）
+3. 表格行格式错乱
+
+---
+
+## 兜底分支（schema流水线失败就走到这里）
+```python
+if read_document is None:
+    raise RuntimeError(f"Excel 解析依赖 ontology-builder 主包，请安装：pip install -e ../../ontology-builder。详情：{_IMPORT_ERROR}")
+```
+检查依赖，如果文档读取工具没导入，直接抛出环境错误。
+
+```python
+text = read_document(tmp_path)
+if not text.strip():
+    raise ValueError("未能从 Excel 中识别出有效术语数据")
+```
+`read_document`：把Excel当成普通文档，提取出表格文本（不是结构化对象，是大段字符串）。
+如果读出来是空文本，直接抛异常，这个异常会向上抛给`classify_and_parse`，被外层捕获，转为warnings。
+
+```python
+entities = _parse_excel_entities(text)
+for e in entities:
+    e.pop("_source", None)
+return entities
+```
+`_parse_excel_entities(text)`：**从excel导出的大段文本中反向解析实体**。
+> 和前面的结构化解析区别：
+> ✅优先路径：直接读excel二进制文件，按行列解析，精度最高。
+> ⚠兜底路径：先转文本，再解析文本，精度会下降，属于降级容错。
+
+## 完整流程示例
+### 场景1：excel正常，schema推断成功
+1. suffix是`.xlsx`
+2. `infer_excel_schema`成功推断表头映射
+3. `extract_entities_from_excel`拿到实体列表
+4. 执行validate_extraction校验，有问题只打日志
+5. pop掉`_source`字段，返回实体列表。
+
+### 场景2：excel表头混乱，schema推断抛异常
+1. try内部发生异常，进入except，打印警告日志
+2. 进入兜底逻辑
+3. read_document读取excel得到文本字符串
+4. `_parse_excel_entities(text)`从文本解析实体
+5. 返回实体列表。
+
+### 场景3：excel读出完全空白
+兜底分支中`text.strip()`为空，抛出`ValueError`，向上抛到`classify_and_parse`，捕获后加入warnings。
+
+## 初学者重点理解几个关键点
+1. **try里面异常不会抛出去**
+`except`捕获全部异常，仅仅打日志，自动降级，保证接口不崩。
+
+2. 校验失败≠流程失败
+`validation["ok"]=False`只是有警告，实体照样返回，不会抛出异常。
+
+3. 两个解析路径对比
+
+|路径|方式|优点|缺点|
+|----|----|----|----|
+|schema流水线|直接解析excel行列|精度高，区分实体行、属性附属行|表头错乱会直接失败|
+|兜底_parse_excel_entities|先转文本，再解析文本|容错强|丢失表格行列结构，解析能力下降|
+
+4. `e.pop("_source", None)`
+`pop(key,默认值)`：删除字典key；key不存在，返回默认值，不会报错。
+
+5. 只有`.xlsx`才走高级schema流水线；其他后缀直接走兜底。
+
+## 和上层代码的关联（回忆classify_and_parse）
+```python
+try:
+    entities = await ontology_service.extract_entities_from_excel_file(tmp_path, suffix)
+except Exception as exc:
+    logger.warning("[multi-source] Excel schema 抽取失败，回退到 read_document: %s", exc)
+    doc_text = read_document(tmp_path)
+    doc_text = _truncate(doc_text, MAX_FILE_CHARS)
+    entities = ontology_service.parse_excel_entities(doc_text)
+```
+> 注意：
+`extract_entities_from_excel_file`内部**已经自带一套降级逻辑**；
+而`classify_and_parse`外层又包了一层try‑except，等于**双重容错保护**。
+
+第一层：本函数内部：schema流水线失败 → 降级文本解析
+第二层：上层调用处：本函数全部逻辑抛出异常 → 再一次兜底。
+
+## 潜在小问题（拓展思考）
+1. 如果schema流水线返回`entities=[]`（不是抛异常，但是实体为空），**不会进入兜底分支**，直接返回空列表。
+> 也就是：推断schema成功，但是表格没有识别出任何实体，不会走到下面read_document兜底。
+> 如果希望这种情况也触发兜底，需要增加判断：
+> ```python
+> if entities:
+>     ...
+> else:
+>     raise RuntimeError("schema extract got zero entities")
+> ```

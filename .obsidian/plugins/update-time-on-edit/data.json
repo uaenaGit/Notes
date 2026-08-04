@@ -233,14 +233,15 @@
     "02 - School/公司/项目/ontology-builder/操作命令.md": "e6b8bbe93862e1e9c14b247d30e7cb2f52e68b90b27e01eca043d799b237718f",
     "02 - School/公司/项目/PDF OCR.md": "ba5b1b4b8f592da76497db5773541273bdb50251ac0bd4fc752cd26895da69af",
     "02 - School/公司/Protege 操作指导.md": "0e63e74255e8524f99980a91e3c710757778b21a7e63e567fa0d7406df59584d",
-    "02 - School/公司/项目/ontology-usage/app.py.md": "db7800a1a9568169d003a895b2decfca3727d782b5a5c4e7c966f46b75078344",
-    "02 - School/公司/项目/ontology-usage/llm_service.py.md": "f32f71c258f52110649848ca2d9da8209b8f922d46da96bcd52f9804eb2cbcad",
-    "02 - School/公司/项目/ontology-usage/onyology_service.py.md": "f6e003cb7ee41fa2ab98c5e76c4290a19d89fc2d3882aed10badef2a0f16e21c",
     "02 - School/公司/项目/ontology-builder/src/ontology_builder_agent/im.py.md": "6647d91ef120f4680ed9e26c73ecaa6de7ef34235e3b98211b2ef1b6d6462dec",
     "02 - School/公司/项目/ontology-builder/src/ontology_builder_agent/__main__.py.md": "362457c50bb721c0772a0960654d0bc50214c4809067d7685beca71b6787a2fb",
     "02 - School/公司/项目/ontology-builder/src/ontology_builder_agent/agent.py.md": "f2de06b660d1f531585059e433cb376c51f016cb5e4f781a8ffc02737700ca4d",
     "02 - School/公司/项目/ontology-builder/src/ontology_builder_agent/bridge_im.py.md": "123fee61ed5ee682b5e9b3809b936e240c517b37c4dbd703e66d4246d77f8f60",
     "02 - School/公司/项目/ontology-builder/src/ontology_builder_agent/extractor.py.md": "e8e6825b16bf9619cdb66664100a9c126abb309daa91c477709a10f35bdf9117",
-    "02 - School/公司/项目/ontology-builder/src/ontology_builder_agent/documents.py.md": "d0824f0665c6b88ecae273e3edb7b9b06ac6d3d236c18c6bc3c853e5bfc7b08c"
+    "02 - School/公司/项目/ontology-builder/src/ontology_builder_agent/documents.py.md": "d0824f0665c6b88ecae273e3edb7b9b06ac6d3d236c18c6bc3c853e5bfc7b08c",
+    "02 - School/公司/项目/ontology-usage/src/ontology_usage/onyology_service.py.md": "0a8412e63a523c69cfb63b87ddf8d5731757a9c2c9abc798c36688b1adb6f264",
+    "02 - School/公司/项目/ontology-usage/src/ontology_usage/app.py.md": "db7800a1a9568169d003a895b2decfca3727d782b5a5c4e7c966f46b75078344",
+    "02 - School/公司/项目/ontology-usage/src/ontology_usage/llm_service.py.md": "f32f71c258f52110649848ca2d9da8209b8f922d46da96bcd52f9804eb2cbcad",
+    "02 - School/公司/项目/ontology-usage/src/ontology_usage/multi_source.py.md": "f4b6ffc55fefe1d0fec94241164148279994cd266ebaaed6c3d9c5a26def9ec9"
   }
 }
