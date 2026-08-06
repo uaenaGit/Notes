@@ -1,6 +1,6 @@
 ---
 created: 2026-07-21T14:17
-updated: 2026-07-30T16:11
+updated: 2026-08-06T14:54
 ---
 # 一、液体火箭发动机设计%20第一二章%20(蔡国飙等).pdf
 ## chapter 1 绪论
@@ -1948,3 +1948,11 @@ python -m ontology_builder_agent from-file `
 ### 1、OCR后生成的页码混入了其他书籍的页码
 16、17、20、21、22、23
 
+# 三、ontology-usage
+## ontology_service.py
+`infer_type_relations` 函数目前只能推断 `kind_of`（子类）关系
+❌不够用场景：
+需要支持 part‑of、connected‑to 等多种关系向上提升；
+需要自动生成传递闭包；
+需要处理反向关系标签；
+需要检测循环继承；

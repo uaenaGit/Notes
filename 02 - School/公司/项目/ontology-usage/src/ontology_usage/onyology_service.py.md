@@ -1,6 +1,6 @@
 ---
 created: 2026-07-31T11:01
-updated: 2026-08-04T16:10
+updated: 2026-08-06T14:44
 ---
 # `build_ontology` 函数详解
 
@@ -465,6 +465,28 @@ valid_types = {"Engine", "Pump"}
 如果你需要，我可以输出**加入单位冲突告警的改造后完整代码**。
 
 # infer_type_relations 代码详解
+```python
+def infer_type_relations(types: list[dict], instances: list[dict], relations: list[dict]) -> list[dict]:
+    """从实例级关系中自动推断类型层级（kind-of / subClassOf）。PR-1: 纯函数。"""
+    valid_types = {t["key"] for t in types}
+    inst_type = {i["id"]: i["type"] for i in instances if i.get("type") in valid_types}
+    seen = set()
+    type_rels: list[dict] = []
+    for rel in relations:
+        label = (rel.get("label") or "").lower()
+        if not any(kw in label for kw in _KIND_OF_LABELS):
+            continue
+        from_type = inst_type.get(rel.get("from"))
+        to_type = inst_type.get(rel.get("to"))
+        if not from_type or not to_type or from_type == to_type:
+            continue
+        key = (from_type, to_type)
+        if key in seen:
+            continue
+        seen.add(key)
+        type_rels.append({"from": from_type, "to": to_type, "label": "kind-of", "key": 0})
+    return type_rels
+```
 ## 一、函数整体功能
 这是本体建模自动化推导工具，**通过扫描实例之间的关系，反向推理出类与类之间的 `kind-of(subClassOf 子类)` 层级关系**。
 
