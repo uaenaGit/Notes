@@ -1,6 +1,6 @@
 ---
 created: 2026-07-31T11:01
-updated: 2026-08-06T14:44
+updated: 2026-08-06T16:08
 ---
 # `build_ontology` 函数详解
 
@@ -786,3 +786,152 @@ except Exception as exc:
 > else:
 >     raise RuntimeError("schema extract got zero entities")
 > ```
+
+# build_abox 函数完整逐行解析
+## 一、函数整体作用
+这个函数是**本体ABox实例层构建核心逻辑**：
+输入：已有概念TBox（类型定义）+ 待解析文本 + 发动机型号提示
+输出：结构化实例、实例关系、数据属性、约束公理，组成完整实例知识库。
+业务定位：接收文档文本，调用大模型抽取实体实例，再做校验、自动派生属性约束，供上层接口返回给前端图谱渲染。
+
+## 二、入参逐句说明
+```python
+async def build_abox(
+    tbox_or_ontology: dict[str, Any] | None,
+    source_text: str,
+    *,
+    include_props: bool = True,
+    model_hints: list[str] | None = None,
+) -> dict[str, Any]:
+```
+1. `tbox_or_ontology`
+    已有的模式层本体（TBox），里面存所有**概念类型（发动机、燃烧室、涡轮等）**；兼容两种旧字段：`types` / `ontoTypes`，传None代表无预先定义类型。
+2. `source_text`
+    待抽取实例的原始文本（PDF/Excel/SysML解析出来的纯文本），大模型从这里提取实体、参数、关系。
+3. `*,`
+    Python语法：后面所有参数必须**关键字传参**，不能按位置传，防止调用顺序错乱。
+4. `include_props: bool = True`
+    开关：True=抽取实例自定义属性（推力、循环方式、推进剂等）；False=只抽实例和关系，忽略属性。
+5. `model_hints`
+    型号提示列表，就是前端接口传过来的 `model_hints: ["F-1"]`；告诉LLM优先生成指定型号发动机实例，匹配业务需求。
+
+## 三、返回值结构（注释说明）
+```python
+Returns:
+    dict 形如 {
+        "instances": [...],          # 所有抽取到的实体实例
+        "relations": [...],           # 实例之间的关系（part-of、kind-of等）
+        "instanceAxioms": [...],      # 实例数值约束（推力=6800kN、氧化剂=液氧）
+        "datatypeProperties": [...],  # 自动派生的数据属性定义
+        "typeBindings": {id: type_key} # 实例id → 所属类型key映射，给关系推理用
+        "constraints": [...],         # 兼容旧代码的别名，和instanceAxioms完全一样
+    }
+```
+
+## 四、分步拆解代码逻辑
+### 步骤1：提取所有合法类型key，用于后续校验实例type
+```python
+types = (
+    (tbox_or_ontology or {}).get("types")
+    or (tbox_or_ontology or {}).get("ontoTypes")
+    or []
+)
+valid_type_keys = {t.get("key") for t in types if t.get("key")}
+type_lines = ", ".join(f"{t.get('key')}: {t.get('name')}" for t in types if t.get("key"))
+```
+- 兼容新旧本体字段 `types` / `ontoTypes`，兜底为空列表；
+- `valid_type_keys` 集合存放所有合法概念key，**限制实例type只能从中选取**，防止LLM随便造不存在的类型；
+- `type_lines` 拼接成字符串，塞进大模型提示词，告诉模型现有哪些类型。
+
+### 步骤2：组装LLM系统提示词（约束大模型输出规则）
+```python
+extra_system_lines = [
+    "",
+    "## 模式层（TBox）约束",
+    "已有类别：" + (type_lines or "（无）") + "。",
+    "请把抽取出的实例的 type 字段严格限定在已有类别 key 中；",
+    "若需要新类别，请额外标注 ``new_type_suggestion`` 字段而非自由命名。",
+]
+extra_system = "\n".join(extra_system_lines)
+if model_hints:
+    extra_system += "\n需要支持的具体型号实例（hint）：" + "、".join(model_hints)
+
+system = (ONTOLOGY_BUILD_SYSTEM if include_props else ONTOLOGY_BUILD_SYSTEM_NO_PROPS) + extra_system
+```
+1. 基础系统提示词二选一：
+    - `include_props=True`：完整提示，要求抽取实例属性；
+    - `include_props=False`：精简提示，忽略属性只抽实例关系。
+2. 追加TBox约束：强制LLM实例type只能使用已存在的类型，不能乱造；
+3. 追加型号hint：把前端传来的`["F-1"]`写入提示词，引导模型优先生成对应发动机实例。
+
+### 步骤3：构造对话消息，调用大模型
+```python
+messages = [
+    {"role": "system", "content": system},
+    {"role": "user", "content": ONTOLOGY_BUILD_USER.format(source_text=source_text)},
+]
+raw = await llm_service.chat(messages, temperature=0.1, max_tokens=8192)
+data = llm_service.extract_json(raw)
+if not data or "instances" not in data:
+    raise ValueError(...)
+```
+1. 消息结构：系统约束词 + 用户待解析文本；
+2. `temperature=0.1`：低随机性，保证抽取结果稳定、结构化；
+3. `extract_json`：之前讲过的工具函数，清洗``标签、剥离markdown代码块，提取纯JSON；
+4. 校验：没有instances直接抛异常，上层接口捕获后返回前端报错。
+
+### 步骤4：数据修复与合法性校验
+```python
+data = _ensure_colors(data)
+# 用 valid_type_keys 做引用校验
+if valid_type_keys:
+    for inst in data.get("instances", []):
+        if inst.get("type") not in valid_type_keys and valid_type_keys:
+            inst["type"] = list(valid_type_keys)[0]  # 兜底
+data = _validate_references(data)
+```
+1. `_ensure_colors`：给实例补全默认颜色，前端图谱渲染用；
+2. 实例类型兜底：如果LLM生成的实例type不在合法类型里，自动改成**第一个合法类型**，避免后续推理报错；
+3. `_validate_references`：你之前解析过的函数，过滤两端实例id不存在的无效关系，修复非法type。
+
+### 步骤5：自动派生数据属性与约束公理（核心自动建模逻辑）
+```python
+instances = data.get("instances", [])
+relations = data.get("relations", [])
+dpp, axioms = derive_datatype_properties_and_constraints(instances, valid_type_keys)
+```
+调用之前讲过的`derive_datatype_properties_and_constraints`：
+- 遍历所有实例的属性键值对，自动生成本体**数据属性datatypeProperties**；
+- 提取每个实例的数值约束，存入`instanceAxioms`（推力、尺寸、介质等参数约束）。
+
+### 步骤6：构建实例-类型映射，打印耗时日志，组装返回字典
+```python
+typeBindings = {i["id"]: i.get("type") for i in instances if i.get("id")}
+logger.info(...)
+return {
+    "instances": instances,
+    "relations": relations,
+    "instanceAxioms": axioms,
+    "datatypeProperties": dpp,
+    "typeBindings": typeBindings,
+    "constraints": axioms, # 兼容旧前端/旧调用方
+}
+```
+1. `typeBindings`：实例id → 所属类型key的映射表，给`infer_type_relations`类型关系推导函数使用；
+2. 日志打印耗时、实例/关系/属性数量，方便调试性能；
+3. 兼容字段`constraints`：旧代码只识别这个字段，新代码统一用`instanceAxioms`，两边同时返回保证兼容。
+
+## 五、整条业务调用链路串联（结合你前后端代码）
+1. 前端fetch `/api/ontology/build-abox`，上传 `documents` 文件列表、`model_hints: ["F-1"]`；
+2. 后端接口读取多个文档，调用`_load_excel_document/_load_html_document`等解析出合并`source_text`；
+3. 传入 `build_abox(tbox本体, source_text, model_hints=["F-1"])`；
+4. build_abox 携带型号提示调用LLM，抽取发动机实例、零件、参数、关系；
+5. 自动校验实例类型、派生数据属性约束，生成结构化ABox数据；
+6. 接口把返回字典序列化JSON，传回前端绘制知识图谱。
+
+## 六、关键设计亮点总结
+1. **强约束LLM输出**：把现有TBox类型全部注入提示词，防止模型随意创建新概念；
+2. **型号hint定向抽取**：对接前端下拉选择，精准提取指定发动机实例；
+3. **容错兜底机制**：非法实例type自动修复、无效关系过滤，保证本体数据合法；
+4. **自动化本体派生**：不用人工定义属性，从实例参数自动生成datatypeProperties；
+5. **向下兼容**：同时提供新旧字段名，老页面不用同步改造即可对接新接口。
