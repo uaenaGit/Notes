@@ -164,9 +164,21 @@
               "icon": "lucide-file",
               "title": "Git 分支上库流程"
             }
+          },
+          {
+            "id": "c69003e73a528244",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.13.6"
+              },
+              "icon": "lucide-book-up",
+              "title": "版本说明 1.13.6"
+            }
           }
         ],
-        "currentTab": 10
+        "currentTab": 11
       }
     ],
     "direction": "vertical"
@@ -367,7 +379,7 @@
       "mermaid-tools:Open Mermaid Toolbar": false
     }
   },
-  "active": "2c1bcf6484a16f9a",
+  "active": "c69003e73a528244",
   "lastOpenFiles": [
     "01 - HOME/operation tips/pycharm/常用快捷键.md",
     "02 - School/公司/项目/ontology-usage/src/ontology_usage/kg_service.py.md",
