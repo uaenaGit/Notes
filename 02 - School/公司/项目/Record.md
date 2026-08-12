@@ -1,6 +1,6 @@
 ---
 created: 2026-07-21T14:17
-updated: 2026-08-12T16:02
+updated: 2026-08-12T16:20
 ---
 # 一、液体火箭发动机设计%20第一二章%20(蔡国飙等).pdf
 ## chapter 1 绪论
@@ -2035,3 +2035,7 @@ npm.cmd run dev
 ## 2、组织选择
 ![image.png](https://cdn.jsdelivr.net/gh/uaenaGit/image-host@main/images20260812160124095.png)
 这个组织是不是应该可以让用户自行选择，组织管理员得先新建组织？
+
+## 3、业务领域实现可选
+![image.png](https://cdn.jsdelivr.net/gh/uaenaGit/image-host@main/images20260812161958096.png)
+目前是默认的，业务领域应该实现可选？
