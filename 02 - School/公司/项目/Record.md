@@ -1,6 +1,6 @@
 ---
 created: 2026-07-21T14:17
-updated: 2026-08-06T18:29
+updated: 2026-08-12T16:02
 ---
 # 一、液体火箭发动机设计%20第一二章%20(蔡国飙等).pdf
 ## chapter 1 绪论
@@ -1945,11 +1945,11 @@ python -m ontology_builder_agent from-file `
 `*_bp.*`是先使用`--dry-run`模式生成的`im.json`和`sysml`，再通过命灵[[操作命令#三、sysml 2 ttl]]转成ttl所得。
 # 二、液体推进剂火箭发动机设计.pdf
 ### chapter 1 液体火箭发动机简介
-### 1、OCR后生成的页码混入了其他书籍的页码
+#### 1、OCR后生成的页码混入了其他书籍的页码
 16、17、20、21、22、23
 
 # 三、ontology-usage
-## ontology_service.py
+## 1、ontology_service.py
 `infer_type_relations` 函数目前只能推断 `kind_of`（子类）关系
 ❌不够用场景：
 需要支持 part‑of、connected‑to 等多种关系向上提升；
@@ -1957,7 +1957,7 @@ python -m ontology_builder_agent from-file `
 需要处理反向关系标签；
 需要检测循环继承；
 
-## kg 链路验证
+## 2、kg 链路验证
 它们是知识图谱最基本的表达形式，叫“三元组”：
 
 ```
@@ -2002,3 +2002,36 @@ THR  = 推力
 ```
 
 这也解释了为什么后续需要本体：TBox 可以规定哪些实体类型、哪些关系合法；映射和校验能让 LLM 的自由表述逐渐收敛为统一、可复用的工程语义。
+
+# 四、trustworthy-ai-platform
+## 1、前后端分离问题
+合理，但不是必须严格“先后”启动。
+
+当前项目是前后端分离开发：
+
+```
+浏览器 -> Vite 前端 5173 -> 代理 /api -> FastAPI 后端 8000
+```
+
+所以开发时通常需要两个进程：
+
+```
+# 窗口 1：后端
+python -m uvicorn trustworthy_ai_platform.app:app --reload
+```
+
+```
+# 窗口 2：前端
+cd frontend
+npm.cmd run dev
+```
+
+可以先启动前端，但在后端启动前，登录等 API 请求一定会报你刚才看到的 `ECONNREFUSED`。
+
+`ontology-usage` 很可能给你的是“单体演示工程”体验：HTML 放在 `static/`，由 FastAPI 直接挂载和提供，因此只启动后端服务也能打开页面。当前平台使用 React + Vite，开发时拆开启动更适合多人分别改前后端、热更新和接口代理。
+
+后续可以加一个统一开发命令，同时启动两个服务，但它只是减少手工输入，不会改变“前端依赖后端 API”的架构。对现在这个刚起步的多人项目，先保持两个窗口更容易定位问题。
+
+## 2、组织选择
+![image.png](https://cdn.jsdelivr.net/gh/uaenaGit/image-host@main/images20260812160124095.png)
+这个组织是不是应该可以让用户自行选择，组织管理员得先新建组织？
