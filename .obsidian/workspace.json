@@ -171,12 +171,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "02 - School/公司/IM JSON ↔ SysML v2 Text ↔ OWL(Turtle).md",
+                "file": "02 - School/公司/Turtle 语法.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "IM JSON ↔ SysML v2 Text ↔ OWL(Turtle)"
+              "title": "Turtle 语法"
             }
           }
         ],
@@ -317,7 +317,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "02 - School/公司/IM JSON ↔ SysML v2 Text ↔ OWL(Turtle).md",
+                "file": "02 - School/公司/Turtle 语法.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -383,13 +383,13 @@
   },
   "active": "c69003e73a528244",
   "lastOpenFiles": [
+    "02 - School/公司/IM JSON ↔ SysML v2 Text ↔ OWL(Turtle).md",
     "02 - School/公司/JSON 学习笔记.md",
     "02 - School/公司/SysML v2 语法速查.md",
     "02 - School/公司/Protege 操作指导.md",
     "02 - School/公司/项目/ontology-builder/src/ontology_builder_agent/im.py.md",
     "02 - School/公司/项目/ontology-builder/src/ontology_builder_agent/__main__.py.md",
     "02 - School/公司/项目/ontology-builder/src/ontology_builder_agent/agent.py.md",
-    "02 - School/公司/IM JSON ↔ SysML v2 Text ↔ OWL(Turtle).md",
     "02 - School/公司/Turtle 语法.md",
     "02 - School/公司/Pydantic 讲解.md",
     "02 - School/公司/项目/Record.md",
