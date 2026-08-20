@@ -211,14 +211,12 @@
             "id": "bc670d5c545886c6",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "excalidraw",
               "state": {
-                "file": "02 - School/公司/项目/ontology-builder/src/ontology_builder_agent/agent.py.md",
-                "mode": "source",
-                "source": false
+                "file": "02 - School/公司/Drawing 2026-07-15 11.35.24.excalidraw.md"
               },
-              "icon": "lucide-file",
-              "title": "agent.py"
+              "icon": "excalidraw-icon",
+              "title": "Drawing 2026-07-15 11.35.24.excalidraw"
             }
           }
         ],
@@ -359,7 +357,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "02 - School/公司/项目/ontology-builder/src/ontology_builder_agent/agent.py.md",
+                "file": "02 - School/公司/Drawing 2026-07-15 11.35.24.excalidraw.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -425,6 +423,7 @@
   },
   "active": "bc670d5c545886c6",
   "lastOpenFiles": [
+    "02 - School/公司/项目/ontology-builder/src/ontology_builder_agent/agent.py.md",
     "02 - School/公司/项目/ontology-builder/src/ontology_builder_agent/extractor.py.md",
     "02 - School/公司/Drawing 2026-07-15 11.35.24.excalidraw.md",
     "05 - Work/复试可能要问的问题（deepseek）.md",
@@ -441,7 +440,6 @@
     "02 - School/公司/通用/Protege 操作指导.md",
     "02 - School/公司/项目/ontology-builder/src/ontology_builder_agent/im.py.md",
     "02 - School/公司/项目/ontology-builder/src/ontology_builder_agent/__main__.py.md",
-    "02 - School/公司/项目/ontology-builder/src/ontology_builder_agent/agent.py.md",
     "02 - School/公司/项目/Record.md",
     "01 - HOME/operation tips/pycharm/常用快捷键.md",
     "02 - School/公司/项目/ontology-usage/src/ontology_usage/kg_service.py.md",
