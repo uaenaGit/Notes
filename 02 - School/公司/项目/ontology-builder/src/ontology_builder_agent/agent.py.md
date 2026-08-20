@@ -1,8 +1,8 @@
 ---
 created: 2026-07-13T14:28
-updated: 2026-07-31T11:07
+updated: 2026-08-20T11:50
 ---
-# `ontology-builder/src/ontology_builder_agent/agent.py`
+# `ontology-generate_bridge_imbuilder/src/ontology_builder_agent/agent.py`
 ## 01 
 ```python
 _OUTPUT_PATH_RE = re.compile(r"(?:输出到|保存到|写入|out(?:put)?(?:\s+path)?)\s*[:：=]?\s*(?P<path>[^\s，。；;]+)", re.IGNORECASE)
