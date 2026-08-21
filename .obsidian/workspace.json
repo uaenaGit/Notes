@@ -230,9 +230,21 @@
               "icon": "excalidraw-icon",
               "title": "Drawing 2026-07-15 11.35.24.excalidraw"
             }
+          },
+          {
+            "id": "5e89ff9fcbee20d0",
+            "type": "leaf",
+            "state": {
+              "type": "excalidraw",
+              "state": {
+                "file": "02 - School/公司/项目/可信AI工业平台/概览.md"
+              },
+              "icon": "excalidraw-icon",
+              "title": "概览"
+            }
           }
         ],
-        "currentTab": 15
+        "currentTab": 16
       }
     ],
     "direction": "vertical"
@@ -369,7 +381,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "02 - School/公司/Drawing 2026-07-15 11.35.24.excalidraw.md",
+                "file": "02 - School/公司/项目/可信AI工业平台/概览.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -433,10 +445,12 @@
       "mermaid-tools:Open Mermaid Toolbar": false
     }
   },
-  "active": "919d73a4900e8e8a",
+  "active": "c4b7f5945a8bfbf9",
   "lastOpenFiles": [
-    "02 - School/公司/项目/trustworthy-ai-platform/Drawing 2026-08-20 17.48.49.excalidraw.md",
     "02 - School/公司/Drawing 2026-07-15 11.35.24.excalidraw.md",
+    "02 - School/公司/项目/可信AI工业平台/概览.md",
+    "02 - School/公司/项目/可信AI工业平台",
+    "02 - School/公司/项目/trustworthy-ai-platform/Drawing 2026-08-20 17.48.49.excalidraw.md",
     "02 - School/公司/项目/trustworthy-ai-platform",
     "02 - School/公司/项目/ontology-builder/src/ontology_builder_agent/agent.py.md",
     "02 - School/公司/项目/ontology-builder/src/ontology_builder_agent/extractor.py.md",
@@ -461,7 +475,6 @@
     "02 - School/公司/项目/ontology-usage/src/ontology_usage/onyology_service.py.md",
     "02 - School/公司/项目/ontology-usage/src/ontology_usage/llm_service.py.md",
     "02 - School/公司/项目/ontology-usage/src/ontology_usage/store.py.md",
-    "02 - School/公司/通用/Git 分支上库流程.md",
     "02 - School/公司/项目/ontology-usage/src/ontology_usage",
     "02 - School/公司/项目/ontology-usage/src",
     "02 - School/公司/项目/ontology-builder/src/ontology_builder_agent",
@@ -470,7 +483,6 @@
     "02 - School/公司/Paper",
     "01 - HOME/operation tips/Python",
     "02 - School/tutorial/李宏毅/生成式人工智能导论",
-    "02 - School/tutorial/李宏毅",
     "Pasted Image 20260626183739_688.png",
     "Pasted Image 20260312194616_170.png",
     "Pasted Image 20260312194605_776.png",
