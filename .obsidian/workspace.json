@@ -85,10 +85,12 @@
             "id": "88ad6a5a620f300d",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
-              "icon": "lucide-file",
-              "title": "新标签页"
+              "type": "excalidraw",
+              "state": {
+                "file": "02 - School/公司/Drawing 2026-07-15 11.35.24.excalidraw.md"
+              },
+              "icon": "excalidraw-icon",
+              "title": "Drawing 2026-07-15 11.35.24.excalidraw"
             }
           },
           {
@@ -379,6 +381,7 @@
             "state": {
               "type": "outline",
               "state": {
+                "file": "02 - School/公司/Drawing 2026-07-15 11.35.24.excalidraw.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
