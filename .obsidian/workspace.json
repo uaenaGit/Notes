@@ -75,12 +75,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "02 - School/tutorial/李宏毅/生成式人工智能导论/P3 训练不了人工智能？那我训练自己！.md",
+                "file": "02 - School/tutorial/李宏毅/生成式人工智能导论/从 Token 到 Transformer：大语言模型如何学习与生成.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "P3 训练不了人工智能？那我训练自己！"
+              "title": "从 Token 到 Transformer：大语言模型如何学习与生成"
             }
           }
         ],
@@ -221,7 +221,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "02 - School/tutorial/李宏毅/生成式人工智能导论/P3 训练不了人工智能？那我训练自己！.md",
+                "file": "02 - School/tutorial/李宏毅/生成式人工智能导论/从 Token 到 Transformer：大语言模型如何学习与生成.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -287,9 +287,9 @@
   },
   "active": "4bdb4277ab6fa529",
   "lastOpenFiles": [
+    "02 - School/tutorial/李宏毅/生成式人工智能导论/P3 训练不了人工智能？那我训练自己！.md",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/从 Token 到 Transformer：大语言模型如何学习与生成.md",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/P1 生成式 AI 是什么.md",
-    "02 - School/tutorial/李宏毅/生成式人工智能导论/P3 训练不了人工智能？那我训练自己！.md",
     "01 - HOME/operation tips/pycharm/常用快捷键.md",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/作业执行配置.md",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/作业执行清单.md",
