@@ -118,7 +118,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "tag:#人工智能",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -139,8 +139,7 @@
               "title": "书签"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -286,7 +285,7 @@
       "mermaid-tools:Open Mermaid Toolbar": false
     }
   },
-  "active": "5e0bb6cc474c6340",
+  "active": "c4b7f5945a8bfbf9",
   "lastOpenFiles": [
     "模型参数.md",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/P4 大语言模型修炼史.md",
