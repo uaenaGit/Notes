@@ -118,7 +118,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "tag:#人工智能",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -139,7 +139,8 @@
               "title": "书签"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -285,10 +286,11 @@
       "mermaid-tools:Open Mermaid Toolbar": false
     }
   },
-  "active": "4bdb4277ab6fa529",
+  "active": "5e0bb6cc474c6340",
   "lastOpenFiles": [
-    "02 - School/prompts/生成.md",
+    "模型参数.md",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/P4 大语言模型修炼史.md",
+    "02 - School/prompts/生成.md",
     "02 - School/prompts",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/P3 训练不了人工智能？那我训练自己！.md",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/P2 今日的生成式 AI 厉害在哪儿.md",
@@ -315,7 +317,6 @@
     "04 - Ideas/casual thoughts.md",
     "01 - HOME/operation tips/obsidian/常用emoji.md",
     "01 - HOME/operation tips/latex/常用编辑技巧.md",
-    "01 - HOME/operation tips/devcpp/常用快捷键.md",
     "02 - School/辅导/考研辅导",
     "02 - School/辅导",
     "02 - School/课程/三维CAD建模",
