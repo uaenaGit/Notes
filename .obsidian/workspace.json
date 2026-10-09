@@ -82,9 +82,21 @@
               "icon": "lucide-file",
               "title": "常用快捷键"
             }
+          },
+          {
+            "id": "d8b53f091e18d535",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.14.4"
+              },
+              "icon": "lucide-book-up",
+              "title": "版本说明 1.14.4"
+            }
           }
         ],
-        "currentTab": 4
+        "currentTab": 5
       }
     ],
     "direction": "vertical"
@@ -285,7 +297,7 @@
       "mermaid-tools:Open Mermaid Toolbar": false
     }
   },
-  "active": "4bdb4277ab6fa529",
+  "active": "d8b53f091e18d535",
   "lastOpenFiles": [
     "02 - School/课程/知识图谱导论/论文推荐.md",
     "02 - School/课程/知识图谱导论/课程考核.md",
