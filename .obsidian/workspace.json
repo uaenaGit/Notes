@@ -73,14 +73,12 @@
             "id": "4bdb4277ab6fa529",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "excalidraw",
               "state": {
-                "file": "02 - School/实验室/刘玉生老师.md",
-                "mode": "source",
-                "source": false
+                "file": "02 - School/公司/项目/可信AI工业平台/概览.md"
               },
-              "icon": "lucide-file",
-              "title": "刘玉生老师"
+              "icon": "excalidraw-icon",
+              "title": "概览"
             }
           }
         ],
@@ -221,7 +219,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "02 - School/实验室/刘玉生老师.md",
+                "file": "02 - School/公司/项目/可信AI工业平台/概览.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -287,6 +285,12 @@
   },
   "active": "4bdb4277ab6fa529",
   "lastOpenFiles": [
+    "Excalidraw/Libraries/local-library.excalidrawlib",
+    "Excalidraw/Libraries",
+    "Excalidraw",
+    "02 - School/公司/Paper/Ontology-grounded retrieval-augmented generation for large language models.md",
+    "02 - School/公司/本体.md",
+    "02 - School/实验室/刘玉生老师.md",
     "02 - School/tutorial/Python/黑马.md",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/P4 大语言模型修炼史.md",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/P3 训练不了人工智能？那我训练自己！.md",
@@ -297,14 +301,12 @@
     "02 - School/prompts/生成.md",
     "02 - School/prompts",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/P2 今日的生成式 AI 厉害在哪儿.md",
-    "02 - School/实验室/刘玉生老师.md",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/李宏毅生成式人工智能导论作业环境配置指南.md",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/作业执行配置.md",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/从 Token 到 Transformer：大语言模型如何学习与生成.md",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/P1 生成式 AI 是什么.md",
     "01 - HOME/operation tips/pycharm/常用快捷键.md",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/作业执行清单.md",
-    "02 - School/公司/本体.md",
     "02 - School/课程/知识图谱导论",
     "03 - Books/置身事内：中国政府与经济发展.md",
     "02 - School/辅导/考研辅导/考研整体把控.md",
@@ -314,16 +316,12 @@
     "01 - HOME/records/Python编程：从入门到实践（第2版）.md",
     "04 - Ideas/Idol/珮瑶小筑搭建.md",
     "04 - Ideas/life/中 VS 美.md",
-    "04 - Ideas/casual thoughts.md",
-    "01 - HOME/operation tips/obsidian/常用emoji.md",
     "02 - School/辅导/考研辅导",
     "02 - School/辅导",
     "02 - School/课程/三维CAD建模",
     "02 - School/课程",
     "02 - School/年级",
-    "02 - School/班级",
     "Pasted Image 20260821154117_749.png",
-    "02 - School/公司/项目/可信AI工业平台",
     "Pasted Image 20260626183739_688.png",
     "Pasted Image 20260312194616_170.png",
     "Pasted Image 20260312194605_776.png",
