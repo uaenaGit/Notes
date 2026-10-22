@@ -87,12 +87,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "02 - School/tutorial/Python/小白学Python.md",
+                "file": "02 - School/tutorial/大模型学习路线-跨专业研一到就业.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "小白学Python"
+              "title": "大模型学习路线-跨专业研一到就业"
             }
           }
         ],
@@ -233,7 +233,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "02 - School/tutorial/Python/小白学Python.md",
+                "file": "02 - School/tutorial/大模型学习路线-跨专业研一到就业.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -299,6 +299,11 @@
   },
   "active": "dc5ba4c86cc7d5b2",
   "lastOpenFiles": [
+    "02 - School/tutorial/李宏毅/生成式人工智能导论/从 Token 到 Transformer：大语言模型如何学习与生成.md",
+    "02 - School/tutorial/大模型学习路线-跨专业研一到就业.md",
+    "02 - School/tutorial/李宏毅/生成式人工智能导论/李宏毅生成式人工智能导论作业环境配置指南.md",
+    "01 - HOME/records/Python编程：从入门到实践（第2版）.md",
+    "02 - School/实验室/刘玉生老师.md",
     "01 - HOME/operation tips/pycharm/常用快捷键.md",
     "02 - School/tutorial/Python/小白学Python.md",
     "02 - School/公司/本体.md",
@@ -307,7 +312,6 @@
     "Excalidraw/Libraries",
     "Excalidraw",
     "02 - School/公司/Paper/Ontology-grounded retrieval-augmented generation for large language models.md",
-    "02 - School/实验室/刘玉生老师.md",
     "02 - School/tutorial/Python/黑马.md",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/P4 大语言模型修炼史.md",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/P3 训练不了人工智能？那我训练自己！.md",
@@ -318,9 +322,7 @@
     "02 - School/prompts/生成.md",
     "02 - School/prompts",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/P2 今日的生成式 AI 厉害在哪儿.md",
-    "02 - School/tutorial/李宏毅/生成式人工智能导论/李宏毅生成式人工智能导论作业环境配置指南.md",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/作业执行配置.md",
-    "02 - School/tutorial/李宏毅/生成式人工智能导论/从 Token 到 Transformer：大语言模型如何学习与生成.md",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/P1 生成式 AI 是什么.md",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/作业执行清单.md",
     "02 - School/课程/知识图谱导论",
@@ -329,8 +331,6 @@
     "02 - School/课程/自然语言处理",
     "01 - HOME/operation tips/obsidian/常用快捷键.md",
     "02 - School/课程/三维CAD建模/课程笔记.md",
-    "01 - HOME/records/Python编程：从入门到实践（第2版）.md",
-    "04 - Ideas/Idol/珮瑶小筑搭建.md",
     "02 - School/辅导/考研辅导",
     "02 - School/辅导",
     "02 - School/课程/三维CAD建模",
