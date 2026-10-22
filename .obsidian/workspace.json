@@ -273,11 +273,11 @@
             }
           }
         ],
-        "currentTab": 4
+        "currentTab": 7
       }
     ],
     "direction": "horizontal",
-    "width": 218.2999267578125
+    "width": 330.2999267578125
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -297,13 +297,13 @@
       "mermaid-tools:Open Mermaid Toolbar": false
     }
   },
-  "active": "dc5ba4c86cc7d5b2",
+  "active": "a869d0beb8d2eae0",
   "lastOpenFiles": [
-    "01 - HOME/operation tips/obsidian/常用快捷键.md",
+    "01 - HOME/records/Python编程：从入门到实践（第2版）.md",
     "02 - School/tutorial/大模型学习路线-跨专业研一到就业.md",
+    "01 - HOME/operation tips/obsidian/常用快捷键.md",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/从 Token 到 Transformer：大语言模型如何学习与生成.md",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/李宏毅生成式人工智能导论作业环境配置指南.md",
-    "01 - HOME/records/Python编程：从入门到实践（第2版）.md",
     "02 - School/实验室/刘玉生老师.md",
     "01 - HOME/operation tips/pycharm/常用快捷键.md",
     "02 - School/tutorial/Python/小白学Python.md",
