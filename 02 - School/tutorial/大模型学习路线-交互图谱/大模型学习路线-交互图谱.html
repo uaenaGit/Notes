@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
@@ -243,7 +243,15 @@ textarea#note:focus{border-color:#33406b;box-shadow:0 0 0 3px rgba(110,130,255,.
 .note-preview pre{
   background:#070b13;border:1px solid #1a2334;border-radius:8px;padding:10px 11px;overflow:auto;margin:9px 0;
 }
-.note-preview pre code{background:none;border:0;padding:0;color:#cfe3ff;font-size:11.3px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+.note-preview pre code{background:none;border:0;padding:0;color:#cfe3ff;font-size:11.3px;line-height:1.6;white-space:pre-wrap;word-break:break-word}.note-preview .table-wrap{overflow-x:auto;margin:10px 0}
+.note-preview table{border-collapse:collapse;min-width:100%;font-size:11.5px}
+.note-preview th,.note-preview td{border:1px solid #202a3d;padding:5px 8px;vertical-align:top}
+.note-preview th{background:#121a2a;color:#d8e2f4;font-weight:600;white-space:nowrap}
+.note-preview tr:nth-child(even) td{background:rgba(255,255,255,.018)}
+.note-preview li.task{list-style:none;margin-left:-18px}
+.note-preview .cb{display:inline-flex;width:13px;height:13px;border:1px solid #55637f;background:rgba(255,255,255,.04);border-radius:3px;margin-right:7px;vertical-align:-2px;align-items:center;justify-content:center;font-size:9px;line-height:1;color:#06101a}
+.note-preview .cb.on{background:#3ddc97;border-color:#3ddc97}
+.note-preview img{max-width:100%;border-radius:8px;border:1px solid #1e2738;margin:8px 0;display:block}
 .note-preview blockquote{margin:9px 0;padding:4px 11px;border-left:2px solid #38466b;color:#9aa7bf}
 .note-preview blockquote p{margin:0}
 .note-preview a{color:#9fb0ff;text-decoration:none;border-bottom:1px dotted #3d4d7a}
@@ -1619,6 +1627,10 @@ function renderMarkdown(src) {
       spans.push(c);
       return '\u0001' + (spans.length - 1) + '\u0001';
     });
+    s = s.replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, (m, alt, url) => {
+      if (/^[a-z][a-z0-9+.-]*:/i.test(url) && !/^https?:/i.test(url)) return alt;
+      return '<img src="' + url + '" alt="' + alt + '" loading="lazy">';
+    });
     s = s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, label, url) => {
       const ok = /^(https?:\/\/|mailto:|\/|#)/i.test(url) ? url : '#';
       return '<a href="' + ok + '" target="_blank" rel="noopener">' + label + '</a>';
@@ -1643,7 +1655,13 @@ function renderMarkdown(src) {
   const flushList = () => {
     if (listType) {
       out += '<' + listType + '>';
-      listItems.forEach(it => { out += '<li>' + inline(it) + '</li>'; });
+      listItems.forEach(it => {
+        if (typeof it === 'string') {
+          out += '<li>' + inline(it) + '</li>';
+        } else {
+          out += '<li class="task"><span class="cb' + (it.checked ? ' on' : '') + '">' + (it.checked ? '✓' : '') + '</span>' + inline(it.text) + '</li>';
+        }
+      });
       out += '</' + listType + '>';
       listType = null; listItems = [];
     }
@@ -1688,10 +1706,51 @@ function renderMarkdown(src) {
       continue;
     }
 
+    // 表格：| 表头 | ... | 下面一行是 |---|---|
+    if (t.indexOf('|') >= 0 && i + 1 < lines.length) {
+      const sepLine = lines[i + 1].trim();
+      if (sepLine.indexOf('-') >= 0 && sepLine.indexOf('|') >= 0 && /^\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)*\|?$/.test(sepLine)) {
+        flushAll();
+        const splitRow = row => {
+          let s = row.trim();
+          if (s.charAt(0) === '|') s = s.slice(1);
+          if (s.charAt(s.length - 1) === '|') s = s.slice(0, -1);
+          return s.split('|').map(c => c.trim());
+        };
+        const header = splitRow(t);
+        const aligns = splitRow(sepLine).map(c => {
+          const l = c.charAt(0) === ':', r = c.charAt(c.length - 1) === ':';
+          return l && r ? 'center' : r ? 'right' : 'left';
+        });
+        i += 2;
+        const rows = [];
+        while (i < lines.length) {
+          const row = lines[i].trim();
+          if (!row || row.indexOf('|') < 0) break;
+          rows.push(splitRow(row));
+          i++;
+        }
+        i--;
+        out += '<div class="table-wrap"><table><thead><tr>' +
+          header.map((c, j) => '<th style="text-align:' + (aligns[j] || 'left') + '">' + inline(c) + '</th>').join('') +
+          '</tr></thead><tbody>';
+        rows.forEach(r => {
+          out += '<tr>' + r.map((c, j) => '<td style="text-align:' + (aligns[j] || 'left') + '">' + inline(c) + '</td>').join('') + '</tr>';
+        });
+        out += '</tbody></table></div>';
+        continue;
+      }
+    }
+
     m = t.match(/^[-*+]\s+(.*)$/);
     if (m) {
       if (listType !== 'ul') { flushAll(); listType = 'ul'; }
-      listItems.push(m[1]);
+      const task = m[1].match(/^\[([ xX])\]\s+(.*)$/);
+      if (task) {
+        listItems.push({task:true, checked: task[1].toLowerCase() === 'x', text: task[2]});
+      } else {
+        listItems.push(m[1]);
+      }
       continue;
     }
 
@@ -1764,7 +1823,7 @@ function renderPanel() {
       '</div>' +
       '<textarea id="note" placeholder="支持 Markdown、代码块和 LaTeX：&#10;**粗体**、`行内代码`、```python 代码块```、$E=mc^2$"></textarea>' +
       '<div class="note-preview" id="notePreview" hidden></div>' +
-      '<div class="note-hint">预览支持 Markdown · 三个反引号的代码块 · 行内公式 $…$ · 块级公式 $$…$$</div>' +
+      '<div class="note-hint">预览支持 Markdown（标题 / 列表 / 表格 / 勾选）· 代码块 · 行内公式 $…$ · 块级公式 $$…$$</div>' +
     '</div>' +
     '<div class="detail-foot">' +
       '<button class="foot-loc" id="panelLocate"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="7" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="2" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>定位到节点</button>' +
