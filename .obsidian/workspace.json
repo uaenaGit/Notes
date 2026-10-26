@@ -85,14 +85,12 @@
             "id": "dc5ba4c86cc7d5b2",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "image",
               "state": {
-                "file": "02 - School/tutorial/大模型学习路线-跨专业研一到就业.md",
-                "mode": "source",
-                "source": false
+                "file": "02 - School/tutorial/知识地图预览.png"
               },
-              "icon": "lucide-file",
-              "title": "大模型学习路线-跨专业研一到就业"
+              "icon": "lucide-image",
+              "title": "知识地图预览"
             }
           }
         ],
@@ -299,10 +297,15 @@
   },
   "active": "dc5ba4c86cc7d5b2",
   "lastOpenFiles": [
+    "02 - School/tutorial/大模型学习知识地图.md",
+    "02 - School/tutorial/大模型学习知识地图.canvas",
+    "02 - School/tutorial/大模型学习路线-跨专业研一到就业.md",
+    "02 - School/tutorial/知识地图预览.png",
+    "02 - School/tutorial/大模型学习知识地图.html",
+    "02 - School/tutorial/动手深度学习",
     "01 - HOME/debug/obsidian/2026-10-22 Obsidian 图片上传失败：PicGo 代理配置.md",
     "01 - HOME/debug/obsidian/templater-debug.md",
     "模型参数.md",
-    "02 - School/tutorial/大模型学习路线-跨专业研一到就业.md",
     "01 - HOME/records/Python编程：从入门到实践（第2版）.md",
     "01 - HOME/operation tips/obsidian/常用快捷键.md",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/从 Token 到 Transformer：大语言模型如何学习与生成.md",
@@ -327,14 +330,10 @@
     "02 - School/tutorial/李宏毅/生成式人工智能导论/P2 今日的生成式 AI 厉害在哪儿.md",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/作业执行配置.md",
     "02 - School/tutorial/李宏毅/生成式人工智能导论/P1 生成式 AI 是什么.md",
-    "02 - School/tutorial/李宏毅/生成式人工智能导论/作业执行清单.md",
     "02 - School/课程/知识图谱导论",
-    "03 - Books/置身事内：中国政府与经济发展.md",
     "02 - School/课程/自然语言处理",
     "02 - School/辅导/考研辅导",
     "02 - School/辅导",
-    "02 - School/课程/三维CAD建模",
-    "02 - School/课程",
     "Pasted Image 20260821154117_749.png",
     "Pasted Image 20260626183739_688.png",
     "Pasted Image 20260312194616_170.png",
@@ -343,7 +342,6 @@
     "Pasted Image 20260308201917_484.png",
     "Pasted Image 20260308201737_293.png",
     "Pasted image 20260217233425.png",
-    "Pasted image 20260223212159.png",
-    "Pasted image 20260223211958.png"
+    "Pasted image 20260223212159.png"
   ]
 }
