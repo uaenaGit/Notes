@@ -1,0 +1,2143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>大模型学习路线 · 知识图谱</title>
+<style>
+:root{
+  --bg:#06080f;
+  --panel:#0a0d16;
+  --panel-2:#0e1320;
+  --line:#171d2c;
+  --line-2:#212a3d;
+  --txt:#dfe6f5;
+  --muted:#8b96ad;
+  --dim:#5d6880;
+  --accent:#8b9cff;
+  --green:#3ddc97;
+  --amber:#f0b45f;
+  --violet:#b98cff;
+  --teal:#48c9c0;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;background:var(--bg);color:var(--txt);overflow:hidden;
+  font-family:"Inter","Segoe UI",system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:#1c2436;border-radius:8px;border:2px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background:#2a3550;background-clip:content-box}
+::-webkit-scrollbar-track{background:transparent}
+
+.app{display:flex;flex-direction:column;height:100vh}
+
+/* ---------- top bar ---------- */
+.globalbar{
+  height:62px;flex:0 0 62px;display:flex;align-items:center;gap:18px;padding:0 20px;
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,#0a0d16 0%,#070a11 100%);
+  position:relative;z-index:30;
+}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{
+  width:38px;height:38px;border-radius:12px;display:grid;place-items:center;flex:0 0 auto;
+  background:linear-gradient(140deg,#7b6cff 0%,#4f7cff 55%,#38d6c4 100%);
+  box-shadow:0 8px 22px rgba(88,110,255,.32), inset 0 1px 0 rgba(255,255,255,.25);
+}
+.brand-text{display:flex;flex-direction:column;line-height:1.15;min-width:0}
+.brand-text h1{font-size:15px;font-weight:600;margin:0;letter-spacing:.01em;white-space:nowrap}
+.brand-text span{font-size:9.5px;letter-spacing:.22em;color:#6e7a96;margin-top:3px}
+.stats{display:flex;align-items:center;gap:8px;font-size:11.5px;color:#77839c;white-space:nowrap}
+.stats b{color:#aab6cf;font-weight:600}
+.stats .sep{color:#2c3549}
+.grow{flex:1}
+.search{position:relative;width:300px;flex:0 1 300px}
+.search .sicon{position:absolute;left:11px;top:50%;transform:translateY(-50%);opacity:.55;pointer-events:none}
+.search input{
+  width:100%;height:36px;border-radius:10px;border:1px solid #1b2233;background:#0b0f1a;
+  color:var(--txt);padding:0 44px 0 34px;font-size:12.5px;outline:none;transition:border-color .15s, background .15s;
+}
+.search input::placeholder{color:#59647c}
+.search input:focus{border-color:#35406a;background:#0c111e;box-shadow:0 0 0 3px rgba(110,130,255,.08)}
+.search kbd{
+  position:absolute;right:9px;top:50%;transform:translateY(-50%);
+  font-size:10px;color:#5d6880;border:1px solid #232c40;border-radius:5px;padding:1px 5px;font-family:inherit;
+}
+.results{
+  position:absolute;top:44px;left:0;right:0;background:#0b101b;border:1px solid #222b40;border-radius:12px;
+  box-shadow:0 18px 40px rgba(0,0,0,.55);padding:6px;display:none;max-height:330px;overflow:auto;z-index:50;
+}
+.results.show{display:block}
+.result{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:8px;cursor:pointer}
+.result:hover,.result.active{background:#141b2c}
+.result .dot{width:8px;height:8px;border-radius:3px;flex:0 0 auto}
+.result .nm{font-size:12.5px;color:#d3dcee;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.result .rg{font-size:10.5px;color:#6a7590;white-space:nowrap}
+.results .empty{padding:14px;text-align:center;color:#5d6880;font-size:12px}
+
+.btn{
+  height:36px;padding:0 14px;border-radius:10px;border:1px solid #1e2638;background:#0c111c;
+  font-size:12.5px;color:#c4cee2;display:inline-flex;align-items:center;gap:7px;transition:.15s;white-space:nowrap;
+}
+.btn:hover{background:#121a2a;border-color:#2a3450;color:#e6edfb}
+.btn.primary{background:linear-gradient(180deg,#2b3f8f,#22337a);border-color:#3a4f9f;color:#e9eeff}
+.btn.primary:hover{background:linear-gradient(180deg,#33499f,#263a86)}
+.btn.sm{height:30px;padding:0 11px;font-size:12px;border-radius:8px}
+.btn svg{opacity:.8}
+
+/* ---------- shell ---------- */
+.body{flex:1;display:flex;min-height:0}
+
+/* ---------- sidebar ---------- */
+.sidebar{
+  width:296px;flex:0 0 296px;display:flex;flex-direction:column;min-height:0;
+  border-right:1px solid var(--line);
+  background:linear-gradient(180deg,#090c14 0%,#070910 100%);
+  z-index:20;
+}
+.sidebar-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:18px 16px 8px}
+.sec{margin-bottom:16px}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:9px}
+.sec-h .t{font-size:11px;letter-spacing:.16em;color:#6d7891}
+.sec-h .e{font-size:9px;letter-spacing:.16em;color:#39445c}
+
+.row{
+  display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:8px;cursor:pointer;
+  transition:background .12s;user-select:none;
+}
+.row:hover{background:#10151f}
+.row.off{opacity:.36}
+.row .dot{width:9px;height:9px;border-radius:3px;flex:0 0 auto;box-shadow:0 0 10px currentColor}
+.row .nm{font-size:12.5px;color:#c2ccdf;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .ct{font-size:11px;color:#5f6a82;font-variant-numeric:tabular-nums}
+.row .eye{opacity:0;font-size:10px;color:#6d7891}
+.row:hover .eye{opacity:1}
+
+.kind-row .line{width:26px;height:2px;flex:0 0 auto;position:relative;border-radius:2px}
+.kind-row .line.dash{background:repeating-linear-gradient(90deg,currentColor 0 4px,transparent 4px 8px)!important}
+
+/* regions */
+.region-row{padding:7px 8px;align-items:center}
+.region-row .num{font-size:9.5px;color:#48536c;width:16px;flex:0 0 auto;font-variant-numeric:tabular-nums;letter-spacing:.04em}
+.region-row .nm{font-size:12.5px;color:#c2ccdf;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.region-row .ct{font-size:10.5px;color:#5a6580;font-variant-numeric:tabular-nums}
+.region-row .bar{position:absolute;left:24px;right:8px;bottom:3px;height:2px;background:#141b28;border-radius:2px;overflow:hidden}
+.region-row{position:relative}
+.region-row .bar i{display:block;height:100%;background:linear-gradient(90deg,#3ddc97,#5ee0b3);border-radius:2px}
+
+/* footer */
+.sidebar-foot{padding:12px 16px 16px;border-top:1px solid var(--line);background:#080b12}
+.progress-card{display:flex;align-items:center;gap:13px;margin-bottom:12px}
+.ring-wrap{position:relative;width:54px;height:54px;flex:0 0 auto}
+.ring-num{position:absolute;inset:0;display:grid;place-items:center;font-size:12px;font-weight:600;color:#dbe4f7;font-variant-numeric:tabular-nums}
+.progress-meta .big{font-size:12.5px;color:#cdd7ea}
+.progress-meta .big b{color:#8ff0c7;font-weight:600}
+.progress-meta .sub{font-size:11px;color:#66718b;margin-top:4px}
+.foot-btns{display:flex;gap:8px}
+.foot-btns .btn{flex:1;justify-content:center;height:32px;font-size:12px}
+.link-reset{display:block;width:100%;text-align:center;font-size:10.5px;color:#4d5870;margin-top:9px}
+.link-reset:hover{color:#8b96ad}
+
+/* ---------- canvas ---------- */
+.main{position:relative;flex:1;min-width:0;overflow:hidden;background:#06080f}
+canvas{display:block;width:100%;height:100%;cursor:grab;touch-action:none}
+canvas.dragging{cursor:grabbing}
+.main::after{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:5;
+  background:radial-gradient(120% 90% at 50% 45%,transparent 55%,rgba(3,5,10,.55) 100%);
+}
+.hint{
+  position:absolute;left:18px;bottom:16px;z-index:8;font-size:11px;color:#5a6580;
+  background:rgba(10,13,22,.72);border:1px solid #1a2133;border-radius:9px;padding:7px 11px;
+  backdrop-filter:blur(6px);display:flex;align-items:center;gap:8px;pointer-events:none;
+}
+.hint b{color:#8492ad;font-weight:500}
+.zoomctl{position:absolute;right:18px;bottom:16px;z-index:8;display:flex;flex-direction:column;gap:1px;background:#0b0f19;border:1px solid #1c2436;border-radius:10px;overflow:hidden}
+.zoomctl button{width:32px;height:30px;display:grid;place-items:center;color:#8b96ad;font-size:15px}
+.zoomctl button:hover{background:#141b2b;color:#e2e9f8}
+
+/* ---------- detail panel ---------- */
+.detail{
+  position:absolute;top:16px;right:16px;bottom:16px;width:386px;z-index:20;
+  background:rgba(10,14,23,.94);border:1px solid #1d2538;border-radius:16px;
+  box-shadow:0 24px 60px rgba(0,0,0,.55);backdrop-filter:blur(18px);
+  transform:translateX(18px);opacity:0;pointer-events:none;
+  transition:transform .22s cubic-bezier(.2,.8,.2,1), opacity .18s;
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.detail.open{transform:none;opacity:1;pointer-events:auto}
+.detail-head{display:flex;align-items:center;gap:8px;padding:14px 16px 0}
+.badge{font-size:10px;letter-spacing:.06em;padding:3px 8px;border-radius:6px;border:1px solid;line-height:1.3}
+.detail-region{font-size:10.5px;color:#6b7690;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.icon-btn{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;color:#7c87a0;font-size:16px}
+.icon-btn:hover{background:#161d2d;color:#dbe4f6}
+.detail-body{overflow-y:auto;padding:10px 18px 18px;flex:1}
+.detail h2{font-size:19px;line-height:1.4;margin:6px 0 10px;font-weight:600;letter-spacing:.01em}
+.detail .desc{font-size:12.8px;line-height:1.75;color:#aab5cc;margin:0 0 12px}
+.detail h4{font-size:10px;letter-spacing:.14em;color:#5d6880;font-weight:500;margin:18px 0 8px}
+.tips{margin:0;padding:0;list-style:none}
+.tips li{position:relative;padding-left:14px;font-size:12px;line-height:1.65;color:#9aa6bf;margin-bottom:5px}
+.tips li::before{content:"";position:absolute;left:2px;top:8px;width:4px;height:4px;border-radius:2px;background:#4a5674}
+.links{display:flex;flex-wrap:wrap;gap:6px}
+.links a{
+  font-size:11px;color:#9fb0ff;text-decoration:none;background:#121a2e;border:1px solid #243055;
+  padding:4px 8px;border-radius:7px;display:inline-flex;align-items:center;gap:5px;max-width:100%;
+}
+.links a:hover{background:#182341;border-color:#364a80;color:#c6d3ff}
+.links a span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{
+  font-size:11.5px;color:#b7c3da;background:#111726;border:1px solid #1e273b;padding:4px 9px;border-radius:20px;
+  display:inline-flex;align-items:center;gap:6px;transition:.12s;
+}
+.chip:hover{background:#172033;border-color:#2c3a58;color:#e6edfb}
+.chip i{width:5px;height:5px;border-radius:50%;display:block}
+.status{display:flex;gap:6px;background:#0c111c;border:1px solid #1a2233;border-radius:10px;padding:3px}
+.status button{
+  flex:1;height:28px;border-radius:7px;font-size:11.5px;color:#7f8ba4;display:flex;align-items:center;justify-content:center;gap:5px;
+}
+.status button:hover{color:#d5deef;background:#141b2b}
+.status button.on[data-st="todo"]{background:#1a2233;color:#c8d2e6}
+.status button.on[data-st="doing"]{background:rgba(240,180,95,.14);color:#f0b45f}
+.status button.on[data-st="done"]{background:rgba(61,220,151,.13);color:#4fe0a5}
+.note-label{display:flex;justify-content:space-between;align-items:center;margin:18px 0 8px;gap:8px}
+.note-label h4{margin:0}
+.note-state{font-size:10px;color:#4f5a72}
+.note-actions{display:flex;align-items:center;gap:8px}
+.note-tabs{display:flex;gap:2px;background:#0b101a;border:1px solid #1a2233;border-radius:7px;padding:2px}
+.note-tabs button{font-size:10.5px;padding:2px 8px;border-radius:5px;color:#77839c}
+.note-tabs button:hover{color:#c6d2e6}
+.note-tabs button.on{background:#1b2437;color:#dbe4f7}
+textarea#note{
+  width:100%;min-height:190px;resize:vertical;background:#0a0e18;border:1px solid #1b2334;border-radius:10px;
+  color:#d3dcee;font-size:12.3px;line-height:1.7;padding:10px 11px;outline:none;
+  font-family:inherit;
+}
+textarea#note::placeholder{color:#4b5670}
+textarea#note:focus{border-color:#33406b;box-shadow:0 0 0 3px rgba(110,130,255,.07)}
+.note-hint{font-size:10px;color:#4b5670;margin-top:7px;line-height:1.6}
+.note-preview{
+  min-height:190px;max-height:440px;overflow:auto;background:#0a0e18;border:1px solid #1b2334;border-radius:10px;
+  padding:12px 13px;font-size:12.3px;line-height:1.72;color:#c3cee1;
+}
+.note-preview[hidden]{display:none}
+.note-preview p{margin:0 0 9px}
+.note-preview p:last-child{margin-bottom:0}
+.note-preview h1,.note-preview h2,.note-preview h3,.note-preview h4{color:#e4ecfb;margin:14px 0 7px;line-height:1.4}
+.note-preview h1{font-size:17px}
+.note-preview h2{font-size:15px}
+.note-preview h3{font-size:13.5px}
+.note-preview h4{font-size:12.5px;color:#cbd6ea}
+.note-preview h5{font-size:12px;color:#c6d1e6;margin:12px 0 6px}
+.note-preview h6{font-size:11.5px;color:#b9c5db;margin:10px 0 5px}
+.note-preview ul,.note-preview ol{margin:6px 0 10px;padding-left:20px}
+.note-preview li{margin:3px 0}
+.note-preview code{
+  background:#131a28;border:1px solid #1e2839;border-radius:4px;padding:1px 4px;
+  font-family:"Cascadia Code","Consolas","SF Mono",monospace;font-size:11.5px;color:#a9d5ff;
+}
+.note-preview pre{
+  background:#070b13;border:1px solid #1a2334;border-radius:8px;padding:10px 11px;overflow:auto;margin:9px 0;
+}
+.note-preview pre code{background:none;border:0;padding:0;color:#cfe3ff;font-size:11.3px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+.note-preview blockquote{margin:9px 0;padding:4px 11px;border-left:2px solid #38466b;color:#9aa7bf}
+.note-preview blockquote p{margin:0}
+.note-preview a{color:#9fb0ff;text-decoration:none;border-bottom:1px dotted #3d4d7a}
+.note-preview a:hover{color:#c6d3ff}
+.note-preview hr{border:0;border-top:1px solid #1d2638;margin:14px 0}
+.note-preview strong{color:#e8effc}
+.note-preview del{color:#6d7890}
+.note-preview mjx-container{max-width:100%;overflow-x:auto;overflow-y:hidden}
+.note-preview mjx-container[display="true"]{margin:10px 0 !important}
+.note-preview .md-empty{color:#4f5a72;font-size:12px}
+.detail-foot{padding:10px 18px;border-top:1px solid #161d2c;display:flex;justify-content:space-between;align-items:center;font-size:10.5px;color:#4f5a72;background:#090d16}
+.foot-loc{color:#7f8da8;display:inline-flex;align-items:center;gap:5px}
+.foot-loc:hover{color:#c3cfe6}
+
+/* toast */
+#toast{
+  position:fixed;left:50%;bottom:70px;transform:translate(-50%,14px);z-index:100;
+  background:#121a2b;border:1px solid #27324c;color:#d5deef;font-size:12px;padding:9px 16px;border-radius:10px;
+  box-shadow:0 14px 40px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:.22s;
+}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:1180px){
+  .stats{display:none}
+  .search{width:230px;flex:0 1 230px}
+  .sidebar{width:262px;flex-basis:262px}
+}
+@media (max-width:860px){
+  .sidebar{display:none}
+  .detail{width:auto;left:12px;right:12px}
+  .brand-text span{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="globalbar">
+    <div class="brand">
+      <div class="logo">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none">
+          <path d="M6 17.2V9.4L12 5l6 4.4v7.8" stroke="#fff" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" opacity=".95"/>
+          <circle cx="6" cy="17.4" r="2.1" fill="#fff"/>
+          <circle cx="18" cy="17.4" r="2.1" fill="#fff"/>
+          <circle cx="12" cy="4.8" r="2.1" fill="#fff"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>大模型学习路线</h1>
+        <span>LLM FIELD ATLAS</span>
+      </div>
+    </div>
+    <div class="stats" id="stats"></div>
+    <div class="grow"></div>
+    <div class="search" id="searchWrap">
+      <svg class="sicon" width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6.5" stroke="#8b96ad" stroke-width="1.7"/><path d="M16 16l4 4" stroke="#8b96ad" stroke-width="1.7" stroke-linecap="round"/></svg>
+      <input id="searchInput" placeholder="搜索节点、资料、概念…" autocomplete="off" spellcheck="false">
+      <kbd>/</kbd>
+      <div class="results" id="results"></div>
+    </div>
+    <button class="btn" id="btnFit" title="回到全景 (F)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      全景
+    </button>
+  </header>
+
+  <div class="body">
+    <aside class="sidebar">
+      <div class="sidebar-scroll">
+        <section class="sec">
+          <div class="sec-h"><span class="t">图层</span><span class="e">LAYERS</span></div>
+          <div id="layerList"></div>
+        </section>
+        <section class="sec">
+          <div class="sec-h"><span class="t">关系</span><span class="e">RELATIONS</span></div>
+          <div id="kindList"></div>
+        </section>
+        <section class="sec">
+          <div class="sec-h"><span class="t">区域</span><span class="e">REGIONS</span></div>
+          <div id="regionList"></div>
+        </section>
+      </div>
+      <div class="sidebar-foot">
+        <div class="progress-card">
+          <div class="ring-wrap">
+            <svg width="54" height="54" viewBox="0 0 54 54">
+              <circle cx="27" cy="27" r="22" fill="none" stroke="#161d2c" stroke-width="4"/>
+              <circle id="ring" cx="27" cy="27" r="22" fill="none" stroke="#3ddc97" stroke-width="4" stroke-linecap="round"
+                stroke-dasharray="138.23" stroke-dashoffset="138.23" transform="rotate(-90 27 27)"/>
+            </svg>
+            <div class="ring-num" id="ringNum">0%</div>
+          </div>
+          <div class="progress-meta">
+            <div class="big">已掌握 <b id="doneCount">0</b> / <span id="allCount">0</span></div>
+            <div class="sub" id="doingText">进行中 0 · 未开始 0</div>
+          </div>
+        </div>
+        <div class="foot-btns">
+          <button class="btn primary" id="btnExport">导出笔记</button>
+          <button class="btn" id="btnReset">重置</button>
+        </div>
+        <button class="link-reset" id="btnResetView">重置视图 · 清除筛选</button>
+      </div>
+    </aside>
+
+    <main class="main" id="stage">
+      <canvas id="graph"></canvas>
+      <div class="hint"><b>拖动</b> 平移 · <b>滚轮</b> 缩放 · <b>点击节点</b> 记录笔记 · <b>双击空白</b> 回全景</div>
+      <div class="zoomctl">
+        <button id="zin" title="放大">+</button>
+        <button id="zout" title="缩小">−</button>
+      </div>
+      <aside class="detail" id="detail" aria-hidden="true">
+        <div id="detailBody" style="display:flex;flex-direction:column;flex:1;min-height:0"></div>
+      </aside>
+    </main>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$','$'],['\\(','\\)']],
+    displayMath: [['$$','$$'],['\\[','\\]']]
+  },
+  svg: {fontCache: 'local'},
+  startup: {typeset: false}
+};
+</script>
+<script src="mathjax-tex-svg.js" onerror="window.__mathjaxFailed=true"></script>
+<script>
+(function(){
+'use strict';
+
+/* =======================================================================
+   数据：10 个区域 / 134 个节点 / 关系
+   ======================================================================= */
+const REGIONS = [
+  {id:'dir',      name:'方向选择',            en:'ORIENTATION',    x:30,   y:30,  w:280, h:560, accent:'#8e9ab8'},
+  {id:'s1',       name:'阶段 1 · 基础',       en:'FOUNDATIONS',    x:334,  y:30,  w:340, h:560, accent:'#6f8dfb'},
+  {id:'s2',       name:'阶段 2 · Transformer', en:'TRANSFORMER',   x:698,  y:30,  w:390, h:560, accent:'#5fb0f7'},
+  {id:'s3',       name:'阶段 3 · CS336',      en:'FROM SCRATCH',   x:1112, y:30,  w:320, h:560, accent:'#8b7cf9'},
+  {id:'s4a',      name:'阶段 4A · 后训练',     en:'POST-TRAINING',  x:1456, y:30,  w:370, h:560, accent:'#f0b45f'},
+  {id:'s4b',      name:'阶段 4B · 系统优化',   en:'SYSTEMS',        x:30,   y:620, w:410, h:500, accent:'#3fc9b0'},
+  {id:'cs',       name:'计算机基础',           en:'CS CORE',        x:464,  y:620, w:340, h:500, accent:'#7c8aa8'},
+  {id:'research', name:'科研能力',             en:'RESEARCH',       x:828,  y:620, w:290, h:500, accent:'#c78ef0'},
+  {id:'career',   name:'实习与求职',           en:'CAREER',         x:1142, y:620, w:280, h:500, accent:'#5bd6a4'},
+  {id:'exec',     name:'执行与复盘',           en:'EXECUTION',      x:1446, y:620, w:380, h:500, accent:'#e58f6f'}
+];
+const WORLD = {w:1850, h:1150};
+
+const TYPES = {
+  concept:  {name:'概念', color:'#6f8dfb', shape:'dot'},
+  resource: {name:'资料', color:'#3ddc97', shape:'square'},
+  project:  {name:'项目', color:'#f0b45f', shape:'diamond'},
+  skill:    {name:'能力', color:'#b98cff', shape:'hex'},
+  check:    {name:'清单', color:'#48c9c0', shape:'ring'}
+};
+
+const KINDS = {
+  prereq:  {name:'前置依赖', color:'#7f8ff5', arrow:true,  dash:false},
+  source:  {name:'出处解释', color:'#37c98f', arrow:true,  dash:false},
+  related: {name:'一般相关', color:'#5a6479', arrow:false, dash:true},
+  produce: {name:'产出成果', color:'#e8a94a', arrow:true,  dash:false}
+};
+
+const NODES = [
+  /* ---------------- 方向选择 ---------------- */
+  {id:'d-choice', label:'方向初选', type:'concept', region:'dir',
+   desc:'前半年打共同基础，研一后半段在「后训练」与「系统优化」之间做比较，再结合导师方向、兴趣、算力与数据定下来。',
+   tips:['不要在还没有项目经验时过早锁死方向','第 6 个月写一页方向对比：做什么、需要什么、我有什么'], tags:['规划']},
+  {id:'d-post', label:'后训练与模型算法', type:'concept', region:'dir',
+   desc:'数据构建、SFT、偏好优化、领域适配与评测；需要深度学习、实验设计与数据分析能力。',
+   tips:['入口：小模型微调 + 可靠评测','深入一个问题，而不是铺开五个']},
+  {id:'d-sys', label:'系统与推理优化', type:'concept', region:'dir',
+   desc:'推理服务、显存与性能优化、算子、分布式；需要 C/C++、OS、体系结构与 CUDA。',
+   tips:['用已有的 C/Linux 经验切入','先补计算机系统基础，再碰 CUDA']},
+  {id:'d-app', label:'应用算法与工程', type:'concept', region:'dir',
+   desc:'RAG、工具调用、检索、业务评测与部署；需要 Python 工程、检索、后端与数据处理。',
+   tips:['尽早做完整项目','必须带评测与错误分析，否则只是 demo']},
+  {id:'d-pre', label:'预训练研究', type:'concept', region:'dir',
+   desc:'数据配比、结构、训练策略、规模规律；需要理论、研究方法、算力与团队支持。',
+   tips:['通过 CS336 建立理解','再结合课题组资源判断是否可行']},
+  {id:'d-material', label:'材料背景的切口', type:'concept', region:'dir',
+   desc:'材料文献抽取、领域检索、专业问答是天然切口；是否选它取决于能否拿到可靠数据与专业评测支持。'},
+
+  /* ---------------- 阶段 1 ---------------- */
+  {id:'r-d2l', label:'动手学深度学习', type:'resource', region:'s1',
+   desc:'先学预备知识、线性神经网络、多层感知机；边看边运行代码，后半本留给阶段 2。',
+   links:[['zh.d2l.ai','https://zh.d2l.ai/']], tags:['教材','PyTorch']},
+  {id:'r-ptb', label:'PyTorch 基础教程', type:'resource', region:'s1',
+   desc:'Tensor、Dataset/DataLoader、模型、自动求导、优化、保存与加载，一条主线走完。',
+   links:[['pytorch.org/tutorials','https://pytorch.org/tutorials/beginner/basics/intro.html']]},
+  {id:'r-numpy', label:'NumPy 官方入门', type:'resource', region:'s1',
+   desc:'数组、索引、形状、广播、矩阵运算；形状感是后面读模型代码的基础。',
+   links:[['numpy.org','https://numpy.org/doc/stable/user/absolute_beginners.html']]},
+  {id:'r-3b1b-la', label:'3Blue1Brown 线性代数', type:'resource', region:'s1',
+   desc:'建立向量、线性变换、矩阵乘法的直觉；看完用 NumPy 手算验证。',
+   links:[['3blue1brown.com','https://www.3blue1brown.com/topics/linear-algebra']]},
+  {id:'r-3b1b-calc', label:'3Blue1Brown 微积分', type:'resource', region:'s1',
+   desc:'导数与链式法则的直觉，最终落到梯度计算与反向传播。',
+   links:[['3blue1brown.com','https://www.3blue1brown.com/topics/calculus']]},
+  {id:'r-cs229', label:'CS229 讲义（选读）', type:'resource', region:'s1',
+   desc:'只查线性代数、概率与学习理论相关章节；不要求此时完整学完。',
+   links:[['cs229.stanford.edu','https://cs229.stanford.edu/']]},
+  {id:'r-statquest', label:'StatQuest（选读）', type:'resource', region:'s1',
+   desc:'遇到不懂的统计概念时按需补，适合零散时间。',
+   links:[['youtube.com/@statquest','https://www.youtube.com/@statquest']]},
+
+  {id:'c-linalg', label:'线性代数', type:'concept', region:'s1',
+   desc:'向量、矩阵乘法、转置、内积、范数；能对上模型代码里的每个形状。',
+   tips:['手推 y=Wx+b 的形状','用 NumPy 把每个运算跑一遍'], tags:['数学']},
+  {id:'c-calc', label:'微积分与梯度', type:'concept', region:'s1',
+   desc:'导数、偏导、链式法则、梯度；手推线性回归梯度并与数值梯度对照。', tags:['数学']},
+  {id:'c-prob', label:'概率统计', type:'concept', region:'s1',
+   desc:'条件概率、期望、方差、常见分布、最大似然；理解损失与采样的前提。', tags:['数学']},
+  {id:'c-split', label:'训练 / 验证 / 测试', type:'concept', region:'s1',
+   desc:'三集划分与去重；不能用测试集调参，数据泄漏是最常见的隐性错误。',
+   tips:['先划分再预处理，避免统计量泄漏','记录划分方式与去重规则']},
+  {id:'c-loss', label:'损失函数', type:'concept', region:'s1',
+   desc:'回归用 MSE、分类用交叉熵；知道每个损失对应的假设与梯度。'},
+  {id:'c-overfit', label:'过拟合与正则化', type:'concept', region:'s1',
+   desc:'用训练/验证曲线判断过拟合；正则化、早停、容量调整是第一批手段。'},
+  {id:'c-leak', label:'数据泄漏', type:'concept', region:'s1',
+   desc:'重复样本跨集合、用未来信息、在全量数据上拟合预处理，都会让评测虚高。',
+   tips:['查重后再划分','预处理只在训练集上 fit']},
+  {id:'c-autograd', label:'自动求导', type:'concept', region:'s1',
+   desc:'计算图、backward、梯度累积；对照手算梯度验证实现是否正确。'},
+
+  {id:'p-1a', label:'项目 1A：NumPy 线性回归', type:'project', region:'s1',
+   desc:'人工数据上实现预测、MSE、梯度与参数更新；画损失曲线，用有限差分抽查梯度。'},
+  {id:'p-1b', label:'项目 1B：PyTorch 分类闭环', type:'project', region:'s1',
+   desc:'Fashion-MNIST + MLP，训练/验证/保存/恢复齐全；比较 2–3 个学习率并记录表现。'},
+  {id:'s-1-closed', label:'训练闭环能力', type:'skill', region:'s1',
+   desc:'不看答案能写出训练循环，能解释 zero_grad/backward/step 与 train()/eval() 的区别。'},
+  {id:'k-1', label:'阶段 1 验收清单', type:'check', region:'s1',
+   desc:'训练循环、三个调用的作用、eval 与 no_grad、测试集调参、学习率现象、仓库可运行。'},
+
+  /* ---------------- 阶段 2 ---------------- */
+  {id:'r-d2l2', label:'动手学深度学习（后半）', type:'resource', region:'s2',
+   desc:'优化、序列模型、注意力与 Transformer；CNN/RNN 先掌握基本原理。',
+   links:[['zh.d2l.ai','https://zh.d2l.ai/']]},
+  {id:'r-z2h', label:'Karpathy: Zero to Hero', type:'resource', region:'s2',
+   desc:'按 micrograd → makemore → GPT 推进，代码和讲解一起学。',
+   links:[['karpathy.ai/zero-to-hero','https://karpathy.ai/zero-to-hero.html']], tags:['视频','代码']},
+  {id:'r-ill', label:'The Illustrated Transformer', type:'resource', region:'s2',
+   desc:'先用图建立结构直觉，再回代码确认每个维度。',
+   links:[['jalammar.github.io','https://jalammar.github.io/illustrated-transformer/']]},
+  {id:'r-attn', label:'Attention Is All You Need', type:'resource', region:'s2',
+   desc:'第一篇精读论文；重点看注意力、多头、位置编码与整体结构。',
+   tips:['注意原论文是 encoder-decoder','学 GPT 时要补 decoder-only 与因果掩码'],
+   links:[['arxiv.org/abs/1706.03762','https://arxiv.org/abs/1706.03762']], tags:['论文']},
+  {id:'r-cs224n', label:'CS224N（选读）', type:'resource', region:'s2',
+   desc:'词向量、注意力、Transformer、语言模型相关章节。',
+   links:[['cs224n','https://web.stanford.edu/class/cs224n/']]},
+  {id:'r-nanogpt', label:'nanoGPT', type:'resource', region:'s2',
+   desc:'读工程结构与训练脚本，再自己实现关键模块；不要直接 fork 当作业。',
+   links:[['github.com/karpathy/nanoGPT','https://github.com/karpathy/nanoGPT']]},
+
+  {id:'c-tok', label:'Tokenizer', type:'concept', region:'s2',
+   desc:'文本到 token 的映射；字符级起步，理解词表、特殊 token 与压缩率。'},
+  {id:'c-emb', label:'Token Embedding', type:'concept', region:'s2',
+   desc:'查表得到向量；理解 embedding 与输出投影是否共享权重。'},
+  {id:'c-pos', label:'位置编码', type:'concept', region:'s2',
+   desc:'正弦或可学习位置编码；自注意力本身没有顺序信息。'},
+  {id:'c-causal', label:'因果掩码', type:'concept', region:'s2',
+   desc:'上三角 mask 保证只能看左边；用小例子验证 mask 的实际行为。',
+   tips:['打印 mask 矩阵','故意去掉 mask，观察 loss 与生成变化']},
+  {id:'c-attn', label:'自注意力', type:'concept', region:'s2',
+   desc:'Q/K/V、缩放点积、softmax；能写出每个张量的形状。'},
+  {id:'c-mha', label:'多头注意力', type:'concept', region:'s2',
+   desc:'多头并行、拼接与输出投影；头数与 head_dim 的关系。'},
+  {id:'c-ffn', label:'前馈网络', type:'concept', region:'s2',
+   desc:'两层 MLP + 激活，占参数大头；理解 4x 扩展比。'},
+  {id:'c-resln', label:'残差与 LayerNorm', type:'concept', region:'s2',
+   desc:'残差稳定梯度、LayerNorm 稳定分布；pre-LN 与 post-LN 的差别。'},
+  {id:'c-xent', label:'交叉熵与 next-token', type:'concept', region:'s2',
+   desc:'语言模型就是逐 token 分类；标签要 shift 一位对齐。'},
+  {id:'c-ppl', label:'困惑度', type:'concept', region:'s2',
+   desc:'交叉熵的指数形式；换 tokenizer 后不可直接比较。'},
+  {id:'c-sampling', label:'采样策略', type:'concept', region:'s2',
+   desc:'temperature、top-k、top-p 的作用与副作用。'},
+  {id:'c-ar', label:'自回归生成', type:'concept', region:'s2',
+   desc:'训练时并行、生成时逐 token；KV cache 的动机由此而来。'},
+
+  {id:'p-gpt', label:'从零实现小型 GPT', type:'project', region:'s2',
+   desc:'tokenizer、embedding、attention、FFN、残差 + 训练与采样；做 3 组单变量小实验。'},
+  {id:'s-2-shape', label:'形状与掩码能力', type:'skill', region:'s2',
+   desc:'能从 token 输入写出每层张量形状；能解释并验证 causal mask。'},
+  {id:'k-2', label:'阶段 2 验收清单', type:'check', region:'s2',
+   desc:'形状、掩码、并行与解码、loss/ppl/temperature、维度与设备报错定位。'},
+
+  /* ---------------- 阶段 3 ---------------- */
+  {id:'r-cs336', label:'CS336 Spring 2025', type:'resource', region:'s3',
+   desc:'Language Modeling from Scratch；固定一个年份，按该版本讲义与作业配套学。',
+   links:[['stanford-cs336.github.io','https://stanford-cs336.github.io/spring2025/']], tags:['课程']},
+  {id:'r-cs336gh', label:'CS336 GitHub 组织', type:'resource', region:'s3',
+   desc:'查对应作业仓库、说明与测试；要求以选定版本为准。',
+   links:[['github.com/stanford-cs336','https://github.com/stanford-cs336']]},
+  {id:'r-torchdoc', label:'PyTorch 文档', type:'resource', region:'s3',
+   desc:'实现时查 API 语义与版本差异，避免凭印象写。',
+   links:[['pytorch.org/docs','https://pytorch.org/docs/stable/index.html']]},
+
+  {id:'c-tokimpl', label:'从零写 tokenizer', type:'concept', region:'s3',
+   desc:'BPE 或字节级实现；训练词表、编码解码、特殊 token 处理。'},
+  {id:'c-opt', label:'优化器实现', type:'concept', region:'s3',
+   desc:'AdamW、学习率调度、权重衰减、梯度裁剪与累积。'},
+  {id:'c-loop', label:'训练工程', type:'concept', region:'s3',
+   desc:'配置管理、日志、断点恢复、混合精度、梯度检查。'},
+  {id:'c-prof', label:'性能分析', type:'concept', region:'s3',
+   desc:'profiler 看算子耗时、内存与通信；先测量再优化。'},
+  {id:'c-mem', label:'显存管理', type:'concept', region:'s3',
+   desc:'参数、梯度、优化器状态、激活各占多少；激活重计算与 checkpointing。'},
+  {id:'c-mixed', label:'混合精度', type:'concept', region:'s3',
+   desc:'fp16/bf16 与 loss scaling；数值稳定性与速度的权衡。'},
+  {id:'c-dist', label:'分布式训练', type:'concept', region:'s3',
+   desc:'DP/DDP/FSDP、张量并行与通信开销；先吃透数据并行。'},
+  {id:'c-clean', label:'数据清洗与去重', type:'concept', region:'s3',
+   desc:'质量过滤、去重、去污染；数据质量决定模型上限。'},
+  {id:'c-mix', label:'数据配比', type:'concept', region:'s3',
+   desc:'领域配比与课程式训练；先小规模消融再放大。'},
+  {id:'c-scaling', label:'规模规律', type:'concept', region:'s3',
+   desc:'参数量、数据量、算力的幂律关系，用来设定实验预算。'},
+
+  {id:'p-lab', label:'小语言模型训练实验台', type:'project', region:'s3',
+   desc:'在阶段 2 项目上加配置、日志、恢复、tokenizer、数据处理、评测与性能统计。'},
+  {id:'s-3-full', label:'全流程解释能力', type:'skill', region:'s3',
+   desc:'能从原始文本讲到训练、评测与生成；能读懂一个小型开源语言模型实现。'},
+  {id:'k-3', label:'阶段 3 验收清单', type:'check', region:'s3',
+   desc:'核心作业通过、全流程解释、读开源实现、可复现代码与报告；记录未完成部分。'},
+
+  /* ---------------- 阶段 4A ---------------- */
+  {id:'r-hf', label:'Hugging Face LLM Course', type:'resource', region:'s4a',
+   desc:'Transformers、Datasets、tokenizer、训练与模型使用，工程接口的入口。',
+   links:[['huggingface.co/learn','https://huggingface.co/learn/llm-course/chapter1/1']]},
+  {id:'r-tf', label:'Transformers 文档', type:'resource', region:'s4a',
+   desc:'模型加载、生成、训练接口与版本变化。',
+   links:[['huggingface.co/docs/transformers','https://huggingface.co/docs/transformers/index']]},
+  {id:'r-peft', label:'PEFT 文档', type:'resource', region:'s4a',
+   desc:'LoRA 等参数高效微调的配置与实现。',
+   links:[['huggingface.co/docs/peft','https://huggingface.co/docs/peft/index']]},
+  {id:'r-trl', label:'TRL 文档', type:'resource', region:'s4a',
+   desc:'按项目需要学 SFT 与偏好优化；核对版本与 API。',
+   links:[['huggingface.co/docs/trl','https://huggingface.co/docs/trl/index']]},
+  {id:'r-lora', label:'LoRA 论文', type:'resource', region:'s4a',
+   desc:'低秩适配的动机、秩的选择与合并推理。',
+   links:[['arxiv.org/abs/2106.09685','https://arxiv.org/abs/2106.09685']], tags:['论文']},
+  {id:'r-dpo', label:'DPO 论文', type:'resource', region:'s4a',
+   desc:'理解 SFT、偏好数据与 RLHF 之后读；DPO 省掉显式奖励模型。',
+   links:[['arxiv.org/abs/2305.18290','https://arxiv.org/abs/2305.18290']], tags:['论文']},
+
+  {id:'c-sft', label:'SFT 监督微调', type:'concept', region:'s4a',
+   desc:'指令数据构造、loss mask、过拟合与灾难性遗忘。'},
+  {id:'c-lora', label:'LoRA 与参数高效微调', type:'concept', region:'s4a',
+   desc:'低秩分解、r/alpha、target modules、合并与多适配器。'},
+  {id:'c-pref', label:'偏好优化', type:'concept', region:'s4a',
+   desc:'偏好数据、Bradley-Terry、DPO/PPO；先有可靠评测再谈对齐。'},
+  {id:'c-rlhf', label:'RLHF 基本思路', type:'concept', region:'s4a',
+   desc:'奖励模型 + 策略优化；理解它为什么难训、为什么对超参敏感。'},
+  {id:'c-rag', label:'RAG', type:'concept', region:'s4a',
+   desc:'检索增强生成：切块、向量化、召回、重排、拼接与引用。'},
+  {id:'c-chunk', label:'切块与检索', type:'concept', region:'s4a',
+   desc:'chunk size/overlap、embedding 模型、混合检索、rerank。'},
+  {id:'c-eval', label:'评测集设计', type:'concept', region:'s4a',
+   desc:'独立构建、覆盖失败模式、标注规范、避免污染；先定指标再调模型。',
+   tips:['自己写 100 条比公开集更能发现问题','固定评分规则与抽查比例']},
+  {id:'c-metric', label:'评测指标', type:'concept', region:'s4a',
+   desc:'正确性、引用支持度、拒答率、延迟与成本；指标要能指导决策。'},
+  {id:'c-judge', label:'LLM-as-a-judge', type:'concept', region:'s4a',
+   desc:'可扩展但有偏差；人工抽查、统一 rubric、检查位置与长度偏差。'},
+  {id:'c-ablate', label:'错误分析与消融', type:'concept', region:'s4a',
+   desc:'把失败分类，做单变量消融，报告训练与推理成本。'},
+
+  {id:'p-rag', label:'专业文献问答与领域适配', type:'project', region:'s4a',
+   desc:'评测集 → 直接回答/基础 RAG 基线 → 切块检索重排 → LoRA/SFT 对照 → 错误分类与消融。'},
+  {id:'s-4a', label:'方向代表作（后训练）', type:'skill', region:'s4a',
+   desc:'能用于科研讨论与实习面试：数据、评测、对照、错误分析与演示齐全。'},
+  {id:'k-4a', label:'阶段 4A 验收', type:'check', region:'s4a',
+   desc:'数据说明、评测协议、对照表、错误案例、可复现实验与演示。'},
+
+  /* ---------------- 阶段 4B ---------------- */
+  {id:'r-csapp', label:'CSAPP', type:'resource', region:'s4b',
+   desc:'内存、缓存、链接、并发；按短板学，配合性能实验。',
+   links:[['csapp.cs.cmu.edu','https://csapp.cs.cmu.edu/']]},
+  {id:'r-ostep', label:'OSTEP', type:'resource', region:'s4b',
+   desc:'进程、线程、虚拟内存、并发；系统方向必读。',
+   links:[['pages.cs.wisc.edu/~remzi/OSTEP','https://pages.cs.wisc.edu/~remzi/OSTEP/']]},
+  {id:'r-cuda', label:'CUDA Programming Guide', type:'resource', region:'s4b',
+   desc:'GPU 执行模型、线程组织、内存层次、同步。',
+   links:[['docs.nvidia.com/cuda','https://docs.nvidia.com/cuda/cuda-programming-guide/']]},
+  {id:'r-triton', label:'Triton Tutorials', type:'resource', region:'s4b',
+   desc:'用简单算子入门 kernel 编写与性能分析。',
+   links:[['triton-lang.org','https://triton-lang.org/main/getting-started/tutorials/index.html']]},
+  {id:'r-vllm', label:'vLLM 文档与代码', type:'resource', region:'s4b',
+   desc:'推理服务、批处理、KV cache；挑一个模块读源码。',
+   links:[['docs.vllm.ai','https://docs.vllm.ai/']]},
+  {id:'r-flash', label:'FlashAttention 论文', type:'resource', region:'s4b',
+   desc:'从 IO 角度理解注意力为什么快。',
+   links:[['arxiv.org/abs/2205.14135','https://arxiv.org/abs/2205.14135']], tags:['论文']},
+  {id:'r-paged', label:'PagedAttention 论文', type:'resource', region:'s4b',
+   desc:'KV cache 的分页管理，推理服务吞吐的关键。',
+   links:[['arxiv.org/abs/2309.06180','https://arxiv.org/abs/2309.06180']], tags:['论文']},
+
+  {id:'c-gpu', label:'GPU 执行模型', type:'concept', region:'s4b',
+   desc:'SM、warp、grid/block、共享内存；先建立执行与内存层次模型。'},
+  {id:'c-kernel', label:'Kernel 与算子', type:'concept', region:'s4b',
+   desc:'向量加法 → softmax → matmul；比较数值误差与不同形状的性能。'},
+  {id:'c-kvc', label:'KV cache', type:'concept', region:'s4b',
+   desc:'自回归解码复用 K/V；用显存换计算，长度与并发下的权衡。'},
+  {id:'c-pagedattn', label:'PagedAttention', type:'concept', region:'s4b',
+   desc:'分页管理 KV，减少碎片、支持前缀共享。'},
+  {id:'c-quant', label:'量化', type:'concept', region:'s4b',
+   desc:'int8/int4、权重或激活量化、GPTQ/AWQ；必须检查质量退化。'},
+  {id:'c-batch', label:'批处理与调度', type:'concept', region:'s4b',
+   desc:'静态/连续批处理、请求调度；吞吐与延迟的取舍。'},
+  {id:'c-lat', label:'延迟与吞吐', type:'concept', region:'s4b',
+   desc:'首 token 延迟、TPOT、QPS、峰值显存；明确计时边界。'},
+  {id:'c-prof2', label:'Profiler 与瓶颈定位', type:'concept', region:'s4b',
+   desc:'Nsight/Torch profiler；先定位再优化，避免凭直觉。'},
+
+  {id:'p-kernel', label:'CUDA/Triton 算子练习', type:'project', region:'s4b',
+   desc:'实现向量加法、softmax 或教学版 matmul，比较误差与形状性能。'},
+  {id:'p-perf', label:'小模型推理性能分析与优化', type:'project', region:'s4b',
+   desc:'固定硬件与基线 → 负载矩阵 → 指标 → profiler → KV cache/批处理/量化 → 质量检查。'},
+  {id:'s-4b', label:'性能报告能力（系统）', type:'skill', region:'s4b',
+   desc:'benchmark 脚本、性能图、环境说明、正确性检查与优化报告。'},
+  {id:'k-4b', label:'阶段 4B 验收', type:'check', region:'s4b',
+   desc:'可复现基准、瓶颈归因、有效范围与退化场景。'},
+
+  /* ---------------- 计算机基础 ---------------- */
+  {id:'r-code', label:'代码随想录', type:'resource', region:'cs',
+   desc:'按专题刷：数组、哈希、树、堆、图、二分、递归、动态规划。',
+   links:[['programmercarl.com','https://programmercarl.com/']]},
+  {id:'r-lc', label:'LeetCode', type:'resource', region:'cs',
+   desc:'用来验证边界与复杂度，不以题量代替掌握。',
+   links:[['leetcode.cn','https://leetcode.cn/']]},
+  {id:'c-dsa', label:'数据结构与算法', type:'concept', region:'cs',
+   desc:'复杂度、边界、常见结构；目标是能独立写、能解释、能复盘。'},
+  {id:'c-os', label:'操作系统', type:'concept', region:'cs',
+   desc:'进程/线程、虚拟内存、并发、文件系统；系统方向要加厚。'},
+  {id:'c-net', label:'计算机网络', type:'concept', region:'cs',
+   desc:'TCP/IP、HTTP、连接与服务通信；面试常考基础。'},
+  {id:'r-netbook', label:'Computer Networking: Top-Down', type:'resource', region:'cs',
+   desc:'配合学校课程看，重点传输层与应用层。',
+   links:[['gaia.cs.umass.edu/kurose_ross','https://gaia.cs.umass.edu/kurose_ross/']]},
+  {id:'r-missing', label:'MIT Missing Semester', type:'resource', region:'cs',
+   desc:'Shell、调试、性能分析、版本控制；已熟悉的部分直接跳过。',
+   links:[['missing.csail.mit.edu','https://missing.csail.mit.edu/']]},
+  {id:'c-tools', label:'工程工具链', type:'concept', region:'cs',
+   desc:'Git、Shell、调试器、profiler、环境管理；越早熟练越省时间。'},
+  {id:'c-weekly', label:'每周 2–3 小时', type:'concept', region:'cs',
+   desc:'基础学习固定节奏，系统方向适当加时；以能解释和复盘为目标。'},
+
+  /* ---------------- 科研能力 ---------------- */
+  {id:'c-paper', label:'论文精读', type:'concept', region:'research',
+   desc:'每周一篇与当前项目直接相关的论文；复杂论文可以更久。',
+   tips:['记录：问题、方法、基线、证据、局限、能否验证']},
+  {id:'c-repro', label:'先复现再改进', type:'concept', region:'research',
+   desc:'复现一个明确结果，再谈改进；比较方法时控制数据、预算与评测条件。'},
+  {id:'c-eng', label:'英文技术阅读', type:'concept', region:'research',
+   desc:'翻译可辅助，但公式、指标定义与实验设置回原文核对。'},
+  {id:'c-advisor', label:'与导师对齐', type:'concept', region:'research',
+   desc:'研一就确认课题方向、毕业要求、算力、数据、协作与实习安排。'},
+  {id:'c-exp', label:'实验记录', type:'concept', region:'research',
+   desc:'问题、基线、变量、结果、分析、局限、复现七段式；模板可直接用。'},
+  {id:'c-talk', label:'组会与表达', type:'concept', region:'research',
+   desc:'一页讲清问题、方法、证据与下一步；练习被追问。'},
+
+  /* ---------------- 实习与求职 ---------------- */
+  {id:'c-intern', label:'研二实习', type:'concept', region:'career',
+   desc:'第 18–24 个月，在导师允许与课题合适时争取对口实习；提前看岗位要求补差距。'},
+  {id:'c-portfolio', label:'代表作', type:'concept', region:'career',
+   desc:'一个能经得起追问的项目，胜过多个半成品。'},
+  {id:'c-interview', label:'面试基础', type:'concept', region:'career',
+   desc:'数据结构、OS、网络 + 方向知识（后训练/系统/应用）。'},
+  {id:'c-story', label:'讲清项目', type:'concept', region:'career',
+   desc:'问题、个人贡献、实验依据、失败尝试与局限；准备 3 分钟和 10 分钟两个版本。'},
+  {id:'c-oss', label:'开源贡献', type:'concept', region:'career',
+   desc:'有合适问题时提 PR；被合并的改动比「参与过」更有说服力。'},
+  {id:'c-timeline', label:'24–36 个月节奏', type:'concept', region:'career',
+   desc:'论文、项目收尾与招聘并行；具体时间以企业当年安排为准。'},
+
+  /* ---------------- 执行与复盘 ---------------- */
+  {id:'k-w1', label:'第 1 周：NumPy 与线性回归', type:'check', region:'exec',
+   desc:'配环境、NumPy 数组与广播、导数与链式法则、线性回归 + 损失曲线、写清形状。'},
+  {id:'k-w2', label:'第 2 周：PyTorch 与自动求导', type:'check', region:'exec',
+   desc:'Tensor/Autograd/优化器，重写线性回归，对照手算梯度，整理成可从头运行的脚本。'},
+  {id:'k-w3', label:'第 3 周：分类训练闭环', type:'check', region:'exec',
+   desc:'MLP、交叉熵、准确率与数据划分；Fashion-MNIST 训练/验证/保存/加载，检查没用测试集调参。'},
+  {id:'k-w4', label:'第 4 周：小实验与复盘', type:'check', region:'exec',
+   desc:'比较学习率、观察过拟合、调整正则或容量、整理 README 与一页报告。'},
+  {id:'c-monthly', label:'每月复盘', type:'concept', region:'exec',
+   desc:'独立实现了什么、哪个概念能结合代码解释、哪些实验有结论、最大瓶颈、下月最重要成果、是否与课题一致。'},
+  {id:'c-tradeoff', label:'取舍原则', type:'concept', region:'exec',
+   desc:'算力不足、课程过载、追热点、AI 使用、就业目标：五个常见坑的处理原则。'},
+  {id:'c-compute', label:'算力不足怎么办', type:'concept', region:'exec',
+   desc:'CPU 或小模型先跑通；先确认组内资源，不急着买硬件。'},
+  {id:'c-overload', label:'课程过载', type:'concept', region:'exec',
+   desc:'同时最多一门主线课 + 一组补充材料 + 一个项目。'},
+  {id:'c-hype', label:'追热点', type:'concept', region:'exec',
+   desc:'先问它解决什么问题、与自己的项目有什么关系；每月复盘方向，不每周换技术栈。'},
+  {id:'c-ai', label:'使用 AI 的边界', type:'concept', region:'exec',
+   desc:'可辅助解释、排错、代码审查；梯度、掩码、数据划分与评测必须自己推导验证。'},
+  {id:'c-time', label:'每周时间分配', type:'concept', region:'exec',
+   desc:'代码与实验 8–10h、课程与数学 4–6h、算法与复盘 3–4h；总投入 15–20h。'},
+  {id:'r-template', label:'实验记录模板', type:'resource', region:'exec',
+   desc:'问题 / 基线与设置 / 实验 / 结果 / 分析 / 局限与下一步 / 复现，七段式 Markdown。'},
+  {id:'c-accept', label:'验收驱动', type:'concept', region:'exec',
+   desc:'以验收标准决定是否进入下一阶段；阶段时长只是参考，不是截止日期。'}
+];
+
+const EDGES = [
+  /* 方向 */
+  ['d-choice','d-post','related'],['d-choice','d-sys','related'],['d-choice','d-app','related'],
+  ['d-choice','d-pre','related'],['d-material','d-app','related'],['d-material','p-rag','related'],
+  ['d-post','c-sft','related'],['d-sys','p-perf','related'],['d-app','c-rag','related'],['d-pre','c-scaling','related'],
+
+  /* 阶段 1 */
+  ['r-3b1b-la','c-linalg','source'],['r-3b1b-calc','c-calc','source'],['r-cs229','c-prob','source'],
+  ['r-statquest','c-prob','source'],['r-numpy','c-linalg','source'],['r-ptb','c-autograd','source'],
+  ['r-d2l','c-loss','source'],['r-d2l','c-overfit','source'],
+  ['c-linalg','p-1a','prereq'],['c-calc','p-1a','prereq'],['r-numpy','p-1a','prereq'],
+  ['c-prob','c-loss','prereq'],['c-calc','c-autograd','prereq'],
+  ['c-autograd','p-1b','prereq'],['c-split','p-1b','prereq'],['c-loss','p-1b','prereq'],
+  ['c-overfit','p-1b','related'],['c-leak','c-split','related'],['c-leak','p-1b','related'],
+  ['p-1a','p-1b','prereq'],['p-1b','s-1-closed','produce'],['s-1-closed','k-1','related'],
+
+  /* 阶段 2 */
+  ['r-ill','c-attn','source'],['r-d2l2','c-attn','source'],['r-attn','c-mha','source'],
+  ['r-attn','c-pos','source'],['r-cs224n','c-emb','source'],['r-z2h','p-gpt','prereq'],
+  ['r-nanogpt','p-gpt','related'],
+  ['c-tok','p-gpt','prereq'],['c-emb','p-gpt','prereq'],['c-pos','p-gpt','prereq'],
+  ['c-causal','p-gpt','prereq'],['c-attn','c-mha','prereq'],['c-attn','p-gpt','prereq'],
+  ['c-mha','p-gpt','prereq'],['c-ffn','p-gpt','prereq'],['c-resln','p-gpt','prereq'],
+  ['c-xent','p-gpt','prereq'],['c-ar','p-gpt','related'],['c-sampling','c-ar','related'],
+  ['c-ppl','c-xent','related'],['c-pos','c-attn','prereq'],['p-1b','p-gpt','prereq'],
+  ['p-gpt','s-2-shape','produce'],['s-2-shape','k-2','related'],
+
+  /* 阶段 3 */
+  ['p-gpt','r-cs336','prereq'],['r-torchdoc','c-opt','source'],['r-cs336gh','r-cs336','related'],
+  ['c-tok','c-tokimpl','prereq'],['c-tokimpl','p-lab','prereq'],['c-opt','p-lab','prereq'],
+  ['c-loop','p-lab','prereq'],['c-prof','p-lab','prereq'],['c-mem','p-lab','prereq'],
+  ['c-mixed','p-lab','related'],['c-dist','c-mem','related'],['c-clean','p-lab','prereq'],
+  ['c-mix','c-clean','related'],['c-scaling','c-mix','related'],
+  ['p-lab','s-3-full','produce'],['s-3-full','k-3','related'],['c-mem','c-kvc','related'],
+
+  /* 阶段 4A */
+  ['p-lab','p-rag','prereq'],['r-hf','c-sft','source'],['r-peft','c-lora','source'],
+  ['r-lora','c-lora','source'],['r-lora','c-sft','related'],['r-trl','c-pref','source'],
+  ['r-dpo','c-pref','source'],['r-dpo','c-rlhf','source'],['r-tf','c-sft','related'],
+  ['c-sft','p-rag','prereq'],['c-lora','p-rag','related'],['c-rag','p-rag','prereq'],
+  ['c-chunk','c-rag','prereq'],['c-eval','p-rag','prereq'],['c-metric','c-eval','prereq'],
+  ['c-judge','c-eval','related'],['c-ablate','p-rag','prereq'],['c-pref','c-sft','prereq'],
+  ['p-rag','s-4a','produce'],['s-4a','k-4a','related'],['c-eval','s-4a','related'],
+
+  /* 阶段 4B */
+  ['r-cuda','c-gpu','source'],['r-triton','c-kernel','source'],['r-flash','c-kernel','related'],
+  ['r-paged','c-pagedattn','source'],['r-vllm','c-pagedattn','related'],['r-vllm','c-batch','related'],
+  ['r-ostep','c-os','source'],['r-csapp','c-mem','source'],['r-csapp','c-prof2','related'],
+  ['c-ar','c-kvc','prereq'],['c-gpu','c-kernel','prereq'],['c-kernel','p-kernel','prereq'],
+  ['c-kvc','c-pagedattn','prereq'],['c-kvc','p-perf','prereq'],['c-batch','p-perf','prereq'],
+  ['c-quant','p-perf','related'],['c-lat','p-perf','prereq'],['c-prof2','p-perf','prereq'],
+  ['p-kernel','p-perf','prereq'],['p-lab','p-perf','prereq'],['p-perf','s-4b','produce'],
+  ['s-4b','k-4b','related'],
+
+  /* 计算机基础 */
+  ['r-code','c-dsa','source'],['r-lc','c-dsa','source'],['r-netbook','c-net','source'],
+  ['r-missing','c-tools','source'],['c-os','c-net','related'],['c-tools','p-lab','related'],
+  ['c-dsa','c-weekly','related'],['c-dsa','c-interview','prereq'],['c-os','c-interview','prereq'],
+  ['c-net','c-interview','prereq'],['c-os','c-gpu','related'],
+
+  /* 科研 */
+  ['c-eng','c-paper','prereq'],['c-paper','c-repro','prereq'],['c-repro','c-exp','prereq'],
+  ['c-advisor','c-repro','related'],['c-exp','c-talk','related'],['c-paper','p-rag','related'],
+  ['c-repro','p-perf','related'],
+
+  /* 求职 */
+  ['c-portfolio','c-story','prereq'],['c-intern','c-portfolio','related'],
+  ['c-oss','c-portfolio','related'],['c-portfolio','c-interview','related'],
+  ['c-timeline','c-intern','related'],['s-4a','c-portfolio','prereq'],['s-4b','c-portfolio','related'],
+
+  /* 执行 */
+  ['k-w1','k-w2','prereq'],['k-w2','k-w3','prereq'],['k-w3','k-w4','prereq'],
+  ['c-time','k-w1','related'],['c-overload','c-time','related'],['c-compute','p-lab','related'],
+  ['c-hype','c-monthly','related'],['c-ai','c-ablate','related'],['c-monthly','k-w4','related'],
+  ['r-template','c-exp','source'],['c-accept','k-1','related'],['c-accept','k-2','related'],
+  ['c-tradeoff','c-compute','related'],['c-tradeoff','c-overload','related'],
+  ['c-tradeoff','c-hype','related'],['c-tradeoff','c-ai','related'],['c-weekly','c-time','related']
+];
+
+/* =======================================================================
+   基础设置
+   ======================================================================= */
+const regionById = {};
+REGIONS.forEach(r => { regionById[r.id] = r; });
+
+const nodes = NODES.map(n => Object.assign({}, n, {x:0, y:0, deg:0}));
+const byId = new Map(nodes.map(n => [n.id, n]));
+const edges = [];
+EDGES.forEach(pair => {
+  const a = byId.get(pair[0]), b = byId.get(pair[1]);
+  if (a && b && a !== b) {
+    edges.push({a:a, b:b, kind:pair[2]});
+    a.deg++; b.deg++;
+  }
+});
+
+const state = {
+  layers:{concept:true, resource:true, project:true, skill:true, check:true},
+  kinds:{prereq:true, source:true, related:true, produce:true},
+  hover:null,
+  selected:null,
+  query:'',
+  results:[],
+  resultIndex:-1
+};
+
+const canvas = document.getElementById('graph');
+const stage = document.getElementById('stage');
+const ctx = canvas.getContext('2d');
+const detail = document.getElementById('detail');
+const detailBody = document.getElementById('detailBody');
+const searchInput = document.getElementById('searchInput');
+const resultsBox = document.getElementById('results');
+const toastEl = document.getElementById('toast');
+
+let W = 0, H = 0, DPR = 1;
+let needsRender = true;
+const view = {x:0, y:0, zoom:0.67};
+let draggingNode = null;
+let panning = null;
+let dragMoved = false;
+let anim = null;
+let userTouched = false;
+
+const LABEL_FONT = '500 13.5px "Segoe UI","Microsoft YaHei",system-ui,sans-serif';
+const LABEL_FONT_BOLD = '600 13.5px "Segoe UI","Microsoft YaHei",system-ui,sans-serif';
+
+/* =======================================================================
+   本地存储
+   ======================================================================= */
+const LS_KEY = 'llm-atlas-v1';
+let store = {v:1, nodes:{}};
+try {
+  const raw = localStorage.getItem(LS_KEY);
+  if (raw) {
+    const parsed = JSON.parse(raw);
+    if (parsed && parsed.nodes) store = parsed;
+  }
+} catch (e) { /* 本地存储不可用时退化为内存 */ }
+
+let saveTimer = null;
+function persist() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(store)); }
+    catch (e) { toast('本地存储不可用：笔记只保留在当前页面'); }
+  }, 250);
+}
+function nodeState(id) {
+  if (!store.nodes[id]) store.nodes[id] = {status:'todo', note:''};
+  return store.nodes[id];
+}
+function statusOf(id) {
+  const s = store.nodes[id];
+  return s && s.status ? s.status : 'todo';
+}
+function noteOf(id) {
+  const s = store.nodes[id];
+  return s && s.note ? s.note : '';
+}
+
+/* =======================================================================
+   布局：区域内力导向，盒子固定
+   ======================================================================= */
+function mulberry32(a) {
+  return function() {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+function layout() {
+  const rand = mulberry32(20261026);
+
+  // 先把每个标签的宽度量出来：把「圆点 + 标签」当成一个矩形来排布
+  ctx.font = LABEL_FONT;
+  nodes.forEach(n => { n.lw = Math.min(ctx.measureText(n.label).width, 206); });
+
+  REGIONS.forEach(r => {
+    const list = nodes.filter(n => n.region === r.id);
+    const cols = 3;
+    const rows = Math.ceil(list.length / cols);
+    list.forEach((n, i) => {
+      const col = i % cols, row = Math.floor(i / cols);
+      n.x = r.x + 30 + (col + 0.5) * ((r.w - 60) / cols) + (rand() - 0.5) * 20;
+      n.y = r.y + 66 + (row + 0.5) * ((r.h - 96) / Math.max(rows, 1)) + (rand() - 0.5) * 14;
+    });
+  });
+
+  const ITER = 720;
+  for (let it = 0; it < ITER; it++) {
+    const cool = 1 - it / ITER;
+
+    // 标签矩形互斥，保证文字不互相压住
+    REGIONS.forEach(r => {
+      const list = nodes.filter(n => n.region === r.id);
+      for (let i = 0; i < list.length; i++) {
+        for (let j = i + 1; j < list.length; j++) {
+          const a = list[i], b = list[j];
+          const dx = b.x - a.x, dy = b.y - a.y;
+          const px = (a.lw + b.lw) / 2 + 16 - Math.abs(dx);
+          if (px <= 0) continue;
+          const py = 44 - Math.abs(dy);
+          if (py <= 0) continue;
+          let sx = 0, sy = 0;
+          if (px < py) sx = (dx >= 0 ? 1 : -1) * px * 0.55;
+          else sy = (dy >= 0 ? 1 : -1) * py * 0.55;
+          a.x -= sx; a.y -= sy; b.x += sx; b.y += sy;
+        }
+      }
+    });
+
+    // 区域内的关系把相关节点拉近
+    edges.forEach(e => {
+      if (e.a.region !== e.b.region) return;
+      const dx = e.b.x - e.a.x, dy = e.b.y - e.a.y;
+      const d = Math.sqrt(dx * dx + dy * dy) || 1;
+      const f = Math.max(-2, Math.min(2, (d - 72) * 0.011)) * cool;
+      const fx = dx / d * f, fy = dy / d * f;
+      e.a.x += fx; e.a.y += fy; e.b.x -= fx; e.b.y -= fy;
+    });
+
+    // 轻微向区域中心收拢，并限制在框内
+    nodes.forEach(n => {
+      const r = regionById[n.region];
+      const cx = r.x + r.w / 2, cy = r.y + 58 + (r.h - 78) / 2;
+      n.x += (cx - n.x) * 0.0025;
+      n.y += (cy - n.y) * 0.0025;
+      const half = Math.min(n.lw / 2, r.w / 2 - 14);
+      n.x = Math.max(r.x + 12 + half, Math.min(r.x + r.w - 12 - half, n.x));
+      n.y = Math.max(r.y + 64, Math.min(r.y + r.h - 34, n.y));
+    });
+  }
+}
+
+/* =======================================================================
+   视图与绘制
+   ======================================================================= */
+function resize() {
+  const rect = stage.getBoundingClientRect();
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = Math.max(1, rect.width);
+  H = Math.max(1, rect.height);
+  canvas.width = Math.round(W * DPR);
+  canvas.height = Math.round(H * DPR);
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  if (!userTouched) fitView(false);
+  needsRender = true;
+}
+
+function fitView(animate) {
+  const pad = 40;
+  const z = Math.min((W - pad * 2) / WORLD.w, (H - pad * 2) / WORLD.h);
+  const target = {
+    zoom: Math.max(0.25, Math.min(1.3, z)),
+    x: (W - WORLD.w * z) / 2,
+    y: (H - WORLD.h * z) / 2
+  };
+  if (animate) animateTo(target); else { view.x = target.x; view.y = target.y; view.zoom = target.zoom; needsRender = true; }
+}
+
+function animateTo(target) {
+  if (anim) cancelAnimationFrame(anim.raf);
+  const from = {x:view.x, y:view.y, zoom:view.zoom};
+  const t0 = performance.now();
+  const dur = 460;
+  const ease = t => 1 - Math.pow(1 - t, 3);
+  const step = now => {
+    const k = Math.min(1, (now - t0) / dur);
+    const e = ease(k);
+    view.x = from.x + (target.x - from.x) * e;
+    view.y = from.y + (target.y - from.y) * e;
+    view.zoom = from.zoom + (target.zoom - from.zoom) * e;
+    needsRender = true;
+    if (k < 1) anim.raf = requestAnimationFrame(step); else anim = null;
+  };
+  anim = {raf:requestAnimationFrame(step)};
+}
+
+function flyToNode(id, zoomTarget) {
+  const n = byId.get(id);
+  if (!n) return;
+  const z = Math.max(0.85, Math.min(1.25, zoomTarget || view.zoom));
+  const panelW = detail.classList.contains('open') ? 200 : 0;
+  animateTo({
+    zoom: z,
+    x: W / 2 - panelW - n.x * z,
+    y: H / 2 - n.y * z
+  });
+}
+
+function flyToRegion(r) {
+  userTouched = true;
+  const z = Math.max(0.55, Math.min(1.25, Math.min((W - 120) / r.w, (H - 120) / r.h)));
+  animateTo({zoom:z, x:W / 2 - (r.x + r.w / 2) * z, y:H / 2 - (r.y + r.h / 2) * z});
+}
+
+function roundRect(x, y, w, h, r) {
+  const rr = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + rr, y);
+  ctx.arcTo(x + w, y, x + w, y + h, rr);
+  ctx.arcTo(x + w, y + h, x, y + h, rr);
+  ctx.arcTo(x, y + h, x, y, rr);
+  ctx.arcTo(x, y, x + w, y, rr);
+  ctx.closePath();
+}
+
+function isDimmed(n) {
+  const focus = state.hover || state.selected;
+  if (!focus) return false;
+  if (n.id === focus) return false;
+  return !edges.some(e => (e.a.id === focus && e.b.id === n.id) || (e.b.id === focus && e.a.id === n.id));
+}
+
+function nodeRadius(n) {
+  return n.type === 'project' ? 8.5 : n.type === 'skill' ? 8 : 7;
+}
+
+function drawGrid() {
+  const step = view.zoom < 0.5 ? 108 : view.zoom < 0.95 ? 72 : 48;
+  const sp = step * view.zoom;
+  const ox = ((view.x % sp) + sp) % sp;
+  const oy = ((view.y % sp) + sp) % sp;
+  ctx.fillStyle = 'rgba(126,146,196,0.085)';
+  for (let x = ox; x < W; x += sp) {
+    for (let y = oy; y < H; y += sp) {
+      ctx.fillRect(x, y, 1.1, 1.1);
+    }
+  }
+}
+
+function draw() {
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  ctx.fillStyle = '#06080f';
+  ctx.fillRect(0, 0, W, H);
+  drawGrid();
+
+  ctx.save();
+  ctx.translate(view.x, view.y);
+  ctx.scale(view.zoom, view.zoom);
+
+  const focus = state.hover || state.selected;
+
+  // 跨区域关系先画（在盒子下层）
+  edges.forEach(e => {
+    if (!state.kinds[e.kind]) return;
+    if (e.a.region === e.b.region) return;
+    if (e.kind === 'related' && !(state.hover || state.selected)) return;
+    drawEdge(e, focus, true);
+  });
+
+  drawRegions();
+
+  // 区域内关系
+  edges.forEach(e => {
+    if (!state.kinds[e.kind]) return;
+    if (e.a.region !== e.b.region) return;
+    drawEdge(e, focus, false);
+  });
+
+  nodes.forEach(n => {
+    if (!state.layers[n.type]) return;
+    drawNode(n, focus);
+  });
+
+  drawLabels();
+  ctx.restore();
+
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  needsRender = false;
+}
+
+function drawRegions() {
+  REGIONS.forEach((r, i) => {
+    const g = ctx.createLinearGradient(r.x, r.y, r.x, r.y + r.h);
+    g.addColorStop(0, 'rgba(16,22,36,0.72)');
+    g.addColorStop(1, 'rgba(8,11,19,0.6)');
+    ctx.fillStyle = g;
+    roundRect(r.x, r.y, r.w, r.h, 14);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(112,132,184,0.17)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // 区域角落的一层很淡的色晕，用来区分不同板块
+    ctx.save();
+    roundRect(r.x, r.y, r.w, r.h, 14);
+    ctx.clip();
+    const rg = ctx.createRadialGradient(r.x + 46, r.y + 30, 0, r.x + 46, r.y + 30, r.w * 0.95);
+    rg.addColorStop(0, hexA(r.accent, 0.07));
+    rg.addColorStop(1, hexA(r.accent, 0));
+    ctx.fillStyle = rg;
+    ctx.fillRect(r.x, r.y, r.w, r.h);
+    ctx.restore();
+
+    // 顶部高光
+    ctx.save();
+    roundRect(r.x, r.y, r.w, r.h, 14);
+    ctx.clip();
+    const hg = ctx.createLinearGradient(r.x, r.y, r.x, r.y + 60);
+    hg.addColorStop(0, 'rgba(120,145,220,0.07)');
+    hg.addColorStop(1, 'rgba(120,145,220,0)');
+    ctx.fillStyle = hg;
+    ctx.fillRect(r.x, r.y, r.w, 60);
+    ctx.restore();
+
+    ctx.fillStyle = r.accent;
+    ctx.globalAlpha = 0.9;
+    roundRect(r.x + 16, r.y + 15, 3, 13, 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    ctx.font = '600 14px "Segoe UI","Microsoft YaHei",system-ui,sans-serif';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'rgba(219,228,246,0.94)';
+    ctx.fillText(r.name, r.x + 27, r.y + 22);
+
+    const cnt = nodes.filter(n => n.region === r.id).length;
+    ctx.font = '10.5px "Segoe UI","Microsoft YaHei",system-ui,sans-serif';
+    ctx.fillStyle = 'rgba(125,140,172,0.75)';
+    ctx.textAlign = 'right';
+    ctx.fillText(cnt + ' 节点', r.x + r.w - 16, r.y + 22);
+
+    ctx.fillStyle = 'rgba(90,104,134,0.4)';
+    ctx.font = '9px "Segoe UI",system-ui,sans-serif';
+    ctx.fillText(String(i + 1).padStart(2, '0'), r.x + r.w - 16, r.y + r.h - 12);
+
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+  });
+}
+
+function edgeGeometry(e) {
+  const a = e.a, b = e.b;
+  const ra = nodeRadius(a) + 2, rb = nodeRadius(b) + 5;
+  let dx = b.x - a.x, dy = b.y - a.y;
+  const len = Math.sqrt(dx * dx + dy * dy) || 1;
+  const ux = dx / len, uy = dy / len;
+  const sx = a.x + ux * ra, sy = a.y + uy * ra;
+  const ex = b.x - ux * rb, ey = b.y - uy * rb;
+  let cx = 0, cy = 0, curved = false;
+
+  if (a.region !== b.region) {
+    const mx = (sx + ex) / 2, my = (sy + ey) / 2;
+    const off = Math.min(90, len * 0.16);
+    cx = mx - dy / len * off;
+    cy = my + dx / len * off;
+    curved = true;
+  }
+  return {sx, sy, ex, ey, cx, cy, curved};
+}
+
+function drawEdge(e, focus, cross) {
+  if (!state.layers[e.a.type] || !state.layers[e.b.type]) return;
+  const kind = KINDS[e.kind];
+  const g = edgeGeometry(e);
+
+  const active = focus && (e.a.id === focus || e.b.id === focus);
+  let alpha = cross ? 0.16 : 0.46;
+  if (focus && !active) alpha = 0.12;
+  if (active) alpha = 0.85;
+
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.strokeStyle = kind.color;
+  ctx.lineWidth = active ? 1.7 : (cross ? 0.9 : 1.15);
+  if (kind.dash) ctx.setLineDash([3.5, 5]);
+
+  ctx.beginPath();
+  ctx.moveTo(g.sx, g.sy);
+  if (g.curved) ctx.quadraticCurveTo(g.cx, g.cy, g.ex, g.ey);
+  else ctx.lineTo(g.ex, g.ey);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  if (kind.arrow && (!focus || active)) {
+    let tx, ty;
+    if (g.curved) { tx = g.ex - g.cx; ty = g.ey - g.cy; }
+    else { tx = g.ex - g.sx; ty = g.ey - g.sy; }
+    const l = Math.sqrt(tx * tx + ty * ty) || 1;
+    tx /= l; ty /= l;
+    const size = active ? 6.5 : 5.5;
+    ctx.fillStyle = kind.color;
+    ctx.beginPath();
+    ctx.moveTo(g.ex, g.ey);
+    ctx.lineTo(g.ex - tx * size - ty * size * 0.45, g.ey - ty * size + tx * size * 0.45);
+    ctx.lineTo(g.ex - tx * size + ty * size * 0.45, g.ey - ty * size - tx * size * 0.45);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawNode(n, focus) {
+  const t = TYPES[n.type];
+  const r = nodeRadius(n);
+  const dim = isDimmed(n);
+  const active = n.id === state.hover || n.id === state.selected;
+  const st = statusOf(n.id);
+
+  ctx.save();
+  ctx.globalAlpha = dim ? (state.selected ? 0.4 : 0.3) : 1;
+
+  if (active) {
+    ctx.shadowColor = t.color;
+    ctx.shadowBlur = 16;
+  }
+
+  ctx.fillStyle = t.color;
+  ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+  ctx.lineWidth = 1;
+
+  if (n.type === 'concept') {
+    ctx.beginPath(); ctx.arc(n.x, n.y, r, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.lineWidth = 0.9; ctx.stroke();
+  } else if (n.type === 'resource') {
+    ctx.beginPath();
+    roundRect(n.x - r, n.y - r, r * 2, r * 2, 3);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 0.9; ctx.stroke();
+  } else if (n.type === 'project') {
+    ctx.beginPath();
+    ctx.moveTo(n.x, n.y - r);
+    ctx.lineTo(n.x + r, n.y);
+    ctx.lineTo(n.x, n.y + r);
+    ctx.lineTo(n.x - r, n.y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.lineWidth = 1; ctx.stroke();
+  } else if (n.type === 'skill') {
+    ctx.beginPath();
+    for (let i = 0; i < 6; i++) {
+      const ang = Math.PI / 6 + i * Math.PI / 3;
+      const px = n.x + Math.cos(ang) * r, py = n.y + Math.sin(ang) * r;
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.lineWidth = 0.9; ctx.stroke();
+  } else {
+    ctx.beginPath(); ctx.arc(n.x, n.y, r - 1, 0, Math.PI * 2);
+    ctx.strokeStyle = t.color; ctx.lineWidth = 2.2; ctx.stroke();
+    ctx.beginPath(); ctx.arc(n.x, n.y, 1.7, 0, Math.PI * 2);
+    ctx.fillStyle = t.color; ctx.fill();
+  }
+
+  ctx.shadowBlur = 0;
+
+  // 学习状态
+  if (st !== 'todo') {
+    ctx.beginPath();
+    ctx.strokeStyle = st === 'done' ? '#3ddc97' : '#f0b45f';
+    ctx.lineWidth = 1.5;
+    ctx.arc(n.x, n.y, r + 4, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * (st === 'done' ? 1 : 0.42));
+    ctx.stroke();
+  }
+
+  // 写过笔记的节点右上角加一个小点
+  if (noteOf(n.id)) {
+    ctx.beginPath();
+    ctx.fillStyle = '#7dd3fc';
+    ctx.arc(n.x + r + 2, n.y - r - 2, 1.9, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  if (active) {
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+    ctx.lineWidth = 1;
+    ctx.arc(n.x, n.y, r + 6, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function labelVisible(n) {
+  if (view.zoom >= 0.62) return true;
+  if (view.zoom >= 0.42) return n.type !== 'concept' || n.deg >= 3;
+  return n.type === 'project' || n.type === 'skill' || n.type === 'check';
+}
+
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+function drawLabels() {
+  const focus = state.hover || state.selected;
+  const placed = [];
+
+  // 预留区域标题与所有节点图形的位置
+  REGIONS.forEach(r => placed.push({x:r.x + 14, y:r.y + 12, w:r.w - 28, h:20}));
+  nodes.forEach(n => {
+    if (state.layers[n.type]) placed.push({x:n.x - 9, y:n.y - 9, w:18, h:18});
+  });
+
+  const order = nodes.filter(n => state.layers[n.type]).slice().sort((a, b) => {
+    const wa = (a.type === 'project' || a.type === 'skill') ? 9 : a.type === 'check' ? 7 : a.type === 'resource' ? 5 : 3;
+    const wb = (b.type === 'project' || b.type === 'skill') ? 9 : b.type === 'check' ? 7 : b.type === 'resource' ? 5 : 3;
+    return (wb + b.deg * 0.4) - (wa + a.deg * 0.4);
+  });
+
+  order.forEach(n => {
+    const forced = n.id === focus;
+    if (!forced && !labelVisible(n)) return;
+
+    const r = regionById[n.region];
+    ctx.font = forced ? LABEL_FONT_BOLD : LABEL_FONT;
+    const tw = ctx.measureText(n.label).width;
+    const bx = clamp(n.x - tw / 2, r.x + 8, r.x + r.w - 8 - tw);
+
+    const cands = [
+      {x:bx, y:n.y + 11, w:tw, h:18},
+      {x:bx, y:n.y - 27, w:tw, h:18},
+      {x:n.x + 12, y:n.y - 9, w:tw, h:18},
+      {x:n.x - 12 - tw, y:n.y - 9, w:tw, h:18}
+    ];
+
+    let chosen = null;
+    for (const c of cands) {
+      if (c.x < r.x + 6 || c.x + c.w > r.x + r.w - 6) continue;
+      if (c.y < r.y + 6 || c.y + c.h > r.y + r.h - 4) continue;
+      let hit = false;
+      for (const p of placed) {
+        if (c.x < p.x + p.w && c.x + c.w > p.x && c.y < p.y + p.h && c.y + c.h > p.y) { hit = true; break; }
+      }
+      if (!hit) { chosen = c; break; }
+    }
+    if (!chosen) return;
+    placed.push(chosen);
+
+    ctx.save();
+    ctx.globalAlpha = isDimmed(n) ? (state.selected ? 0.3 : 0.2) : 1;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+    if (forced) {
+      ctx.fillStyle = 'rgba(9,13,22,0.94)';
+      roundRect(chosen.x - 5, chosen.y - 2, tw + 10, 20, 5);
+      ctx.fill();
+    }
+    // 文字描边，避免连线从字里穿过
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = 3.4;
+    ctx.strokeStyle = 'rgba(5,7,12,0.88)';
+    ctx.strokeText(n.label, chosen.x, chosen.y + 13);
+    ctx.fillStyle = forced ? '#ffffff' : 'rgba(198,211,232,0.94)';
+    ctx.fillText(n.label, chosen.x, chosen.y + 13);
+    ctx.restore();
+  });
+}
+
+/* =======================================================================
+   交互
+   ======================================================================= */
+function toWorld(clientX, clientY) {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: (clientX - rect.left - view.x) / view.zoom,
+    y: (clientY - rect.top - view.y) / view.zoom
+  };
+}
+
+function hitTest(p) {
+  let best = null, bestD = 15 * 15;
+  for (let i = nodes.length - 1; i >= 0; i--) {
+    const n = nodes[i];
+    if (!state.layers[n.type]) continue;
+    const dx = p.x - n.x, dy = p.y - n.y;
+    const d2 = dx * dx + dy * dy;
+    if (d2 < bestD) { bestD = d2; best = n; }
+  }
+  return best;
+}
+
+canvas.addEventListener('pointerdown', e => {
+  userTouched = true;
+  const p = toWorld(e.clientX, e.clientY);
+  const n = hitTest(p);
+  dragMoved = false;
+  if (n) {
+    draggingNode = {node:n, dx:p.x - n.x, dy:p.y - n.y};
+    canvas.setPointerCapture(e.pointerId);
+    canvas.classList.add('dragging');
+  } else {
+    panning = {sx:e.clientX, sy:e.clientY, ox:view.x, oy:view.y};
+    canvas.setPointerCapture(e.pointerId);
+    canvas.classList.add('dragging');
+  }
+});
+
+canvas.addEventListener('pointermove', e => {
+  const p = toWorld(e.clientX, e.clientY);
+  if (draggingNode) {
+    const n = draggingNode.node;
+    const r = regionById[n.region];
+    n.x = Math.max(r.x + 30, Math.min(r.x + r.w - 30, p.x - draggingNode.dx));
+    n.y = Math.max(r.y + 58, Math.min(r.y + r.h - 24, p.y - draggingNode.dy));
+    dragMoved = true;
+    needsRender = true;
+    return;
+  }
+  if (panning) {
+    view.x = panning.ox + (e.clientX - panning.sx);
+    view.y = panning.oy + (e.clientY - panning.sy);
+    if (Math.abs(e.clientX - panning.sx) + Math.abs(e.clientY - panning.sy) > 3) dragMoved = true;
+    needsRender = true;
+    return;
+  }
+  const n = hitTest(p);
+  const id = n ? n.id : null;
+  if (id !== state.hover) {
+    state.hover = id;
+    canvas.style.cursor = n ? 'pointer' : 'grab';
+    needsRender = true;
+  }
+});
+
+function endPointer(e) {
+  if (draggingNode) {
+    if (!dragMoved) selectNode(draggingNode.node.id);
+    draggingNode = null;
+    needsRender = true;
+  } else if (panning) {
+    if (!dragMoved && !hitTest(toWorld(e.clientX, e.clientY))) {
+      closePanel();
+    }
+    panning = null;
+    needsRender = true;
+  }
+  canvas.classList.remove('dragging');
+}
+canvas.addEventListener('pointerup', endPointer);
+canvas.addEventListener('pointercancel', () => { draggingNode = null; panning = null; canvas.classList.remove('dragging'); });
+
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  userTouched = true;
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  const wx = (mx - view.x) / view.zoom, wy = (my - view.y) / view.zoom;
+  const factor = Math.exp(-e.deltaY * 0.0014);
+  const nz = Math.max(0.22, Math.min(3, view.zoom * factor));
+  view.x = mx - wx * nz;
+  view.y = my - wy * nz;
+  view.zoom = nz;
+  needsRender = true;
+}, {passive:false});
+
+canvas.addEventListener('dblclick', e => {
+  const p = toWorld(e.clientX, e.clientY);
+  const r = REGIONS.find(rr => p.x > rr.x && p.x < rr.x + rr.w && p.y > rr.y && p.y < rr.y + rr.h);
+  if (r) flyToRegion(r); else fitView(true);
+});
+
+document.getElementById('zin').addEventListener('click', () => {
+  userTouched = true;
+  const z = Math.min(3, view.zoom * 1.25);
+  const cx = W / 2, cy = H / 2;
+  view.x = cx - (cx - view.x) * (z / view.zoom);
+  view.y = cy - (cy - view.y) * (z / view.zoom);
+  view.zoom = z; needsRender = true;
+});
+document.getElementById('zout').addEventListener('click', () => {
+  userTouched = true;
+  const z = Math.max(0.22, view.zoom / 1.25);
+  const cx = W / 2, cy = H / 2;
+  view.x = cx - (cx - view.x) * (z / view.zoom);
+  view.y = cy - (cy - view.y) * (z / view.zoom);
+  view.zoom = z; needsRender = true;
+});
+
+/* =======================================================================
+   详情面板
+   ======================================================================= */
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function selectNode(id) {
+  if (state.selected !== id) noteTabMode = 'edit';
+  state.selected = id;
+  state.hover = null;
+  needsRender = true;
+  renderPanel();
+  detail.classList.add('open');
+  detail.setAttribute('aria-hidden', 'false');
+}
+
+function closePanel() {
+  state.selected = null;
+  detail.classList.remove('open');
+  detail.setAttribute('aria-hidden', 'true');
+  needsRender = true;
+}
+
+function neighborsOf(id) {
+  const list = [];
+  edges.forEach(e => {
+    if (e.a.id === id) list.push({node:e.b, kind:e.kind});
+    else if (e.b.id === id) list.push({node:e.a, kind:e.kind});
+  });
+  return list;
+}
+
+/* =======================================================================
+   笔记渲染：Markdown + 代码块 + LaTeX
+   ======================================================================= */
+let noteTabMode = 'edit';
+
+function typesetMath(el) {
+  if (!el) return;
+  const MJ = window.MathJax;
+  if (!MJ || !MJ.startup || !MJ.startup.promise) return;
+  try {
+    MJ.startup.promise.then(function () {
+      return MJ.typesetPromise([el]);
+    }).catch(function () {});
+  } catch (e) { /* 忽略渲染错误，保留原文 */ }
+}
+
+function renderMarkdown(src) {
+  const raw = String(src == null ? '' : src).replace(/\r\n?/g, '\n');
+  if (!raw.trim()) return '<div class="md-empty">还没有笔记。切回「编辑」，可以用 Markdown 写说明、贴代码、写 LaTeX 公式。</div>';
+
+  const codeBlocks = [];
+  const mathBlocks = [];
+  let text = raw;
+
+  // 先保护代码块和公式，避免被 Markdown 规则误伤
+  text = text.replace(/```([^\n`]*)\n([\s\S]*?)```/g, (m, lang, code) => {
+    codeBlocks.push({lang: String(lang).trim(), code: code.replace(/\n$/, '')});
+    return '\u0000C' + (codeBlocks.length - 1) + '\u0000';
+  });
+
+  const pushMath = (display, body) => {
+    mathBlocks.push({display: display, body: body});
+    return '\u0000M' + (mathBlocks.length - 1) + '\u0000';
+  };
+  text = text.replace(/\$\$([\s\S]+?)\$\$/g, (m, b) => pushMath(true, b));
+  text = text.replace(/\\\[([\s\S]+?)\\\]/g, (m, b) => pushMath(true, b));
+  text = text.replace(/\\\(([\s\S]+?)\\\)/g, (m, b) => pushMath(false, b));
+  text = text.replace(/(^|[^\\$])\$([^\n$]+?)\$/g, (m, pre, b) => pre + pushMath(false, b));
+
+  text = esc(text);
+
+  const codeHtml = i => {
+    const c = codeBlocks[i];
+    return '<pre><code>' + esc(c.code) + '</code></pre>';
+  };
+  const mathHtml = i => {
+    const mm = mathBlocks[i];
+    return esc(mm.display ? '$$' + mm.body + '$$' : '$' + mm.body + '$');
+  };
+
+  function inline(s) {
+    const spans = [];
+    s = s.replace(/`([^`]+)`/g, (m, c) => {
+      spans.push(c);
+      return '\u0001' + (spans.length - 1) + '\u0001';
+    });
+    s = s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, label, url) => {
+      const ok = /^(https?:\/\/|mailto:|\/|#)/i.test(url) ? url : '#';
+      return '<a href="' + ok + '" target="_blank" rel="noopener">' + label + '</a>';
+    });
+    s = s.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+    s = s.replace(/__([^_\n]+)__/g, '<strong>$1</strong>');
+    s = s.replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
+    s = s.replace(/~~([^~\n]+)~~/g, '<del>$1</del>');
+    s = s.replace(/\u0001(\d+)\u0001/g, (m, i) => '<code>' + spans[+i] + '</code>');
+    return s;
+  }
+
+  const lines = text.split('\n');
+  let out = '';
+  let para = [];
+  let listType = null;
+  let listItems = [];
+
+  const flushPara = () => {
+    if (para.length) { out += '<p>' + para.map(inline).join('<br>') + '</p>'; para = []; }
+  };
+  const flushList = () => {
+    if (listType) {
+      out += '<' + listType + '>';
+      listItems.forEach(it => { out += '<li>' + inline(it) + '</li>'; });
+      out += '</' + listType + '>';
+      listType = null; listItems = [];
+    }
+  };
+  const flushAll = () => { flushPara(); flushList(); };
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const t = line.trim();
+
+    if (!t) { flushAll(); continue; }
+
+    const codeOnly = t.match(/^\u0000C(\d+)\u0000$/);
+    if (codeOnly) { flushAll(); out += codeHtml(+codeOnly[1]); continue; }
+
+    const mathOnly = t.match(/^\u0000M(\d+)\u0000$/);
+    if (mathOnly && mathBlocks[+mathOnly[1]].display) {
+      flushAll();
+      out += '<div class="math-block">' + mathHtml(+mathOnly[1]) + '</div>';
+      continue;
+    }
+
+    let m = t.match(/^(#{1,6})\s+(.*)$/);
+    if (m) {
+      flushAll();
+      const lvl = Math.min(m[1].length + 2, 6);
+      out += '<h' + lvl + '>' + inline(m[2]) + '</h' + lvl + '>';
+      continue;
+    }
+
+    if (/^(-{3,}|\*{3,}|_{3,})$/.test(t)) { flushAll(); out += '<hr>'; continue; }
+
+    if (t.slice(0, 4) === '&gt;') {
+      flushAll();
+      const buf = [];
+      while (i < lines.length && lines[i].trim().slice(0, 4) === '&gt;') {
+        buf.push(lines[i].trim().replace(/^&gt;\s?/, ''));
+        i++;
+      }
+      i--;
+      out += '<blockquote><p>' + buf.map(inline).join('<br>') + '</p></blockquote>';
+      continue;
+    }
+
+    m = t.match(/^[-*+]\s+(.*)$/);
+    if (m) {
+      if (listType !== 'ul') { flushAll(); listType = 'ul'; }
+      listItems.push(m[1]);
+      continue;
+    }
+
+    m = t.match(/^\d+[.)]\s+(.*)$/);
+    if (m) {
+      if (listType !== 'ol') { flushAll(); listType = 'ol'; }
+      listItems.push(m[1]);
+      continue;
+    }
+
+    if (listType) flushList();
+    para.push(t);
+  }
+  flushAll();
+
+  // 恢复行内的代码与公式占位符
+  out = out.replace(/\u0000C(\d+)\u0000/g, (m, i) => '<code>' + esc(codeBlocks[+i].code) + '</code>');
+  out = out.replace(/\u0000M(\d+)\u0000/g, (m, i) => mathHtml(+i));
+
+  return out;
+}
+
+function renderPanel() {
+  const n = byId.get(state.selected);
+  if (!n) return;
+  const t = TYPES[n.type];
+  const r = regionById[n.region];
+  const st = statusOf(n.id);
+  const note = noteOf(n.id);
+  const related = neighborsOf(n.id).slice(0, 10);
+
+  const linksHtml = (n.links || []).map(l =>
+    '<a href="' + esc(l[1]) + '" target="_blank" rel="noopener"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>' + esc(l[0]) + '</span></a>'
+  ).join('');
+
+  const tipsHtml = (n.tips && n.tips.length)
+    ? '<h4>要点</h4><ul class="tips">' + n.tips.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul>'
+    : '';
+
+  const chips = related.map(x =>
+    '<button class="chip" data-goto="' + esc(x.node.id) + '"><i style="background:' + TYPES[x.node.type].color + '"></i>' + esc(x.node.label) + '</button>'
+  ).join('');
+
+  detailBody.innerHTML =
+    '<div class="detail-head">' +
+      '<span class="badge" style="color:' + t.color + ';border-color:' + hexA(t.color, .45) + ';background:' + hexA(t.color, .1) + '">' + t.name + '</span>' +
+      '<span class="detail-region">' + esc(r.name) + '</span>' +
+      '<button class="icon-btn" id="panelClose" title="关闭">×</button>' +
+    '</div>' +
+    '<div class="detail-body">' +
+      '<h2>' + esc(n.label) + '</h2>' +
+      '<p class="desc">' + esc(n.desc) + '</p>' +
+      tipsHtml +
+      (linksHtml ? '<h4>资料入口</h4><div class="links">' + linksHtml + '</div>' : '') +
+      (chips ? '<h4>关联节点</h4><div class="chips">' + chips + '</div>' : '') +
+      '<h4>学习状态</h4>' +
+      '<div class="status" id="statusBox">' +
+        '<button data-st="todo" class="' + (st === 'todo' ? 'on' : '') + '">未开始</button>' +
+        '<button data-st="doing" class="' + (st === 'doing' ? 'on' : '') + '">学习中</button>' +
+        '<button data-st="done" class="' + (st === 'done' ? 'on' : '') + '">已掌握</button>' +
+      '</div>' +
+      '<div class="note-label"><h4>我的笔记</h4>' +
+        '<div class="note-actions">' +
+          '<span class="note-state" id="noteState">' + (note ? '已保存' : '自动保存到本地') + '</span>' +
+          '<div class="note-tabs">' +
+            '<button data-tab="edit">编辑</button>' +
+            '<button data-tab="view">预览</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<textarea id="note" placeholder="支持 Markdown、代码块和 LaTeX：&#10;**粗体**、`行内代码`、```python 代码块```、$E=mc^2$"></textarea>' +
+      '<div class="note-preview" id="notePreview" hidden></div>' +
+      '<div class="note-hint">预览支持 Markdown · 三个反引号的代码块 · 行内公式 $…$ · 块级公式 $$…$$</div>' +
+    '</div>' +
+    '<div class="detail-foot">' +
+      '<button class="foot-loc" id="panelLocate"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="7" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="2" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>定位到节点</button>' +
+      '<span id="footHint">' + r.name + '</span>' +
+    '</div>';
+
+  detailBody.querySelector('#note').value = note;
+
+  detailBody.querySelector('#panelClose').onclick = closePanel;
+  detailBody.querySelector('#panelLocate').onclick = () => flyToNode(n.id, 1.05);
+
+  detailBody.querySelectorAll('[data-goto]').forEach(btn => {
+    btn.onclick = () => { selectNode(btn.getAttribute('data-goto')); flyToNode(btn.getAttribute('data-goto')); };
+  });
+
+  detailBody.querySelectorAll('#statusBox button').forEach(btn => {
+    btn.onclick = () => {
+      const s = nodeState(n.id);
+      s.status = btn.getAttribute('data-st');
+      persist();
+      renderPanel();
+      updateProgress();
+      needsRender = true;
+    };
+  });
+
+  const ta = detailBody.querySelector('#note');
+  const prev = detailBody.querySelector('#notePreview');
+  const tabBtns = detailBody.querySelectorAll('.note-tabs button');
+
+  function applyNoteTab() {
+    tabBtns.forEach(b => b.classList.toggle('on', b.getAttribute('data-tab') === noteTabMode));
+    if (noteTabMode === 'view') {
+      ta.hidden = true;
+      prev.hidden = false;
+      prev.innerHTML = renderMarkdown(ta.value);
+      if (window.__mathjaxFailed) {
+        prev.insertAdjacentHTML('beforeend', '<div class="md-empty" style="margin-top:10px">公式渲染文件 mathjax-tex-svg.js 没有加载，公式会以源码显示。</div>');
+      }
+      typesetMath(prev);
+    } else {
+      prev.hidden = true;
+      ta.hidden = false;
+    }
+  }
+  tabBtns.forEach(b => {
+    b.onclick = () => {
+      noteTabMode = b.getAttribute('data-tab');
+      applyNoteTab();
+    };
+  });
+  applyNoteTab();
+
+  let tTimer = null;
+  ta.addEventListener('input', () => {
+    const s = nodeState(n.id);
+    s.note = ta.value;
+    const stEl = detailBody.querySelector('#noteState');
+    if (stEl) stEl.textContent = '输入中…';
+    clearTimeout(tTimer);
+    tTimer = setTimeout(() => {
+      persist();
+      const el = detailBody.querySelector('#noteState');
+      if (el) el.textContent = '已保存 ' + timeStr();
+    }, 450);
+  });
+}
+
+function hexA(hex, a) {
+  const h = hex.replace('#', '');
+  const r = parseInt(h.slice(0, 2), 16), g = parseInt(h.slice(2, 4), 16), b = parseInt(h.slice(4, 6), 16);
+  return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+}
+
+function timeStr() {
+  const d = new Date();
+  return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+}
+
+/* =======================================================================
+   侧栏
+   ======================================================================= */
+function renderSidebar() {
+  const layerList = document.getElementById('layerList');
+  layerList.innerHTML = Object.keys(TYPES).map(k => {
+    const t = TYPES[k];
+    const cnt = nodes.filter(n => n.type === k).length;
+    return '<div class="row layer-row' + (state.layers[k] ? '' : ' off') + '" data-layer="' + k + '">' +
+      '<span class="dot" style="background:' + t.color + ';color:' + t.color + '"></span>' +
+      '<span class="nm">' + t.name + '</span>' +
+      '<span class="ct">' + cnt + '</span>' +
+      '<span class="eye">' + (state.layers[k] ? '◉' : '○') + '</span>' +
+    '</div>';
+  }).join('');
+
+  const kindList = document.getElementById('kindList');
+  kindList.innerHTML = Object.keys(KINDS).map(k => {
+    const kk = KINDS[k];
+    const cnt = edges.filter(e => e.kind === k).length;
+    return '<div class="row kind-row' + (state.kinds[k] ? '' : ' off') + '" data-kind="' + k + '">' +
+      '<span class="line' + (kk.dash ? ' dash' : '') + '" style="background:' + kk.color + ';color:' + kk.color + '"></span>' +
+      '<span class="nm">' + kk.name + '</span>' +
+      '<span class="ct">' + cnt + '</span>' +
+    '</div>';
+  }).join('');
+
+  const regionList = document.getElementById('regionList');
+  regionList.innerHTML = REGIONS.map((r, i) => {
+    const list = nodes.filter(n => n.region === r.id);
+    const done = list.filter(n => statusOf(n.id) === 'done').length;
+    const pct = Math.round(done / list.length * 100);
+    return '<div class="row region-row" data-region="' + r.id + '" title="' + esc(r.en) + '">' +
+      '<span class="num">' + String(i + 1).padStart(2, '0') + '</span>' +
+      '<span class="nm">' + esc(r.name) + '</span>' +
+      '<span class="ct">' + list.length + '</span>' +
+      '<span class="bar"><i style="width:' + pct + '%"></i></span>' +
+    '</div>';
+  }).join('');
+
+  layerList.querySelectorAll('[data-layer]').forEach(el => {
+    el.onclick = () => {
+      const k = el.getAttribute('data-layer');
+      state.layers[k] = !state.layers[k];
+      renderSidebar();
+      needsRender = true;
+    };
+  });
+  kindList.querySelectorAll('[data-kind]').forEach(el => {
+    el.onclick = () => {
+      const k = el.getAttribute('data-kind');
+      state.kinds[k] = !state.kinds[k];
+      renderSidebar();
+      needsRender = true;
+    };
+  });
+  regionList.querySelectorAll('[data-region]').forEach(el => {
+    el.onclick = () => flyToRegion(regionById[el.getAttribute('data-region')]);
+  });
+}
+
+function updateProgress() {
+  const total = nodes.length;
+  const done = nodes.filter(n => statusOf(n.id) === 'done').length;
+  const doing = nodes.filter(n => statusOf(n.id) === 'doing').length;
+  const pct = total ? Math.round(done / total * 100) : 0;
+  const ring = document.getElementById('ring');
+  const C = 2 * Math.PI * 22;
+  ring.style.strokeDashoffset = String(C * (1 - done / total));
+  document.getElementById('ringNum').textContent = pct + '%';
+  document.getElementById('doneCount').textContent = done;
+  document.getElementById('allCount').textContent = total;
+  document.getElementById('doingText').textContent = '进行中 ' + doing + ' · 未开始 ' + (total - done - doing);
+  updateStats();
+}
+
+function updateStats() {
+  document.getElementById('stats').innerHTML =
+    '<b>' + nodes.length + '</b> 节点 <span class="sep">·</span> <b>' + edges.length +
+    '</b> 关系 <span class="sep">·</span> <b>' + REGIONS.length + '</b> 区域';
+}
+
+/* =======================================================================
+   搜索
+   ======================================================================= */
+function doSearch(q) {
+  const query = q.trim().toLowerCase();
+  state.query = query;
+  if (!query) { hideResults(); return; }
+  const res = nodes.filter(n => {
+    const region = regionById[n.region];
+    return (n.label + ' ' + n.desc + ' ' + (n.tags || []).join(' ') + ' ' + region.name).toLowerCase().indexOf(query) >= 0;
+  }).slice(0, 8);
+  state.results = res;
+  state.resultIndex = res.length ? 0 : -1;
+  if (!res.length) {
+    resultsBox.innerHTML = '<div class="empty">没有匹配的节点</div>';
+    resultsBox.classList.add('show');
+    return;
+  }
+  resultsBox.innerHTML = res.map((n, i) => {
+    const t = TYPES[n.type];
+    return '<div class="result' + (i === 0 ? ' active' : '') + '" data-id="' + n.id + '">' +
+      '<span class="dot" style="background:' + t.color + '"></span>' +
+      '<span class="nm">' + esc(n.label) + '</span>' +
+      '<span class="rg">' + esc(regionById[n.region].name) + '</span>' +
+    '</div>';
+  }).join('');
+  resultsBox.classList.add('show');
+  resultsBox.querySelectorAll('.result').forEach(el => {
+    el.onclick = () => {
+      const id = el.getAttribute('data-id');
+      hideResults();
+      searchInput.blur();
+      selectNode(id);
+      flyToNode(id);
+    };
+  });
+}
+
+function hideResults() {
+  resultsBox.classList.remove('show');
+  state.results = [];
+  state.resultIndex = -1;
+}
+function moveResult(dir) {
+  const items = resultsBox.querySelectorAll('.result');
+  if (!items.length) return;
+  state.resultIndex = (state.resultIndex + dir + items.length) % items.length;
+  items.forEach((el, i) => el.classList.toggle('active', i === state.resultIndex));
+  items[state.resultIndex].scrollIntoView({block:'nearest'});
+}
+function chooseResult() {
+  if (state.resultIndex < 0 || !state.results[state.resultIndex]) return;
+  const id = state.results[state.resultIndex].id;
+  hideResults();
+  searchInput.blur();
+  selectNode(id);
+  flyToNode(id);
+}
+
+searchInput.addEventListener('input', () => doSearch(searchInput.value));
+searchInput.addEventListener('focus', () => { if (searchInput.value.trim()) doSearch(searchInput.value); });
+searchInput.addEventListener('keydown', e => {
+  if (e.key === 'ArrowDown') { e.preventDefault(); moveResult(1); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); moveResult(-1); }
+  else if (e.key === 'Enter') { e.preventDefault(); chooseResult(); }
+  else if (e.key === 'Escape') { hideResults(); searchInput.blur(); }
+});
+document.addEventListener('click', e => {
+  if (!document.getElementById('searchWrap').contains(e.target)) hideResults();
+});
+
+/* =======================================================================
+   导出 / 重置
+   ======================================================================= */
+function exportNotes() {
+  const date = new Date();
+  const iso = date.toISOString().slice(0, 10);
+  const lines = [];
+  lines.push('---');
+  lines.push('title: 大模型学习路线 · 知识图谱笔记');
+  lines.push('created: ' + iso);
+  lines.push('tags:');
+  lines.push('  - 学习路线');
+  lines.push('  - 知识图谱');
+  lines.push('  - 大模型');
+  lines.push('---');
+  lines.push('');
+  lines.push('# 大模型学习路线 · 知识图谱笔记');
+  lines.push('');
+  const done = nodes.filter(n => statusOf(n.id) === 'done').length;
+  lines.push('> 进度：已掌握 ' + done + ' / ' + nodes.length + ' 节点，导出于 ' + date.toLocaleString('zh-CN') + '。');
+  lines.push('');
+
+  REGIONS.forEach(r => {
+    const list = nodes.filter(n => n.region === r.id);
+    const touched = list.filter(n => statusOf(n.id) !== 'todo' || noteOf(n.id));
+    lines.push('## ' + r.name);
+    lines.push('');
+    if (!touched.length) {
+      lines.push('- 暂无记录');
+      lines.push('');
+      return;
+    }
+    touched.forEach(n => {
+      const st = statusOf(n.id);
+      const box = st === 'done' ? '[x]' : '[ ]';
+      lines.push('- ' + box + ' [[' + n.label + ']] · ' + TYPES[n.type].name +
+        (st === 'doing' ? ' · 学习中' : ''));
+      if (noteOf(n.id)) {
+        noteOf(n.id).split('\n').forEach(l => lines.push('  ' + l));
+      }
+    });
+    lines.push('');
+  });
+
+  lines.push('---');
+  lines.push('');
+  lines.push('## 全部节点索引');
+  lines.push('');
+  REGIONS.forEach(r => {
+    lines.push('### ' + r.name);
+    lines.push(nodes.filter(n => n.region === r.id).map(n => '[[' + n.label + ']]').join(' · '));
+    lines.push('');
+  });
+
+  const blob = new Blob([lines.join('\n')], {type:'text/markdown;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '大模型学习路线-知识图谱笔记.md';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1200);
+  toast('已导出 Markdown，可直接放进 Obsidian');
+}
+
+function resetAll() {
+  if (!confirm('确定清空所有学习状态和笔记？该操作不可撤销。')) return;
+  store = {v:1, nodes:{}};
+  try { localStorage.removeItem(LS_KEY); } catch (e) {}
+  updateProgress();
+  renderSidebar();
+  if (state.selected) renderPanel();
+  toast('已重置');
+}
+
+let toastTimer = null;
+function toast(msg) {
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2400);
+}
+
+/* =======================================================================
+   启动
+   ======================================================================= */
+document.getElementById('btnFit').onclick = () => fitView(true);
+document.getElementById('btnExport').onclick = exportNotes;
+document.getElementById('btnReset').onclick = resetAll;
+document.getElementById('btnResetView').onclick = () => {
+  Object.keys(state.layers).forEach(k => state.layers[k] = true);
+  Object.keys(state.kinds).forEach(k => state.kinds[k] = true);
+  searchInput.value = '';
+  hideResults();
+  renderSidebar();
+  fitView(true);
+  toast('已重置视图与筛选');
+};
+
+document.addEventListener('keydown', e => {
+  const tag = (document.activeElement && document.activeElement.tagName) || '';
+  if (e.key === '/' && tag !== 'INPUT' && tag !== 'TEXTAREA') {
+    e.preventDefault();
+    searchInput.focus();
+    searchInput.select();
+  } else if (e.key === 'Escape') {
+    if (tag === 'INPUT') { hideResults(); searchInput.blur(); }
+    else closePanel();
+  } else if ((e.key === 'f' || e.key === 'F') && tag !== 'INPUT' && tag !== 'TEXTAREA') {
+    fitView(true);
+  }
+});
+
+window.addEventListener('resize', () => { resize(); needsRender = true; });
+
+// 供自动化检查与二次开发使用
+window.__atlas = {
+  state: state, view: view, nodes: nodes, edges: edges, regions: REGIONS,
+  selectNode: selectNode, flyToNode: flyToNode, fitView: fitView, exportNotes: exportNotes
+};
+
+// 初始化
+resize();
+layout();
+fitView(false);
+renderSidebar();
+updateProgress();
+requestAnimationFrame(function loop() {
+  if (needsRender) draw();
+  requestAnimationFrame(loop);
+});
+
+setTimeout(() => {
+  let seen = '1';
+  try { seen = localStorage.getItem('llm-atlas-seen'); } catch (e) {}
+  if (!seen) {
+    toast('点击任意节点查看说明并记笔记 · 笔记自动保存在本地');
+    try { localStorage.setItem('llm-atlas-seen', '1'); } catch (e) {}
+  }
+}, 700);
+
+})();
+</script>
+</body>
+</html>

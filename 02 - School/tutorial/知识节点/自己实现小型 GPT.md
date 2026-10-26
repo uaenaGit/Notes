@@ -1,9 +1,13 @@
 ---
-title: "自己实现小型 GPT"
-kind: "项目"
-status: "未开始"
-atlas_id: "gpt"
-tags: ["大模型学习", "知识节点"]
+title: 自己实现小型 GPT
+kind: 项目
+status: 未开始
+atlas_id: gpt
+tags:
+  - 大模型学习
+  - 知识节点
+created: 2026-10-26T15:41
+updated: 2026-10-26T15:56
 ---
 # 自己实现小型 GPT
 
