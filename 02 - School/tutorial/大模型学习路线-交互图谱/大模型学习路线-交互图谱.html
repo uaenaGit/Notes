@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
@@ -258,7 +258,7 @@ textarea#note:focus{border-color:#33406b;box-shadow:0 0 0 3px rgba(110,130,255,.
 .note-preview a:hover{color:#c6d3ff}
 .note-preview hr{border:0;border-top:1px solid #1d2638;margin:14px 0}
 .note-preview strong{color:#e8effc}
-.note-preview del{color:#6d7890}
+.note-preview del{color:#8b96ab;text-decoration:line-through;text-decoration-color:rgba(255,132,150,.9);text-decoration-thickness:1.5px}
 .note-preview mjx-container{max-width:100%;overflow-x:auto;overflow-y:hidden}
 .note-preview mjx-container[display="true"]{margin:10px 0 !important}
 .note-preview .md-empty{color:#4f5a72;font-size:12px}
@@ -1638,7 +1638,9 @@ function renderMarkdown(src) {
     s = s.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
     s = s.replace(/__([^_\n]+)__/g, '<strong>$1</strong>');
     s = s.replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
-    s = s.replace(/~~([^~\n]+)~~/g, '<del>$1</del>');
+    s = s.replace(/＊＊([^＊\n]+)＊＊/g, '<strong>$1</strong>');
+    s = s.replace(/＊([^＊\n]+)＊/g, '<em>$1</em>');
+    s = s.replace(/(~~|～～|〜〜|˜˜|∼∼)([^\n]+?)\1/g, '<del>$2</del>');
     s = s.replace(/\u0001(\d+)\u0001/g, (m, i) => '<code>' + spans[+i] + '</code>');
     return s;
   }
