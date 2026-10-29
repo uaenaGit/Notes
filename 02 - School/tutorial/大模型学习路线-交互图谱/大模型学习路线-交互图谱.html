@@ -3,6 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#06080f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="大模型图谱">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0%200%2032%2032'%3E%3Crect width='32' height='32' rx='8' fill='%235a6cff'/%3E%3Ccircle cx='16' cy='10' r='3' fill='white'/%3E%3Ccircle cx='10' cy='22' r='2.4' fill='white'/%3E%3Ccircle cx='22' cy='22' r='2.4' fill='white'/%3E%3C/svg%3E">
 <title>大模型学习路线 · 知识图谱</title>
 <style>
 :root{
@@ -139,7 +144,10 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .progress-meta .sub{font-size:11px;color:#66718b;margin-top:4px}
 .foot-btns{display:flex;gap:8px}
 .foot-btns .btn{flex:1;justify-content:center;height:32px;font-size:12px}
-.link-reset{display:block;width:100%;text-align:center;font-size:10.5px;color:#4d5870;margin-top:9px}
+.foot-links{display:flex;justify-content:center;align-items:center;gap:7px;margin-top:9px;font-size:10.5px;color:#3f4a60}
+.foot-links button{font-size:10.5px;color:#4d5870;padding:1px 2px}
+.foot-links button:hover{color:#9aa6bf}
+.foot-links span{color:#2b3446}
 .link-reset:hover{color:#8b96ad}
 
 /* ---------- canvas ---------- */
@@ -274,19 +282,48 @@ textarea#note:focus{border-color:#33406b;box-shadow:0 0 0 3px rgba(110,130,255,.
 }
 #toast.show{opacity:1;transform:translate(-50%,0)}
 
+.menu-btn{
+  display:none;width:34px;height:34px;border:1px solid #1e2638;border-radius:9px;
+  color:#aeb9cf;align-items:center;justify-content:center;flex:0 0 auto;background:#0c111c;
+}
+.menu-btn:hover{background:#121a2a;color:#e6edfb}
+.scrim{
+  position:fixed;inset:0;background:rgba(3,5,10,.62);z-index:55;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.scrim.show{opacity:1;pointer-events:auto}
+
 @media (max-width:1180px){
   .stats{display:none}
   .search{width:230px;flex:0 1 230px}
   .sidebar{width:262px;flex-basis:262px}
 }
 @media (max-width:860px){
-  .sidebar{display:none}
-  .detail{width:auto;left:12px;right:12px}
+  .menu-btn{display:flex}
+  .sidebar{
+    position:fixed;left:0;top:62px;bottom:0;z-index:60;display:flex;
+    width:300px;flex-basis:300px;transform:translateX(-102%);
+    transition:transform .24s cubic-bezier(.2,.8,.2,1);
+    box-shadow:24px 0 60px rgba(0,0,0,.55);
+  }
+  .sidebar.open{transform:none}
+  .detail{width:auto;left:10px;right:10px;top:10px;bottom:10px}
   .brand-text span{display:none}
+  .brand-text h1{font-size:13.5px;max-width:118px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .globalbar{gap:10px;padding:0 12px}
+  .search{width:auto;flex:1;min-width:0}
+  .search kbd{display:none}
+  .hint{display:none}
+  .zoomctl{bottom:12px;right:12px}
+  .globalbar > .btn#btnFit span{display:none}
+  .globalbar > .btn#btnFit{padding:0 10px}
+  #toast{left:12px;right:12px;bottom:14px;transform:translateY(14px);max-width:none;text-align:center}
+  #toast.show{transform:none}
 }
 </style>
 </head>
 <body>
+<div class="scrim" id="scrim"></div>
 <div class="app">
   <header class="globalbar">
     <div class="brand">
@@ -303,6 +340,9 @@ textarea#note:focus{border-color:#33406b;box-shadow:0 0 0 3px rgba(110,130,255,.
         <span>LLM FIELD ATLAS</span>
       </div>
     </div>
+    <button class="menu-btn" id="btnMenu" title="菜单" aria-label="打开侧栏">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
     <div class="stats" id="stats"></div>
     <div class="grow"></div>
     <div class="search" id="searchWrap">
@@ -313,7 +353,7 @@ textarea#note:focus{border-color:#33406b;box-shadow:0 0 0 3px rgba(110,130,255,.
     </div>
     <button class="btn" id="btnFit" title="回到全景 (F)">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-      全景
+      <span class="fit-label">全景</span>
     </button>
   </header>
 
@@ -352,13 +392,20 @@ textarea#note:focus{border-color:#33406b;box-shadow:0 0 0 3px rgba(110,130,255,.
           <button class="btn primary" id="btnExport">导出笔记</button>
           <button class="btn" id="btnReset">重置</button>
         </div>
-        <button class="link-reset" id="btnResetView">重置视图 · 清除筛选</button>
+        <div class="foot-links">
+          <button id="btnBackup" title="把全部笔记与进度导出为 JSON">备份</button>
+          <span>·</span>
+          <button id="btnRestore" title="从 JSON 备份恢复">导入</button>
+          <span>·</span>
+          <button id="btnResetView">重置视图</button>
+        </div>
+        <input type="file" id="restoreFile" accept=".json,application/json" hidden>
       </div>
     </aside>
 
     <main class="main" id="stage">
       <canvas id="graph"></canvas>
-      <div class="hint"><b>拖动</b> 平移 · <b>滚轮</b> 缩放 · <b>点击节点</b> 记录笔记 · <b>双击空白</b> 回全景</div>
+      <div class="hint"><b>拖动</b> 平移 · <b>滚轮 / 双指</b> 缩放 · <b>点击节点</b> 记录笔记 · <b>双击空白</b> 回全景</div>
       <div class="zoomctl">
         <button id="zin" title="放大">+</button>
         <button id="zout" title="缩小">−</button>
@@ -1012,7 +1059,7 @@ function resize() {
   canvas.height = Math.round(H * DPR);
   canvas.style.width = W + 'px';
   canvas.style.height = H + 'px';
-  if (!userTouched) fitView(false);
+  if (!userTouched && window.innerWidth > 860) fitView(false);
   needsRender = true;
 }
 
@@ -1020,7 +1067,7 @@ function fitView(animate) {
   const pad = 40;
   const z = Math.min((W - pad * 2) / WORLD.w, (H - pad * 2) / WORLD.h);
   const target = {
-    zoom: Math.max(0.25, Math.min(1.3, z)),
+    zoom: Math.max(0.16, Math.min(1.3, z)),
     x: (W - WORLD.w * z) / 2,
     y: (H - WORLD.h * z) / 2
   };
@@ -1045,6 +1092,16 @@ function animateTo(target) {
   anim = {raf:requestAnimationFrame(step)};
 }
 
+function focusRegionInstant(id) {
+  const r = regionById[id];
+  if (!r) { fitView(false); return; }
+  const z = Math.max(0.45, Math.min(1.15, Math.min((W - 40) / r.w, (H - 40) / r.h)));
+  view.zoom = z;
+  view.x = W / 2 - (r.x + r.w / 2) * z;
+  view.y = H / 2 - (r.y + r.h / 2) * z;
+  needsRender = true;
+}
+
 function flyToNode(id, zoomTarget) {
   const n = byId.get(id);
   if (!n) return;
@@ -1061,6 +1118,15 @@ function flyToRegion(r) {
   userTouched = true;
   const z = Math.max(0.55, Math.min(1.25, Math.min((W - 120) / r.w, (H - 120) / r.h)));
   animateTo({zoom:z, x:W / 2 - (r.x + r.w / 2) * z, y:H / 2 - (r.y + r.h / 2) * z});
+  closeSidebarOnMobile();
+}
+
+function closeSidebarOnMobile() {
+  if (window.innerWidth > 860) return;
+  const sb = document.querySelector(".sidebar");
+  const sc = document.getElementById("scrim");
+  if (sb) sb.classList.remove("open");
+  if (sc) sc.classList.remove("show");
 }
 
 function roundRect(x, y, w, h, r) {
@@ -1428,19 +1494,52 @@ function toWorld(clientX, clientY) {
 }
 
 function hitTest(p) {
-  let best = null, bestD = 15 * 15;
+  let best = null, bestD = 18 * 18;
+  const z = view.zoom;
   for (let i = nodes.length - 1; i >= 0; i--) {
     const n = nodes[i];
     if (!state.layers[n.type]) continue;
-    const dx = p.x - n.x, dy = p.y - n.y;
+    const dx = (p.x - n.x) * z, dy = (p.y - n.y) * z;
     const d2 = dx * dx + dy * dy;
     if (d2 < bestD) { bestD = d2; best = n; }
   }
   return best;
 }
 
+const activePointers = new Map();
+let pinch = null;
+
+function pinchInfo() {
+  const pts = Array.from(activePointers.values());
+  const a = pts[0], b = pts[1];
+  return {
+    dist: Math.hypot(a.x - b.x, a.y - b.y) || 1,
+    mid: {x:(a.x + b.x) / 2, y:(a.y + b.y) / 2}
+  };
+}
+
 canvas.addEventListener('pointerdown', e => {
   userTouched = true;
+  activePointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+
+  if (activePointers.size === 2) {
+    // 第二根手指落下：切换成双指缩放
+    draggingNode = null;
+    panning = null;
+    const rect = canvas.getBoundingClientRect();
+    const info = pinchInfo();
+    const mx = info.mid.x - rect.left, my = info.mid.y - rect.top;
+    pinch = {
+      dist: info.dist,
+      zoom: view.zoom,
+      wx: (mx - view.x) / view.zoom,
+      wy: (my - view.y) / view.zoom
+    };
+    canvas.classList.add('dragging');
+    return;
+  }
+  if (activePointers.size > 2) return;
+
   const p = toWorld(e.clientX, e.clientY);
   const n = hitTest(p);
   dragMoved = false;
@@ -1456,6 +1555,22 @@ canvas.addEventListener('pointerdown', e => {
 });
 
 canvas.addEventListener('pointermove', e => {
+  if (activePointers.has(e.pointerId)) {
+    activePointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+  }
+
+  if (pinch && activePointers.size >= 2) {
+    const info = pinchInfo();
+    const rect = canvas.getBoundingClientRect();
+    const mx = info.mid.x - rect.left, my = info.mid.y - rect.top;
+    const z = Math.max(0.22, Math.min(3, pinch.zoom * (info.dist / pinch.dist)));
+    view.zoom = z;
+    view.x = mx - pinch.wx * z;
+    view.y = my - pinch.wy * z;
+    needsRender = true;
+    return;
+  }
+
   const p = toWorld(e.clientX, e.clientY);
   if (draggingNode) {
     const n = draggingNode.node;
@@ -1483,6 +1598,14 @@ canvas.addEventListener('pointermove', e => {
 });
 
 function endPointer(e) {
+  activePointers.delete(e.pointerId);
+  if (pinch) {
+    if (activePointers.size < 2) {
+      pinch = null;
+      canvas.classList.remove('dragging');
+    }
+    return;
+  }
   if (draggingNode) {
     if (!dragMoved) selectNode(draggingNode.node.id);
     draggingNode = null;
@@ -1497,7 +1620,11 @@ function endPointer(e) {
   canvas.classList.remove('dragging');
 }
 canvas.addEventListener('pointerup', endPointer);
-canvas.addEventListener('pointercancel', () => { draggingNode = null; panning = null; canvas.classList.remove('dragging'); });
+canvas.addEventListener('pointercancel', e => {
+  activePointers.delete(e.pointerId);
+  if (activePointers.size < 2) pinch = null;
+  draggingNode = null; panning = null; canvas.classList.remove('dragging');
+});
 
 canvas.addEventListener('wheel', e => {
   e.preventDefault();
@@ -2122,6 +2249,53 @@ function exportNotes() {
   toast('已导出 Markdown，可直接放进 Obsidian');
 }
 
+function exportBackup() {
+  const payload = {
+    app: 'llm-field-atlas',
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    nodes: store.nodes
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '大模型学习路线-笔记备份-' + new Date().toISOString().slice(0, 10) + '.json';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1200);
+  toast('已导出备份 JSON');
+}
+
+function importBackup(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(String(reader.result));
+      if (!data || typeof data !== 'object' || !data.nodes) throw new Error('bad');
+      let count = 0;
+      Object.keys(data.nodes).forEach(id => {
+        if (!byId.has(id)) return;
+        const rec = data.nodes[id] || {};
+        store.nodes[id] = {
+          status: (rec.status === 'doing' || rec.status === 'done') ? rec.status : 'todo',
+          note: typeof rec.note === 'string' ? rec.note : ''
+        };
+        count++;
+      });
+      persist();
+      updateProgress();
+      renderSidebar();
+      if (state.selected) renderPanel();
+      needsRender = true;
+      toast('已导入 ' + count + ' 条记录');
+    } catch (e) {
+      toast('备份文件格式不对，导入失败');
+    }
+  };
+  reader.onerror = () => toast('读取文件失败');
+  reader.readAsText(file);
+}
+
 function resetAll() {
   if (!confirm('确定清空所有学习状态和笔记？该操作不可撤销。')) return;
   store = {v:1, nodes:{}};
@@ -2145,7 +2319,25 @@ function toast(msg) {
    ======================================================================= */
 document.getElementById('btnFit').onclick = () => fitView(true);
 document.getElementById('btnExport').onclick = exportNotes;
+document.getElementById('btnBackup').onclick = exportBackup;
 document.getElementById('btnReset').onclick = resetAll;
+
+const restoreInput = document.getElementById('restoreFile');
+document.getElementById('btnRestore').onclick = () => restoreInput.click();
+restoreInput.onchange = () => {
+  if (restoreInput.files && restoreInput.files[0]) importBackup(restoreInput.files[0]);
+  restoreInput.value = '';
+};
+
+const sidebarEl = document.querySelector('.sidebar');
+const scrimEl = document.getElementById('scrim');
+function setSidebar(open) {
+  sidebarEl.classList.toggle('open', open);
+  scrimEl.classList.toggle('show', open);
+}
+document.getElementById('btnMenu').onclick = () => setSidebar(!sidebarEl.classList.contains('open'));
+scrimEl.onclick = () => setSidebar(false);
+
 document.getElementById('btnResetView').onclick = () => {
   Object.keys(state.layers).forEach(k => state.layers[k] = true);
   Object.keys(state.kinds).forEach(k => state.kinds[k] = true);
@@ -2181,7 +2373,7 @@ window.__atlas = {
 // 初始化
 resize();
 layout();
-fitView(false);
+if (window.innerWidth <= 860) focusRegionInstant("s1"); else fitView(false);
 renderSidebar();
 updateProgress();
 requestAnimationFrame(function loop() {
