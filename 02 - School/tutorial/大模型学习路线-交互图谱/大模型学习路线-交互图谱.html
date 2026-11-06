@@ -136,7 +136,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 /* footer */
 .sidebar-foot{padding:12px 16px 16px;border-top:1px solid var(--line);background:#080b12}
-.progress-card{display:flex;align-items:center;gap:13px;margin-bottom:12px}
+.progress-card{display:flex;align-items:center;gap:13px;margin-bottom:8px}
 .ring-wrap{position:relative;width:54px;height:54px;flex:0 0 auto}
 .ring-num{position:absolute;inset:0;display:grid;place-items:center;font-size:12px;font-weight:600;color:#dbe4f7;font-variant-numeric:tabular-nums}
 .progress-meta .big{font-size:12.5px;color:#cdd7ea}
@@ -144,6 +144,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .progress-meta .sub{font-size:11px;color:#66718b;margin-top:4px}
 .foot-btns{display:flex;gap:8px}
 .foot-btns .btn{flex:1;justify-content:center;height:32px;font-size:12px}
+.storage{font-size:10px;color:#4b5670;text-align:center;margin:0 0 2px}
 .foot-links{display:flex;justify-content:center;align-items:center;gap:7px;margin-top:9px;font-size:10.5px;color:#3f4a60}
 .foot-links button{font-size:10.5px;color:#4d5870;padding:1px 2px}
 .foot-links button:hover{color:#9aa6bf}
@@ -178,6 +179,9 @@ canvas.dragging{cursor:grabbing}
   display:flex;flex-direction:column;overflow:hidden;
 }
 .detail.open{transform:none;opacity:1;pointer-events:auto}
+.detail.wide{width:min(720px, calc(100vw - 120px))}
+.detail.wide textarea#note{min-height:300px}
+.note-preview mjx-container svg{max-width:100%;height:auto}
 .detail-head{display:flex;align-items:center;gap:8px;padding:14px 16px 0}
 .badge{font-size:10px;letter-spacing:.06em;padding:3px 8px;border-radius:6px;border:1px solid;line-height:1.3}
 .detail-region{font-size:10.5px;color:#6b7690;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -392,6 +396,7 @@ textarea#note:focus{border-color:#33406b;box-shadow:0 0 0 3px rgba(110,130,255,.
           <button class="btn primary" id="btnExport">导出笔记</button>
           <button class="btn" id="btnReset">重置</button>
         </div>
+        <div class="storage" id="storageInfo">本地笔记 0 条 · 约 0 KB</div>
         <div class="foot-links">
           <button id="btnBackup" title="把全部笔记与进度导出为 JSON">备份</button>
           <span>·</span>
@@ -951,13 +956,38 @@ try {
 } catch (e) { /* 本地存储不可用时退化为内存 */ }
 
 let saveTimer = null;
+let warnedStorage = false;
 function persist() {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
-    try { localStorage.setItem(LS_KEY, JSON.stringify(store)); }
-    catch (e) { toast('本地存储不可用：笔记只保留在当前页面'); }
+    try {
+      localStorage.setItem(LS_KEY, JSON.stringify(store));
+      updateStorageInfo();
+    } catch (e) {
+      const quota = e && (e.name === 'QuotaExceededError' || e.code === 22 || e.code === 1014);
+      toast(quota ? '本地空间不足：请先点「备份」导出，再清理部分笔记' : '本地存储不可用：笔记只保留在当前页面');
+    }
   }, 250);
 }
+
+function updateStorageInfo() {
+  const el = document.getElementById('storageInfo');
+  if (!el) return;
+  let chars = 0;
+  try { chars = JSON.stringify(store).length; } catch (e) { chars = 0; }
+  const kb = Math.max(1, Math.round(chars * 2 / 1024));
+  let count = 0;
+  Object.keys(store.nodes || {}).forEach(id => {
+    if (store.nodes[id] && store.nodes[id].note) count++;
+  });
+  el.textContent = '本地笔记 ' + count + ' 条 · 约 ' + kb + ' KB';
+  el.title = '浏览器 localStorage 常见上限 5–10 MB，约合 250–500 万汉字；重要内容建议定期「备份」或「导出笔记」';
+  if (kb > 4096 && !warnedStorage) {
+    warnedStorage = true;
+    toast('本地笔记已超过 4 MB，建议先「备份」再继续写');
+  }
+}
+
 function nodeState(id) {
   if (!store.nodes[id]) store.nodes[id] = {status:'todo', note:''};
   return store.nodes[id];
@@ -1682,6 +1712,12 @@ function selectNode(id) {
   detail.setAttribute('aria-hidden', 'false');
 }
 
+let panelWide = false;
+function setPanelWide(on) {
+  panelWide = on;
+  detail.classList.toggle('wide', on);
+}
+
 function closePanel() {
   state.selected = null;
   detail.classList.remove('open');
@@ -1927,6 +1963,7 @@ function renderPanel() {
     '<div class="detail-head">' +
       '<span class="badge" style="color:' + t.color + ';border-color:' + hexA(t.color, .45) + ';background:' + hexA(t.color, .1) + '">' + t.name + '</span>' +
       '<span class="detail-region">' + esc(r.name) + '</span>' +
+      '<button class="icon-btn" id="panelWide" title="放大面板"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></button>' +
       '<button class="icon-btn" id="panelClose" title="关闭">×</button>' +
     '</div>' +
     '<div class="detail-body">' +
@@ -1962,6 +1999,7 @@ function renderPanel() {
   detailBody.querySelector('#note').value = note;
 
   detailBody.querySelector('#panelClose').onclick = closePanel;
+  detailBody.querySelector('#panelWide').onclick = () => setPanelWide(!panelWide);
   detailBody.querySelector('#panelLocate').onclick = () => flyToNode(n.id, 1.05);
 
   detailBody.querySelectorAll('[data-goto]').forEach(btn => {
@@ -2106,6 +2144,7 @@ function updateProgress() {
   document.getElementById('allCount').textContent = total;
   document.getElementById('doingText').textContent = '进行中 ' + doing + ' · 未开始 ' + (total - done - doing);
   updateStats();
+  updateStorageInfo();
 }
 
 function updateStats() {
