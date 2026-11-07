@@ -2424,7 +2424,7 @@ setTimeout(() => {
   let seen = '1';
   try { seen = localStorage.getItem('llm-atlas-seen'); } catch (e) {}
   if (!seen) {
-    toast('点击任意节点查看说明并记笔记 · 笔记自动保存在本地');
+    toast('点击任意节点记笔记 · 换设备时用侧栏底部「备份 / 导入」');
     try { localStorage.setItem('llm-atlas-seen', '1'); } catch (e) {}
   }
 }, 700);
