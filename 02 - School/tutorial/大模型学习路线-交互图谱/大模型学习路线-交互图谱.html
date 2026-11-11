@@ -2516,9 +2516,67 @@ function scheduleAutosave(immediate) {
   autoState.timer = setTimeout(autosaveFlush, immediate ? 60 : AUTOSAVE.gap);
 }
 
+function parseNoteFile(content) {
+  var m = /^---\r?\n([\s\S]*?)\r?\n---[ \t]*\r?\n?/.exec(String(content || ''));
+  if (!m) return null;
+  var fm = m[1];
+  var idm = /^node:[ \t]*(.+)$/m.exec(fm);
+  if (!idm) return null;
+  var sm = /^status:[ \t]*(.+)$/m.exec(fm);
+  var status = null;
+  if (sm) {
+    var v = sm[1].trim();
+    if (v === '已掌握') status = 'done';
+    else if (v === '学习中') status = 'doing';
+    else if (v === '未开始') status = 'todo';
+  }
+  return {id: idm[1].trim(), status: status, body: trimBlankLines(content.slice(m[0].length))};
+}
+
+function editingNoteId() {
+  var el = document.activeElement;
+  if (!el || el.tagName !== 'TEXTAREA' || el.id !== 'note') return null;
+  return state.selected || null;
+}
+
+function applyExternal(list, skipId) {
+  var changed = 0;
+  (list || []).forEach(function(item) {
+    var rec = parseNoteFile(item && item.content);
+    if (!rec || !byId.has(rec.id) || rec.id === skipId) return;
+    var cur = noteOf(rec.id);
+    var nextStatus = rec.status || statusOf(rec.id);
+    if (cur === rec.body && statusOf(rec.id) === nextStatus) return;
+    store.nodes[rec.id] = {status: nextStatus, note: rec.body};
+    changed++;
+  });
+  if (changed) {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(store)); } catch (e) {}
+    updateStorageInfo();
+    updateProgress();
+    renderSidebar();
+    needsRender = true;
+    autoState.lastHash = '';
+    if (!editingNoteId() && state.selected) renderPanel();
+    toast('已从 Obsidian 同步 ' + changed + ' 条修改');
+  }
+  return changed;
+}
+
+async function pullFromDisk() {
+  if (editingNoteId() || autoState.busy) return 0;
+  try {
+    const res = await fetch(AUTOSAVE.base + '/state?t=' + encodeURIComponent(AUTOSAVE.token), {cache: 'no-store'});
+    if (!res.ok) return 0;
+    const d = await res.json();
+    if (d && d.external && d.external.length) return applyExternal(d.external);
+  } catch (e) { /* 服务没起来就跳过 */ }
+  return 0;
+}
+
 async function autosaveFlush() {
   if (autoState.busy) { autoState.pending = true; return; }
-  const payload = autosavePayload();
+  let payload = autosavePayload();
   if (payload.hash === autoState.lastHash) {
     if (autoState.mode !== 'saved' && autoState.lastSaved) { autoState.mode = 'saved'; renderAutosave(); }
     return;
@@ -2528,14 +2586,25 @@ async function autosaveFlush() {
   autoState.mode = 'saving';
   renderAutosave();
   try {
-    const res = await fetch(AUTOSAVE.base + '/save', {
-      method: 'POST',
-      headers: {'Content-Type': 'text/plain;charset=UTF-8'},
-      body: JSON.stringify(payload),
-      cache: 'no-store'
-    });
-    const data = await res.json().catch(() => null);
-    if (!res.ok || !data || !data.ok) throw new Error((data && data.error) || ('HTTP ' + res.status));
+    let res = null, data = null;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      res = await fetch(AUTOSAVE.base + '/save', {
+        method: 'POST',
+        headers: {'Content-Type': 'text/plain;charset=UTF-8'},
+        body: JSON.stringify(payload),
+        cache: 'no-store'
+      });
+      data = await res.json().catch(() => null);
+      if (res.status === 409 && data && data.external && data.external.length) {
+        var editing = editingNoteId();
+        applyExternal(data.external, editing);
+        if (editing) toast('这条笔记在 Obsidian 里也有改动，以你正在写的内容为准');
+        payload = autosavePayload();
+        continue;
+      }
+      break;
+    }
+    if (!res || !res.ok || !data || !data.ok) throw new Error((data && data.error) || ('HTTP ' + (res && res.status)));
     autoState.lastHash = payload.hash;
     autoState.lastSaved = new Date();
     autoState.mode = 'saved';
@@ -2610,6 +2679,7 @@ async function autosaveBoot() {
   }
   autoState.mode = 'idle';
   renderAutosave();
+  await pullFromDisk();
   if (autosaveHasData()) autosaveFlush();
 }
 
@@ -2674,6 +2744,11 @@ document.getElementById('autosaveInfo').onclick = autosaveRetry;
 window.addEventListener('beforeunload', autosaveBeacon);
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'hidden') autosaveBeacon();
+  else pullFromDisk();
+});
+window.addEventListener('focus', () => { pullFromDisk(); });
+document.addEventListener('focusout', (e) => {
+  if (e.target && e.target.id === 'note') setTimeout(pullFromDisk, 400);
 });
 
 const restoreInput = document.getElementById('restoreFile');
@@ -2723,7 +2798,7 @@ window.__atlas = {
   state: state, view: view, nodes: nodes, edges: edges, regions: REGIONS,
   selectNode: selectNode, flyToNode: flyToNode, fitView: fitView, exportNotes: exportNotes,
   autosave: {
-    flush: autosaveFlush, retry: autosaveRetry, ping: autosavePing,
+    flush: autosaveFlush, retry: autosaveRetry, ping: autosavePing, pull: pullFromDisk,
     state: () => autoState
   }
 };
