@@ -2247,6 +2247,44 @@ function trimBlankLines(text) {
   return arr.join('\n');
 }
 
+function noteFileName(label) {
+  var s = String(label || '').replace(/[\/\\:*?"<>|#^\[\]]/g, ' ').replace(/\s+/g, ' ').trim();
+  s = s.replace(/^[.\s]+/, '').replace(/[.\s]+$/, '');
+  return (s.slice(0, 80) || '未命名');
+}
+
+function yamlStr(v) {
+  return JSON.stringify(String(v == null ? '' : v));
+}
+
+function nodeStatusName(id) {
+  var st = statusOf(id);
+  return st === 'done' ? '已掌握' : (st === 'doing' ? '学习中' : '未开始');
+}
+
+function regionNameOf(id) {
+  for (var i = 0; i < REGIONS.length; i++) {
+    if (REGIONS[i].id === id) return REGIONS[i].name;
+  }
+  return '';
+}
+
+function normalizeMath(text) {
+  var inFence = false;
+  return String(text || '').split('\n').map(function(line) {
+    if (/^\s*(```|~~~)/.test(line)) { inFence = !inFence; return line; }
+    if (inFence) return line;
+    return line.split(/(`+[^`]*`+)/).map(function(seg, i) {
+      if (i % 2 === 1) return seg;
+      return seg
+        .replace(/\\\[/g, function() { return '$$'; })
+        .replace(/\\\]/g, function() { return '$$'; })
+        .replace(/\\\(/g, function() { return '$'; })
+        .replace(/\\\)/g, function() { return '$'; });
+    }).join('');
+  }).join('\n');
+}
+
 function demoteHeadings(text, by, maxLevel) {
   var inFence = false;
   return String(text || '').split('\n').map(function(line) {
@@ -2259,12 +2297,72 @@ function demoteHeadings(text, by, maxLevel) {
   }).join('\n');
 }
 
-function buildNotesMarkdown() {
-  const date = new Date();
-  const iso = date.toISOString().slice(0, 10);
-  const lines = [];
+function buildAllNotesMarkdown() {
+  var date = new Date();
+  var done = nodes.filter(function(n) { return statusOf(n.id) === 'done'; }).length;
+  var lines = ['---'];
+  lines.push('title: 大模型学习路线 · 笔记合集');
+  lines.push('created: ' + date.toISOString().slice(0, 10));
+  lines.push('tags:');
+  lines.push('  - 学习路线');
+  lines.push('  - 知识图谱');
+  lines.push('  - 大模型');
   lines.push('---');
-  lines.push('title: 大模型学习路线 · 知识图谱笔记');
+  lines.push('');
+  lines.push('# 大模型学习路线 · 笔记合集');
+  lines.push('');
+  lines.push('> 已掌握 ' + done + ' / ' + nodes.length + ' 个节点，导出于 ' + date.toLocaleString('zh-CN') + '。');
+  lines.push('');
+  REGIONS.forEach(function(r) {
+    var touched = nodes.filter(function(n) {
+      return n.region === r.id && (noteOf(n.id).trim() || statusOf(n.id) !== 'todo');
+    });
+    if (!touched.length) return;
+    lines.push('## ' + r.name);
+    lines.push('');
+    touched.forEach(function(n) {
+      var st = statusOf(n.id);
+      var mark = st === 'done' ? ' · 已掌握' : (st === 'doing' ? ' · 学习中' : '');
+      lines.push('### [[' + n.label + ']] · ' + TYPES[n.type].name + mark);
+      lines.push('');
+      var body = demoteHeadings(normalizeMath(trimBlankLines(noteOf(n.id))), 3, 6);
+      if (body) {
+        body.split('\n').forEach(function(l) { lines.push(l); });
+        lines.push('');
+      }
+    });
+  });
+  return lines.join('\n');
+}
+
+function buildNodeMarkdown(n) {
+  var lines = ['---'];
+  lines.push('title: ' + yamlStr(n.label));
+  lines.push('type: ' + TYPES[n.type].name);
+  lines.push('region: ' + yamlStr(regionNameOf(n.region)));
+  lines.push('status: ' + nodeStatusName(n.id));
+  lines.push('node: ' + n.id);
+  lines.push('updated: ' + new Date().toISOString().slice(0, 10));
+  lines.push('tags:');
+  lines.push('  - 知识图谱笔记');
+  (n.tags || []).forEach(function(t) { lines.push('  - ' + t); });
+  lines.push('---');
+  var body = normalizeMath(trimBlankLines(noteOf(n.id)));
+  if (body) {
+    lines.push('');
+    body.split('\n').forEach(function(l) { lines.push(l); });
+  }
+  return lines.join('\n') + '\n';
+}
+
+function buildIndexMarkdown() {
+  var date = new Date();
+  var iso = date.toISOString().slice(0, 10);
+  var done = nodes.filter(function(n) { return statusOf(n.id) === 'done'; }).length;
+  var withNotes = 0;
+  nodes.forEach(function(n) { if (noteOf(n.id).trim()) withNotes++; });
+  var lines = ['---'];
+  lines.push('title: 大模型学习路线 · 笔记总览');
   lines.push('created: ' + iso);
   lines.push('tags:');
   lines.push('  - 学习路线');
@@ -2272,46 +2370,32 @@ function buildNotesMarkdown() {
   lines.push('  - 大模型');
   lines.push('---');
   lines.push('');
-  lines.push('# 大模型学习路线 · 知识图谱笔记');
+  lines.push('# 大模型学习路线 · 笔记总览');
   lines.push('');
-  const done = nodes.filter(n => statusOf(n.id) === 'done').length;
-  lines.push('> 进度：已掌握 ' + done + ' / ' + nodes.length + ' 节点，导出于 ' + date.toLocaleString('zh-CN') + '。');
+  lines.push('> 已掌握 ' + done + ' / ' + nodes.length + ' 个节点 · 笔记 ' + withNotes + ' 条 · 更新于 ' + date.toLocaleString('zh-CN') + '。');
+  lines.push('>');
+  lines.push('> 每条笔记单独存在 `节点笔记/` 文件夹里，点下面的链接直达。');
   lines.push('');
-
-  REGIONS.forEach(r => {
-    const list = nodes.filter(n => n.region === r.id);
-    const touched = list.filter(n => statusOf(n.id) !== 'todo' || noteOf(n.id));
+  REGIONS.forEach(function(r) {
+    var touched = nodes.filter(function(n) {
+      return n.region === r.id && (noteOf(n.id).trim() || statusOf(n.id) !== 'todo');
+    });
+    if (!touched.length) return;
     lines.push('## ' + r.name);
     lines.push('');
-    if (!touched.length) {
-      lines.push('- 暂无记录');
-      lines.push('');
-      return;
-    }
-    touched.forEach(n => {
-      const st = statusOf(n.id);
-      const mark = st === 'done' ? ' · 已掌握' : (st === 'doing' ? ' · 学习中' : '');
-      lines.push('### [[' + n.label + ']] · ' + TYPES[n.type].name + mark);
-      lines.push('');
-      const body = demoteHeadings(trimBlankLines(noteOf(n.id)), 3, 6);
-      if (body) {
-        body.split('\n').forEach(l => lines.push(l));
-        lines.push('');
+    touched.forEach(function(n) {
+      var st = statusOf(n.id);
+      var mark = st === 'done' ? ' · 已掌握' : (st === 'doing' ? ' · 学习中' : '');
+      if (noteOf(n.id).trim()) {
+        var name = noteFileName(n.label);
+        var link = (name === n.label) ? '[[' + name + ']]' : '[[' + name + '|' + n.label + ']]';
+        lines.push('- ' + link + ' · ' + TYPES[n.type].name + mark);
+      } else {
+        lines.push('- ' + n.label + ' · ' + TYPES[n.type].name + mark);
       }
     });
-    if (lines[lines.length - 1] !== '') lines.push('');
-  });
-
-  lines.push('---');
-  lines.push('');
-  lines.push('## 全部节点索引');
-  lines.push('');
-  REGIONS.forEach(r => {
-    lines.push('### ' + r.name);
-    lines.push(nodes.filter(n => n.region === r.id).map(n => '[[' + n.label + ']]').join(' · '));
     lines.push('');
   });
-
   return lines.join('\n');
 }
 
@@ -2326,8 +2410,8 @@ function downloadBlob(text, mime, filename) {
 }
 
 function exportNotes() {
-  downloadBlob(buildNotesMarkdown(), 'text/markdown;charset=utf-8', '大模型学习路线-知识图谱笔记.md');
-  toast('已导出 Markdown，可直接放进 Obsidian');
+  downloadBlob(buildAllNotesMarkdown(), 'text/markdown;charset=utf-8', '大模型学习路线-笔记合集.md');
+  toast('已导出合并版笔记；库里另有 节点笔记/ 单文件版本');
 }
 
 function buildBackupJSON() {
@@ -2383,12 +2467,18 @@ function countedNotes() {
 }
 
 function autosavePayload() {
+  var files = [];
+  nodes.forEach(function(n) {
+    if (!noteOf(n.id).trim()) return;
+    files.push({name: noteFileName(n.label), content: buildNodeMarkdown(n)});
+  });
   return {
     token: AUTOSAVE.token,
     ts: Date.now(),
     notes: countedNotes(),
     hash: fnv1a(JSON.stringify(store.nodes || {})),
-    markdown: buildNotesMarkdown(),
+    index: buildIndexMarkdown(),
+    files: files,
     backup: buildBackupJSON()
   };
 }
@@ -2463,9 +2553,9 @@ async function autosaveFlush() {
 
 function updateAutosaveTitle(data) {
   const el = document.getElementById('autosaveInfo');
-  if (!el) return;
-  const extra = data && data.files ? '\n' + data.files.join('\n') : '';
-  el.title = '自动备份：停笔约 1 秒后写入\n' + (data && data.dir ? data.dir : '') + extra;
+  if (!el || !data) return;
+  el.title = '自动备份：停笔约 1 秒后写入\n' + (data.dir || '') +
+    '\n总览：' + (data.index || '') + '\n笔记：' + (data.notesDir || '') + '/';
 }
 
 function autosaveBeacon() {
