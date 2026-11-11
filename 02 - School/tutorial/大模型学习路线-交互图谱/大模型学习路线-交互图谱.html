@@ -145,6 +145,15 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .foot-btns{display:flex;gap:8px}
 .foot-btns .btn{flex:1;justify-content:center;height:32px;font-size:12px}
 .storage{font-size:10px;color:#4b5670;text-align:center;margin:0 0 2px}
+.autosave{display:flex;align-items:center;justify-content:center;gap:5px;font-size:10px;color:#4b5670;margin:0 0 3px;padding:2px 4px;border-radius:5px;cursor:pointer;user-select:none;line-height:1.3}
+.autosave:hover{background:rgba(120,150,220,.08)}
+.autosave i{width:5px;height:5px;border-radius:50%;background:#3f4a60;display:inline-block;flex:none}
+.autosave.on{color:#4ecb8f}
+.autosave.on i{background:#3ddc97;box-shadow:0 0 6px rgba(61,220,151,.8)}
+.autosave.warn{color:#d8a13a}
+.autosave.warn i{background:#e0a93f}
+.autosave.bad{color:#d47070}
+.autosave.bad i{background:#d46060}
 .foot-links{display:flex;justify-content:center;align-items:center;gap:7px;margin-top:9px;font-size:10.5px;color:#3f4a60}
 .foot-links button{font-size:10.5px;color:#4d5870;padding:1px 2px}
 .foot-links button:hover{color:#9aa6bf}
@@ -397,6 +406,9 @@ textarea#note:focus{border-color:#33406b;box-shadow:0 0 0 3px rgba(110,130,255,.
           <button class="btn" id="btnReset">重置</button>
         </div>
         <div class="storage" id="storageInfo">本地笔记 0 条 · 约 0 KB</div>
+        <div class="autosave" id="autosaveInfo" title="自动备份：把笔记实时写进这个文件夹里的 Markdown 与 JSON">
+          <i></i><span id="autosaveText">自动备份 · 待命</span>
+        </div>
         <div class="foot-links">
           <button id="btnBackup" title="把全部笔记与进度导出为 JSON">备份</button>
           <span>·</span>
@@ -967,6 +979,7 @@ function persist() {
       const quota = e && (e.name === 'QuotaExceededError' || e.code === 22 || e.code === 1014);
       toast(quota ? '本地空间不足：请先点「备份」导出，再清理部分笔记' : '本地存储不可用：笔记只保留在当前页面');
     }
+    scheduleAutosave();
   }, 250);
 }
 
@@ -981,7 +994,7 @@ function updateStorageInfo() {
     if (store.nodes[id] && store.nodes[id].note) count++;
   });
   el.textContent = '本地笔记 ' + count + ' 条 · 约 ' + kb + ' KB';
-  el.title = '浏览器 localStorage 常见上限 5–10 MB，约合 250–500 万汉字；重要内容建议定期「备份」或「导出笔记」';
+  el.title = '浏览器 localStorage 常见上限 5–10 MB，约合 250–500 万汉字；笔记会同时自动备份到本文件夹，换设备仍用「备份 / 导入」';
   if (kb > 4096 && !warnedStorage) {
     warnedStorage = true;
     toast('本地笔记已超过 4 MB，建议先「备份」再继续写');
@@ -2227,7 +2240,26 @@ document.addEventListener('click', e => {
 /* =======================================================================
    导出 / 重置
    ======================================================================= */
-function exportNotes() {
+function trimBlankLines(text) {
+  const arr = String(text || '').split('\n');
+  while (arr.length && !arr[0].trim()) arr.shift();
+  while (arr.length && !arr[arr.length - 1].trim()) arr.pop();
+  return arr.join('\n');
+}
+
+function demoteHeadings(text, by, maxLevel) {
+  var inFence = false;
+  return String(text || '').split('\n').map(function(line) {
+    if (/^\s*(```|~~~)/.test(line)) { inFence = !inFence; return line; }
+    if (inFence) return line;
+    var m = line.match(/^(#{1,6})(\s+)/);
+    if (!m) return line;
+    var level = Math.min(m[1].length + by, maxLevel);
+    return new Array(level + 1).join('#') + line.slice(m[1].length);
+  }).join('\n');
+}
+
+function buildNotesMarkdown() {
   const date = new Date();
   const iso = date.toISOString().slice(0, 10);
   const lines = [];
@@ -2258,14 +2290,16 @@ function exportNotes() {
     }
     touched.forEach(n => {
       const st = statusOf(n.id);
-      const box = st === 'done' ? '[x]' : '[ ]';
-      lines.push('- ' + box + ' [[' + n.label + ']] · ' + TYPES[n.type].name +
-        (st === 'doing' ? ' · 学习中' : ''));
-      if (noteOf(n.id)) {
-        noteOf(n.id).split('\n').forEach(l => lines.push('  ' + l));
+      const mark = st === 'done' ? ' · 已掌握' : (st === 'doing' ? ' · 学习中' : '');
+      lines.push('### [[' + n.label + ']] · ' + TYPES[n.type].name + mark);
+      lines.push('');
+      const body = demoteHeadings(trimBlankLines(noteOf(n.id)), 3, 6);
+      if (body) {
+        body.split('\n').forEach(l => lines.push(l));
+        lines.push('');
       }
     });
-    lines.push('');
+    if (lines[lines.length - 1] !== '') lines.push('');
   });
 
   lines.push('---');
@@ -2278,32 +2312,217 @@ function exportNotes() {
     lines.push('');
   });
 
-  const blob = new Blob([lines.join('\n')], {type:'text/markdown;charset=utf-8'});
+  return lines.join('\n');
+}
+
+function downloadBlob(text, mime, filename) {
+  const blob = new Blob([text], {type: mime});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = '大模型学习路线-知识图谱笔记.md';
+  a.download = filename;
   document.body.appendChild(a);
   a.click();
   setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1200);
+}
+
+function exportNotes() {
+  downloadBlob(buildNotesMarkdown(), 'text/markdown;charset=utf-8', '大模型学习路线-知识图谱笔记.md');
   toast('已导出 Markdown，可直接放进 Obsidian');
 }
 
-function exportBackup() {
-  const payload = {
+function buildBackupJSON() {
+  return JSON.stringify({
     app: 'llm-field-atlas',
     version: 1,
     exportedAt: new Date().toISOString(),
     nodes: store.nodes
-  };
-  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json;charset=utf-8'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = '大模型学习路线-笔记备份-' + new Date().toISOString().slice(0, 10) + '.json';
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1200);
+  }, null, 2);
+}
+
+function exportBackup() {
+  downloadBlob(buildBackupJSON(), 'application/json;charset=utf-8',
+    '大模型学习路线-笔记备份-' + new Date().toISOString().slice(0, 10) + '.json');
   toast('已导出备份 JSON');
 }
+
+/* =======================================================================
+   自动备份：停笔后把笔记写进同目录的 md / json
+   ======================================================================= */
+const AUTOSAVE = {
+  base: 'http://127.0.0.1:8765',
+  token: '956e9579f075f04702e468fcf789d439',
+  gap: 900,        // 停笔多久后写盘
+  retry: 15000     // 服务没起来时的重试间隔
+};
+
+const autoState = {
+  mode: 'idle',    // idle | saving | saved | offline | bad
+  lastSaved: null,
+  lastHash: '',
+  timer: null,
+  retryTimer: null,
+  pending: false,
+  busy: false
+};
+
+function fnv1a(str) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 0x01000193) >>> 0;
+  }
+  return h.toString(16);
+}
+
+function countedNotes() {
+  let c = 0;
+  Object.keys(store.nodes || {}).forEach(id => {
+    if (store.nodes[id] && store.nodes[id].note) c++;
+  });
+  return c;
+}
+
+function autosavePayload() {
+  return {
+    token: AUTOSAVE.token,
+    ts: Date.now(),
+    notes: countedNotes(),
+    hash: fnv1a(JSON.stringify(store.nodes || {})),
+    markdown: buildNotesMarkdown(),
+    backup: buildBackupJSON()
+  };
+}
+
+function renderAutosave() {
+  const el = document.getElementById('autosaveInfo');
+  const txt = document.getElementById('autosaveText');
+  if (!el || !txt) return;
+  el.className = 'autosave';
+  if (autoState.mode === 'saving') {
+    el.classList.add('on');
+    txt.textContent = '自动备份 · 写入中…';
+  } else if (autoState.mode === 'saved') {
+    el.classList.add('on');
+    txt.textContent = '自动备份 · 已保存 ' + (autoState.lastSaved ? timeStrOf(autoState.lastSaved) : '');
+  } else if (autoState.mode === 'offline') {
+    el.classList.add('warn');
+    txt.textContent = '自动备份未连接 · 点此重试';
+  } else if (autoState.mode === 'bad') {
+    el.classList.add('bad');
+    txt.textContent = '自动备份出错 · 点此重试';
+  } else {
+    txt.textContent = '自动备份 · 待命';
+  }
+}
+
+function timeStrOf(d) {
+  return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0') +
+    ':' + String(d.getSeconds()).padStart(2, '0');
+}
+
+function scheduleAutosave(immediate) {
+  if (!window.fetch) return;
+  clearTimeout(autoState.timer);
+  autoState.timer = setTimeout(autosaveFlush, immediate ? 60 : AUTOSAVE.gap);
+}
+
+async function autosaveFlush() {
+  if (autoState.busy) { autoState.pending = true; return; }
+  const payload = autosavePayload();
+  if (payload.hash === autoState.lastHash) {
+    if (autoState.mode !== 'saved' && autoState.lastSaved) { autoState.mode = 'saved'; renderAutosave(); }
+    return;
+  }
+  autoState.busy = true;
+  clearTimeout(autoState.retryTimer);
+  autoState.mode = 'saving';
+  renderAutosave();
+  try {
+    const res = await fetch(AUTOSAVE.base + '/save', {
+      method: 'POST',
+      headers: {'Content-Type': 'text/plain;charset=UTF-8'},
+      body: JSON.stringify(payload),
+      cache: 'no-store'
+    });
+    const data = await res.json().catch(() => null);
+    if (!res.ok || !data || !data.ok) throw new Error((data && data.error) || ('HTTP ' + res.status));
+    autoState.lastHash = payload.hash;
+    autoState.lastSaved = new Date();
+    autoState.mode = 'saved';
+    updateAutosaveTitle(data);
+  } catch (err) {
+    autoState.mode = 'offline';
+    autoState.lastError = String(err && err.message || err);
+    autoState.retryTimer = setTimeout(autosaveFlush, AUTOSAVE.retry);
+  } finally {
+    autoState.busy = false;
+    renderAutosave();
+    if (autoState.pending) { autoState.pending = false; scheduleAutosave(true); }
+  }
+}
+
+function updateAutosaveTitle(data) {
+  const el = document.getElementById('autosaveInfo');
+  if (!el) return;
+  const extra = data && data.files ? '\n' + data.files.join('\n') : '';
+  el.title = '自动备份：停笔约 1 秒后写入\n' + (data && data.dir ? data.dir : '') + extra;
+}
+
+function autosaveBeacon() {
+  try {
+    if (!navigator.sendBeacon || !autosaveHasData()) return;
+    const payload = autosavePayload();
+    if (payload.hash === autoState.lastHash) return;
+    const body = new Blob([JSON.stringify(payload)], {type: 'text/plain;charset=UTF-8'});
+    if (!navigator.sendBeacon(AUTOSAVE.base + '/save', body)) autosaveFlush();
+  } catch (e) { /* 忽略 */ }
+}
+
+function autosaveHasData() {
+  return Object.keys(store.nodes || {}).some(id => {
+    const n = store.nodes[id];
+    return n && (n.note || (n.status && n.status !== 'todo'));
+  });
+}
+
+async function autosavePing() {
+  try {
+    const res = await fetch(AUTOSAVE.base + '/ping?t=' + Date.now(), {cache: 'no-store'});
+    if (!res.ok) return false;
+    const d = await res.json();
+    return !!(d && d.ok);
+  } catch (e) { return false; }
+}
+
+async function autosaveRetry() {
+  const ok = await autosavePing();
+  if (!ok) {
+    toast('自动备份服务没在运行：双击文件夹里的「启动自动备份.command」');
+    autoState.mode = 'offline';
+    renderAutosave();
+    return;
+  }
+  if (autoState.mode === 'offline' || autoState.mode === 'bad') toast('自动备份已连接');
+  autoState.mode = 'idle';
+  renderAutosave();
+  autosaveFlush();
+}
+
+async function autosaveBoot() {
+  renderAutosave();
+  const ok = await autosavePing();
+  if (!ok) {
+    autoState.mode = 'offline';
+    renderAutosave();
+    clearTimeout(autoState.retryTimer);
+    autoState.retryTimer = setTimeout(autosaveBoot, AUTOSAVE.retry);
+    return;
+  }
+  autoState.mode = 'idle';
+  renderAutosave();
+  if (autosaveHasData()) autosaveFlush();
+}
+
 
 function importBackup(file) {
   const reader = new FileReader();
@@ -2342,6 +2561,7 @@ function resetAll() {
   updateProgress();
   renderSidebar();
   if (state.selected) renderPanel();
+  scheduleAutosave(true);
   toast('已重置');
 }
 
@@ -2360,6 +2580,11 @@ document.getElementById('btnFit').onclick = () => fitView(true);
 document.getElementById('btnExport').onclick = exportNotes;
 document.getElementById('btnBackup').onclick = exportBackup;
 document.getElementById('btnReset').onclick = resetAll;
+document.getElementById('autosaveInfo').onclick = autosaveRetry;
+window.addEventListener('beforeunload', autosaveBeacon);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') autosaveBeacon();
+});
 
 const restoreInput = document.getElementById('restoreFile');
 document.getElementById('btnRestore').onclick = () => restoreInput.click();
@@ -2406,7 +2631,11 @@ window.addEventListener('resize', () => { resize(); needsRender = true; });
 // 供自动化检查与二次开发使用
 window.__atlas = {
   state: state, view: view, nodes: nodes, edges: edges, regions: REGIONS,
-  selectNode: selectNode, flyToNode: flyToNode, fitView: fitView, exportNotes: exportNotes
+  selectNode: selectNode, flyToNode: flyToNode, fitView: fitView, exportNotes: exportNotes,
+  autosave: {
+    flush: autosaveFlush, retry: autosaveRetry, ping: autosavePing,
+    state: () => autoState
+  }
 };
 
 // 初始化
@@ -2415,6 +2644,7 @@ layout();
 if (window.innerWidth <= 860) focusRegionInstant("s1"); else fitView(false);
 renderSidebar();
 updateProgress();
+autosaveBoot();
 requestAnimationFrame(function loop() {
   if (needsRender) draw();
   requestAnimationFrame(loop);
@@ -2424,7 +2654,7 @@ setTimeout(() => {
   let seen = '1';
   try { seen = localStorage.getItem('llm-atlas-seen'); } catch (e) {}
   if (!seen) {
-    toast('点击任意节点记笔记 · 换设备时用侧栏底部「备份 / 导入」');
+    toast('点节点记笔记 · 停笔约 1 秒自动备份到本文件夹 · 换设备仍用「备份 / 导入」');
     try { localStorage.setItem('llm-atlas-seen', '1'); } catch (e) {}
   }
 }, 700);
