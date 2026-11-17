@@ -113,12 +113,14 @@
             "id": "8eca7d9d165e9dc5",
             "type": "leaf",
             "state": {
-              "type": "excalidraw",
+              "type": "markdown",
               "state": {
-                "file": "02 - School/论文/Progress in machine translation/Drawing 2026-11-16 09.17.54.excalidraw.md"
+                "file": "02 - School/tutorial/大模型学习路线-交互图谱/节点笔记/动手学深度学习.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "excalidraw-icon",
-              "title": "Drawing 2026-11-16 09.17.54.excalidraw"
+              "icon": "lucide-file",
+              "title": "动手学深度学习"
             }
           }
         ],
@@ -259,7 +261,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "02 - School/论文/Progress in machine translation/Drawing 2026-11-16 09.17.54.excalidraw.md",
+                "file": "02 - School/tutorial/大模型学习路线-交互图谱/节点笔记/动手学深度学习.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -325,8 +327,8 @@
   },
   "active": "8eca7d9d165e9dc5",
   "lastOpenFiles": [
-    "02 - School/辅导/考研辅导/考研整体把控.md",
     "02 - School/论文/Progress in machine translation/Drawing 2026-11-16 09.17.54.excalidraw.md",
+    "02 - School/辅导/考研辅导/考研整体把控.md",
     "02 - School/论文/Progress in machine translation",
     "02 - School/tutorial/大模型学习路线-交互图谱/节点笔记/动手学深度学习.md",
     "02 - School/论文",
