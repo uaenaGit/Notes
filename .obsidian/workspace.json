@@ -165,7 +165,8 @@
               "title": "书签"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -311,7 +312,7 @@
       "mermaid-tools:Open Mermaid Toolbar": false
     }
   },
-  "active": "bf8c471946172f4f",
+  "active": "5e0bb6cc474c6340",
   "lastOpenFiles": [
     "02 - School/辅导/考研辅导/考研整体把控.md",
     "02 - School/tutorial/大模型学习路线-交互图谱/节点笔记/动手学深度学习.md",
