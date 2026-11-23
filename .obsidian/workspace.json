@@ -144,7 +144,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "/```py(?!thon)/",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -249,7 +249,7 @@
               "type": "outline",
               "state": {
                 "file": "02 - School/tutorial/大模型学习路线-交互图谱/节点笔记/动手学深度学习.md",
-                "followCursor": false,
+                "followCursor": true,
                 "showSearch": true,
                 "searchQuery": ""
               },
@@ -289,6 +289,27 @@
           }
         ],
         "currentTab": 4
+      },
+      {
+        "id": "e22c3d7a6bd54eea",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "d5f62d0590b8cee8",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "02 - School/tutorial/大模型学习路线-交互图谱/节点笔记/动手学深度学习.md",
+                "followCursor": true,
+                "showSearch": true,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "大纲"
+            }
+          }
+        ]
       }
     ],
     "direction": "horizontal",
@@ -312,7 +333,7 @@
       "mermaid-tools:Open Mermaid Toolbar": false
     }
   },
-  "active": "5e0bb6cc474c6340",
+  "active": "d5f62d0590b8cee8",
   "lastOpenFiles": [
     "02 - School/tutorial/大模型学习路线-交互图谱/自动备份/快照-2026-11-22.json",
     "01 - HOME/operation tips/vscode/常用快捷键.md",
