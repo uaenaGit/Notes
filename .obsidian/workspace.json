@@ -165,8 +165,7 @@
               "title": "书签"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -186,7 +185,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Leetcode/02 - files/testDemo.md",
+                "file": "02 - School/tutorial/大模型学习路线-交互图谱/节点笔记/动手学深度学习.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -196,7 +195,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "testDemo 的反向链接列表"
+              "title": "反向链接"
             }
           },
           {
@@ -205,12 +204,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "02 - School/公司/项目/ontology-usage/onyology_service.py.md",
+                "file": "02 - School/tutorial/大模型学习路线-交互图谱/节点笔记/动手学深度学习.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "onyology_service.py 的出链列表"
+              "title": "出链"
             }
           },
           {
@@ -243,28 +242,13 @@
             }
           },
           {
-            "id": "ad6a219d253361d8",
-            "type": "leaf",
-            "state": {
-              "type": "outline",
-              "state": {
-                "file": "02 - School/tutorial/大模型学习路线-交互图谱/节点笔记/动手学深度学习.md",
-                "followCursor": true,
-                "showSearch": true,
-                "searchQuery": ""
-              },
-              "icon": "lucide-list",
-              "title": "大纲"
-            }
-          },
-          {
             "id": "290d89efe5478e52",
             "type": "leaf",
             "state": {
               "type": "calendar",
               "state": {},
-              "icon": "lucide-ghost",
-              "title": "calendar"
+              "icon": "calendar-with-checkmark",
+              "title": "Calendar"
             }
           },
           {
@@ -286,30 +270,24 @@
               "icon": "git-pull-request",
               "title": "Source Control"
             }
-          }
-        ],
-        "currentTab": 4
-      },
-      {
-        "id": "e22c3d7a6bd54eea",
-        "type": "tabs",
-        "children": [
+          },
           {
-            "id": "d5f62d0590b8cee8",
+            "id": "3511e8284c2d484d",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
                 "file": "02 - School/tutorial/大模型学习路线-交互图谱/节点笔记/动手学深度学习.md",
-                "followCursor": true,
-                "showSearch": true,
+                "followCursor": false,
+                "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
               "title": "大纲"
             }
           }
-        ]
+        ],
+        "currentTab": 7
       }
     ],
     "direction": "horizontal",
@@ -333,11 +311,11 @@
       "mermaid-tools:Open Mermaid Toolbar": false
     }
   },
-  "active": "d5f62d0590b8cee8",
+  "active": "6f1586002874ea0f",
   "lastOpenFiles": [
+    "02 - School/tutorial/大模型学习路线-交互图谱/节点笔记/动手学深度学习.md",
     "02 - School/tutorial/大模型学习路线-交互图谱/自动备份/快照-2026-11-22.json",
     "01 - HOME/operation tips/vscode/常用快捷键.md",
-    "02 - School/tutorial/大模型学习路线-交互图谱/节点笔记/动手学深度学习.md",
     "02 - School/辅导/考研辅导/考研整体把控.md",
     "02 - School/tutorial/知识节点/检索增强 RAG.md",
     "02 - School/tutorial/知识节点/每周 - 每月复盘.md",
@@ -371,7 +349,6 @@
     "02 - School/tutorial/大模型学习路线-交互图谱/大模型学习路线-笔记备份.json",
     "02 - School/tutorial/大模型学习路线-交互图谱/启动自动备份.command",
     "02 - School/tutorial/大模型学习路线-交互图谱/自动备份/大模型学习路线-交互图谱-原始版本.html",
-    "02 - School/tutorial/大模型学习路线-交互图谱/自动备份",
     "02 - School/tutorial/大模型学习知识地图.canvas",
     "02 - School/tutorial/大模型学习路线-交互图谱/preview.png",
     "02 - School/tutorial/大模型学习路线-交互图谱/preview-panel.png",
