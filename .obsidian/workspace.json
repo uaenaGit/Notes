@@ -122,9 +122,21 @@
               "icon": "lucide-file",
               "title": "杭州旅游智能助手实现方案"
             }
+          },
+          {
+            "id": "fb7072ca8e899abe",
+            "type": "leaf",
+            "state": {
+              "type": "excalidraw",
+              "state": {
+                "file": "02 - School/论文/人机交互/Digital Companionship/Drawing 2026-11-26 14.41.44.excalidraw.md"
+              },
+              "icon": "excalidraw-icon",
+              "title": "Drawing 2026-11-26 14.41.44.excalidraw"
+            }
           }
         ],
-        "currentTab": 7
+        "currentTab": 8
       }
     ],
     "direction": "vertical"
@@ -291,7 +303,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "02 - School/课程/知识图谱导论/杭州旅游智能助手实现方案.md",
+                "file": "02 - School/论文/人机交互/Digital Companionship/Drawing 2026-11-26 14.41.44.excalidraw.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -325,8 +337,10 @@
       "mermaid-tools:Open Mermaid Toolbar": false
     }
   },
-  "active": "c4b7f5945a8bfbf9",
+  "active": "fb7072ca8e899abe",
   "lastOpenFiles": [
+    "02 - School/课程/知识图谱导论/杭州旅游智能助手实现方案.md",
+    "02 - School/论文/人机交互/Digital Companionship/Drawing 2026-11-26 14.41.44.excalidraw.md",
     "02 - School/论文/自然语言处理",
     "02 - School/论文/人机交互/Digital Companionship",
     "02 - School/tutorial/大模型学习路线-交互图谱/节点笔记/动手学深度学习.md",
@@ -345,7 +359,6 @@
     "02 - School/论文/机器翻译/Progress in machine translation/Drawing 2026-11-16 09.17.54.excalidraw.md",
     "02 - School/论文/机器翻译/Progress in machine translation",
     "02 - School/论文",
-    "02 - School/课程/知识图谱导论/杭州旅游智能助手实现方案.md",
     "02 - School/课程/知识图谱导论/课程考核.md",
     "02 - School/课程/知识图谱导论/课上笔记.md",
     "02 - School/tutorial/大模型学习路线-交互图谱/大模型学习路线-笔记总览.md",
@@ -359,7 +372,6 @@
     "02 - School/tutorial/大模型学习路线-交互图谱/自动备份/回收站/2026-11-11_115015/大模型学习路线-知识图谱笔记.md",
     "02 - School/tutorial/大模型学习路线-交互图谱/自动备份/回收站/2026-11-11_115015",
     "02 - School/tutorial/大模型学习路线-交互图谱/自动备份/回收站",
-    "02 - School/tutorial/大模型学习路线-交互图谱/节点笔记",
     "02 - School/tutorial/大模型学习路线-交互图谱/自动备份/写入前备份-2026-11-11_115013.md",
     "02 - School/公司/项目/可信AI工业平台/概览.md",
     "02 - School/tutorial/大模型学习路线-交互图谱/自动备份/写入前备份-2026-11-11_113628.md",
