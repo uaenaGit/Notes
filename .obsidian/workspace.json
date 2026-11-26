@@ -127,12 +127,14 @@
             "id": "fb7072ca8e899abe",
             "type": "leaf",
             "state": {
-              "type": "excalidraw",
+              "type": "markdown",
               "state": {
-                "file": "02 - School/论文/人机交互/Digital Companionship/Drawing 2026-11-26 14.41.44.excalidraw.md"
+                "file": "02 - School/tutorial/大模型学习路线-交互图谱/节点笔记/动手学深度学习.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "excalidraw-icon",
-              "title": "Drawing 2026-11-26 14.41.44.excalidraw"
+              "icon": "lucide-file",
+              "title": "动手学深度学习"
             }
           }
         ],
@@ -303,7 +305,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "02 - School/论文/人机交互/Digital Companionship/Drawing 2026-11-26 14.41.44.excalidraw.md",
+                "file": "02 - School/tutorial/大模型学习路线-交互图谱/节点笔记/动手学深度学习.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -339,8 +341,8 @@
   },
   "active": "fb7072ca8e899abe",
   "lastOpenFiles": [
-    "02 - School/课程/知识图谱导论/杭州旅游智能助手实现方案.md",
     "02 - School/论文/人机交互/Digital Companionship/Drawing 2026-11-26 14.41.44.excalidraw.md",
+    "02 - School/课程/知识图谱导论/杭州旅游智能助手实现方案.md",
     "02 - School/论文/自然语言处理",
     "02 - School/论文/人机交互/Digital Companionship",
     "02 - School/tutorial/大模型学习路线-交互图谱/节点笔记/动手学深度学习.md",
